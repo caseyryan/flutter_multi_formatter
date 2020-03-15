@@ -1,6 +1,7 @@
 # flutter_multi_formatter
 
-This package contains a few useful input formatters and utility methods 
+This package contains formatters for international phone numbers, credit / debit cards and 
+a masked formatter
 
 Formatting a phone
 
@@ -116,5 +117,40 @@ TextFormField(
     ],
 ),
 ```
+
+## Masked formatter
+
+```dart
+MaskedInputFormater
+```
+This formatter allows you to easily format a text by a mask
+This formatter processes current text selection very carefully so that itput does not 
+feel unnatural
+Use it like any other formatters
+
+```dart
+/// # matches any character and 0 matches digits
+/// so, in order to format a string like this GHJ45GHJHN to GHJ-45-GHJHN
+/// use a mask like this
+TextFormField(
+    keyboardType: TextInputType.phone,
+    inputFormatters: [
+        MaskedInputFormater('###-00-#####')
+    ],
+),
+```
+But in case you want # (hash symbol) to match only some particular values, you can pass 
+a regular expression to [anyCharMatcher] parameter
+
+```dart
+/// in this scenario, the # symbol will only match uppercase latin letters
+TextFormField(
+    keyboardType: TextInputType.phone,
+    inputFormatters: [
+        MaskedInputFormater('###-00-#####', anyCharMatcher: RegExp(r'[A-Z]'))
+    ],
+),
+```
+
 
 For more details see example project
