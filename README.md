@@ -2,6 +2,9 @@
 
 This package contains a few useful input formatters and utility methods 
 
+<img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/phone_format.gif?raw=true" width="240"/><img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/card_format.gif?raw=true" width="240"/>
+
+
 ## using:
 ```dart
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -101,7 +104,11 @@ formatter
 TextFormField(
     keyboardType: TextInputType.phone,
     inputFormatters: [
-        PhoneInputFormatter()
+        PhoneInputFormatter(onCountrySelected:  (PhoneCountryData countryData) {
+            print(countryData.country);
+        });
     ],
 ),
 ```
+
+For more details see example project
