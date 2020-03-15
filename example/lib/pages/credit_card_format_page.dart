@@ -82,6 +82,22 @@ class _CreditCardFormatPageState extends State<CreditCardFormatPage> {
                       CvvCodeFormatter()
                     ],
                   ),
+                  _getText(
+                    'Card holder name (this allows only latin letters A-Z and' + 
+                    ' automatically converts them to uppercase)'
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'HOLDER NAME',
+                      hintStyle: TextStyle(color: Colors.black.withOpacity(.3)),
+                      errorStyle: TextStyle(color: Colors.red)
+                    ),
+                    keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      CreditCardHolderNameFormatter()
+                    ],
+                  ),
                   
                 ],
               ),

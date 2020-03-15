@@ -75,23 +75,6 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                     height: 10.0,
                   ),
                   _getText(
-                    'You can also use different phone formats by setting constructor params'
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Type a phone number',
-                      hintStyle: TextStyle(color: Colors.black.withOpacity(.3)),
-                      errorStyle: TextStyle(color: Colors.red)
-                    ),
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      PhoneInputFormatter(
-                        areaCodeSeparator: AreaCodeSeparator.Dashes
-                      )
-                    ],
-                  ),
-                  _getText(
                     'You can also use formatAsPhoneNumber(string) ' + 
                     'function to format a string containing a phone number. E.g ' + 
                     '79998885544 will be formatted to +7 (999) 888-55-44'
