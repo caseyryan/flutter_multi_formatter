@@ -83,7 +83,6 @@ class CreditCardHolderNameFormatter extends TextInputFormatter {
         affinity: TextAffinity.downstream
       ),
       text: text,
-
     );
   }
   
