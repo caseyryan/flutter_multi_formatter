@@ -74,8 +74,7 @@ class CreditCardHolderNameFormatter extends TextInputFormatter {
       .join('');
     var endOffset = max(oldValue.text.length - oldValue.selection.end, 0);
     var selectionEnd = text.length - endOffset;
-
-    return newValue;
+    
     return TextEditingValue(
       composing: TextRange.collapsed(selectionEnd),
       selection: TextSelection.collapsed(
