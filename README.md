@@ -3,9 +3,11 @@
 This package contains a few useful input formatters and utility methods 
 
 Formatting a phone
+
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/phone_format.gif?raw=true" width="240"/>
 
 Formatting a credint / debit card
+
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/card_format.gif?raw=true" width="240"/>
 
 
