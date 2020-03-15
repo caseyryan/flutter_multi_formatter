@@ -1,3 +1,10 @@
-## [0.0.1] - TODO: Add release date.
+## [1.0.3]
 
-* TODO: Describe initial release.
+Initial pub release. Includes a list of formatters:
+
+PhoneInputFormatter
+MaskedInputFormater
+CreditCardNumberFormatter
+CvvCodeFormatter
+CreditCardExpirationDateFormatter
+CreditCardHolderNameFormatter
