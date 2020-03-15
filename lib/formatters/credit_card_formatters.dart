@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:flutter/services.dart';
+
 import 'formatter_utils.dart';
 import 'masked_input_formatter.dart';
 
@@ -48,4 +52,39 @@ class CreditCardExpirationDateFormatter extends MaskedInputFormater {
     }
     return result;
   }
+}
+
+/// allows only latin characters and converts them to uppercase
+/// you can use TextCapitalization.characters instead of this formatter 
+/// in most cases
+class CreditCardHolderNameFormatter extends TextInputFormatter {
+
+  static RegExp _nameMatcher = RegExp(r'[A-Z ]+');
+
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    var isErasing = newValue.text.length < oldValue.text.length;
+    if (isErasing) {
+      return newValue;
+    } 
+    var newText = newValue.text.toUpperCase();
+    var text = newText.split('')
+      .where((s) => _nameMatcher.hasMatch(s))
+      .map((s) => s.toUpperCase())
+      .join('');
+    var endOffset = max(oldValue.text.length - oldValue.selection.end, 0);
+    var selectionEnd = text.length - endOffset;
+
+    return newValue;
+    return TextEditingValue(
+      composing: TextRange.collapsed(selectionEnd),
+      selection: TextSelection.collapsed(
+        offset: selectionEnd, 
+        affinity: TextAffinity.downstream
+      ),
+      text: text,
+
+    );
+  }
+  
 }
