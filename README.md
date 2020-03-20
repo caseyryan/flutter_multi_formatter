@@ -1,18 +1,18 @@
 # flutter_multi_formatter
 
-This package contains formatters for international phone numbers, credit / debit cards and 
+This package contains formatters for international phone numbers, credit / debit cards, currencies and 
 a masked formatter
 
 Formatting a phone
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/phone_format.gif?raw=true" width="240"/>
 
-Formatting a credint / debit card
+Formatting a credit / debit card
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/card_format.gif?raw=true" width="240"/>
 
 
-## using:
+## Using:
 ```dart
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 ```
@@ -30,27 +30,86 @@ CreditCardNumberFormatter
 CvvCodeFormatter
 CreditCardExpirationDateFormatter
 CreditCardHolderNameFormatter
+/// for currencies
+MoneyInputFormatter
 ```
 
 ## Utility methods and widgets
 
-```dart 
-String toNumericString(String text);
-```
 gets all numbers out of a string and joins them into a new string
 e.g. a string like fGgfjh456bb78 will be converted into this: 45678
 
 ```dart 
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+
+String toNumericString(String text);
+```
+
+return 'true' if the checked characted is digit
+```dart 
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+
 bool isDigit(String character);
 ```
-return 'true' if the checked characted is digit
+
+toCurrencyString() is used by the MoneyInputFormatter internally 
+but you can also use it directly
+```dart
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+
+String toCurrencyString(String value, {
+    int mantissaLength = 2,
+    ThousandSeparator thousandSeparator = ThousandSeparator.Comma,
+    ShorteningPolicy shorteningPolicy = ShorteningPolicy.NoShortening,
+    String leadingSymbol = '',
+    String trailingSymbol = '',
+    bool useSymbolPadding = false
+});
+
+print(toCurrencyString('123456', leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN)); // $123,456.00
+
+/// the values can also be shortened to thousands, millions, billions... 
+/// in this case a 1000 will be displayed as 1K, and 1250000 will turn to this 1.25M
+var result = toCurrencyString(
+    '125000', 
+    leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN,
+    shorteningPolicy: ShorteningPolicy.RoundToThousands
+); // $125K
+
+result = toCurrencyString(
+    '1250000', 
+    leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN,
+    shorteningPolicy: ShorteningPolicy.RoundToMillions
+); // 1.25M
+
+```
+there's also an extension version of this function which can be used on 
+double, int and String
+but before using it, make sure you use dart sdk version 2.6+ 
+open pubspec.yaml and check this section:
+```
+environment:
+  sdk: ">=2.6.0 <3.0.0"
+```
+
+```dart
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+
+var someNumericValue = 123456;
+print(someNumericValue.toCurrencyString(leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN)); // $123,456.00
+
+var someNumericStringValue = '123456';
+print(someNumericStringValue.toCurrencyString(trailingSymbol: MoneyInputFormatter.EURO_SIGN)); // 123,456.00€
+
+```
+
 
 ```dart 
-/// a widget
+/// it's a widget
 Unfocuser
 ```
-This allows you to unfocus any text input and hide the keyboard 
-when you type outside a text input. Use it like this:
+Unfocuser allows you to unfocus any text input and hide the onscreen keyboard 
+when you tap outside of a text input. Use it like this:
 
 ```dart 
 @override
@@ -151,6 +210,36 @@ TextFormField(
     ],
 ),
 ```
+
+
+```dart
+MoneyInputFormatter
+```
+
+```dart
+TextFormField(
+    keyboardType: TextInputType.number,
+    inputFormatters: [
+        MoneyInputFormatter(
+            leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN
+        )
+    ],
+),
+...
+
+TextFormField(
+    keyboardType: TextInputType.number,
+    inputFormatters: [
+        MoneyInputFormatter(
+            trailingSymbol: MoneyInputFormatter.EURO_SIGN,
+            useSymbolPadding: true,
+            mantissaLength: 3 // the length of the fractional side
+        )
+    ],
+),
+
+```
+
 
 
 For more details see example project

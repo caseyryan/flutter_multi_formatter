@@ -23,20 +23,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-final RegExp _digitRegex = RegExp(r'[-0-9]+');
-final RegExp _digitWithPeriodRegex = RegExp(r'[-0-9]+(\.[0-9]+)?');
 
-String toNumericString(String inputString, {bool allowPeriod = false}) {
-  if (inputString == null) return '';
-  var regExp = allowPeriod ? _digitWithPeriodRegex : _digitRegex;
-  return inputString.splitMapJoin(regExp,
-      onMatch: (m) => m.group(0),
-      onNonMatch: (nm) => ''
-  );
+enum ShorteningPolicy {
+  /// displays a value of 1234456789.34 as 1,234,456,789.34
+  NoShortening,
+  /// displays a value of 1234456789.34 as 1,234,456K
+  RoundToThousands,
+  /// displays a value of 1234456789.34 as 1,234M
+  RoundToMillions,
+  /// displays a value of 1234456789.34 as 1B
+  RoundToBillions,
+  RoundToTrillions,
+  /// uses K, M, B, or T depending on how big the numeric value is
+  Automatic
 }
-bool isDigit(String character) {
-  if (character == null || character.isEmpty || character.length > 1) {
-    return false;
-  } 
-  return _digitRegex.stringMatch(character) != null;
+
+enum ThousandSeparator {
+  Comma,
+  None,
+  Space
 }
