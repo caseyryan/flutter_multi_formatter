@@ -11,6 +11,10 @@ Formatting a credit / debit card
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/card_format.gif?raw=true" width="240"/>
 
+Formatting currencies
+
+<img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/money_format.gif?raw=true" width="240"/>
+
 
 ## Using:
 ```dart
@@ -210,7 +214,7 @@ TextFormField(
     ],
 ),
 ```
-
+## Money Input formatter
 
 ```dart
 MoneyInputFormatter
