@@ -24,7 +24,7 @@ class _CreditCardFormatPageState extends State<CreditCardFormatPage> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text('Phone Formatter Demo'),
+          title: Text('Card Formatter Demo'),
         ),
         body: SingleChildScrollView(
           child: Padding(

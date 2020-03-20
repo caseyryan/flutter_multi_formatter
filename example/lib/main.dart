@@ -1,4 +1,5 @@
 import 'package:example/pages/credit_card_format_page.dart';
+import 'package:example/pages/money_format_page.dart';
 import 'package:example/pages/phone_format_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -82,6 +83,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: <Widget>[
                       Icon(Icons.credit_card),
                       Expanded(child: Center(child: Text('Credit Card Formatter Demo'))),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 50.0,
+              ),
+              Container(
+                height: 50,
+                child: RaisedButton(
+                  textColor: Colors.white,
+                  color: Colors.orange,
+                  onPressed: () {
+                    openPage(MoneyFormatPage());
+                  },
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.attach_money),
+                      Expanded(child: Center(child: Text('Money formatter'))),
                     ],
                   ),
                 ),
