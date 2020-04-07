@@ -30,10 +30,9 @@ PhoneInputFormatter
 /// for anything that can be masked
 MaskedInputFormater
 /// for credit / debit cards
-CreditCardNumberFormatter
-CvvCodeFormatter
+CreditCardNumberInputFormatter
+CreditCardCvcInputFormatter
 CreditCardExpirationDateFormatter
-CreditCardHolderNameFormatter
 /// for currencies
 MoneyInputFormatter
 ```
@@ -49,7 +48,8 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 String toNumericString(String text);
 ```
 
-return 'true' if the checked characted is digit
+returns 'true' if the checked characted is digit
+
 ```dart 
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
@@ -181,6 +181,53 @@ TextFormField(
 ),
 ```
 
+```dart
+CreditCardNumberInputFormatter
+```
+CreditCardNumberInputFormatter automatically detects a type of a card based on a predefined 
+list of card system and formats the number accordingly. 
+This detection is pretty rough and may not work with many card system. 
+All supported systems are available as string constants in 
+
+```dart
+class CardSystem {
+  static const String VISA = 'Visa';
+  static const String MASTERCARD = 'Mastercard';
+  static const String JCB = 'JCB';
+  static const String DISCOVER = 'Discover';
+  static const String MAESTRO = 'Maestro';
+  static const String AMERICAN_EXPRESS= 'Amex';
+}
+```
+Anyway, if the number is not supported it will just be returned as is and your input will not 
+break because of that
+
+
+```dart
+TextFormField(
+    keyboardType: TextInputType.number,
+    inputFormatters: [
+        CreditCardNumberInputFormatter(onCardSystemSelected:  (CardSystemData cardSystemData) {
+            print(cardSystemData.system);
+        });
+    ],
+),
+
+/// there's also a method to format a number as a card number
+/// the method is located in a credit_card_number_input_formatter.dart file
+String formatAsCardNumber(
+String cardNumber, {
+    bool useSeparators = true,
+});
+
+/// and a method to check is a card is valid
+bool isCardValidNumber(String cardNumber);
+/// but it will return true only if the card system is supported, 
+/// so you should not really rely on that
+
+```
+
+
 ## Masked formatter
 
 ```dart
@@ -246,4 +293,4 @@ TextFormField(
 
 
 
-For more details see example project
+For more details see example project. And feel free to open an issue if you find any bugs of errors

@@ -43,13 +43,13 @@ class _CreditCardFormatPageState extends State<CreditCardFormatPage> {
                   TextFormField(
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      hintText: '0000 0000 0000 0000',
+                      hintText: 'CARD NUMBER',
                       hintStyle: TextStyle(color: Colors.black.withOpacity(.3)),
                       errorStyle: TextStyle(color: Colors.red)
                     ),
                     keyboardType: TextInputType.number,
                     inputFormatters: [
-                      CreditCardNumberFormatter()
+                      CreditCardNumberInputFormatter()
                     ],
                   ),
                   _getText(
@@ -79,26 +79,9 @@ class _CreditCardFormatPageState extends State<CreditCardFormatPage> {
                     ),
                     keyboardType: TextInputType.number,
                     inputFormatters: [
-                      CvvCodeFormatter()
+                      CreditCardCvcInputFormatter()
                     ],
                   ),
-                  _getText(
-                    'Card holder name (this allows only latin letters A-Z and' + 
-                    ' automatically converts them to uppercase)'
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'HOLDER NAME',
-                      hintStyle: TextStyle(color: Colors.black.withOpacity(.3)),
-                      errorStyle: TextStyle(color: Colors.red)
-                    ),
-                    keyboardType: TextInputType.text,
-                    inputFormatters: [
-                      CreditCardHolderNameFormatter()
-                    ],
-                  ),
-                  
                 ],
               ),
             ),

@@ -38,6 +38,7 @@ class MaskedInputFormater extends TextInputFormatter {
   final String _anyCharMask = '#';
   final String _onlyDigitMask = '0';
   final RegExp anyCharMatcher;
+  String _lastValue;
 
   /// [mask] is a string that must contain # (hash) and 0 (zero) 
   /// as maskable characters. # means any possible character,
@@ -59,12 +60,13 @@ class MaskedInputFormater extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     var isErasing = newValue.text.length < oldValue.text.length;
-    if (isErasing) {
+    if (isErasing || _lastValue == newValue.text) {
       return newValue;
     } 
     var maskedValue = applyMask(newValue.text);
     var endOffset = max(oldValue.text.length - oldValue.selection.end, 0);
     var selectionEnd = maskedValue.length - endOffset;
+    _lastValue = maskedValue;
     return TextEditingValue(
       selection: TextSelection.collapsed(offset: selectionEnd),
       text: maskedValue

@@ -1,5 +1,5 @@
 /*
-(c) Copyright 2019 Serov Konstantin.
+(c) Copyright 2020 Serov Konstantin.
 
 Licensed under the MIT license:
 
@@ -24,17 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-library flutter_multi_formatter;
+import 'package:flutter_multi_formatter/formatters/masked_input_formatter.dart';
 
-export 'formatters/formatter_utils.dart';
-export 'formatters/masked_input_formatter.dart';
-export 'formatters/phone_input_enums.dart';
-export 'formatters/phone_input_formatter.dart';
-export 'formatters/money_input_formatter.dart';
-export 'formatters/money_input_enums.dart';
-export 'formatters/formatter_extension_methods.dart';
-export 'formatters/credit_card_cvc_input_formatter.dart';
-export 'formatters/credit_card_expiration_input_formatter.dart';
-export 'formatters/credit_card_number_input_formatter.dart';
-export 'utils/unfocuser.dart';
-
+class CreditCardCvcInputFormatter extends MaskedInputFormater {
+  CreditCardCvcInputFormatter() : super('000');
+}
