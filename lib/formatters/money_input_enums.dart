@@ -37,9 +37,16 @@ enum ShorteningPolicy {
   /// uses K, M, B, or T depending on how big the numeric value is
   Automatic
 }
-
+/// [Comma] means this format 1,000,000.00
+/// [Period] means thousands and mantissa will look like this
+/// 1.000.000,00 
+/// [None] no separator will be applied at all
+/// [SpaceAndPeriodMantissa] 1 000 000.00
+/// [SpaceAndCommaMantissa] 1 000 000,00
 enum ThousandSeparator {
   Comma,
+  Period,
   None,
-  Space
+  SpaceAndPeriodMantissa,
+  SpaceAndCommaMantissa,
 }

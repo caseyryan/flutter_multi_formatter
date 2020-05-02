@@ -46,7 +46,9 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     MoneyInputFormatter(
-                      leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN
+                      trailingSymbol: MoneyInputFormatter.DOLLAR_SIGN,
+                      thousandSeparator: ThousandSeparator.Period,
+                      // thousandSeparator: ThousandSeparator.Comma
                     )
                   ],
                 ),
@@ -104,7 +106,7 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                     MoneyInputFormatter(
                       leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN,
                       useSymbolPadding: true,
-                      thousandSeparator: ThousandSeparator.Space
+                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa
                     )
                   ],
                 ),

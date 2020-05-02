@@ -75,18 +75,49 @@ class MoneyInputFormatter extends TextInputFormatter {
     assert(thousandSeparator != null),
     assert(useSymbolPadding != null);
 
+  /// просто, чтобы проверить не используется ли запятая для дробной части
+  bool _usesCommasForMantissa(String value) {
+    if (thousandSeparator == ThousandSeparator.Period || 
+        thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
+      return value.lastIndexOf(',') > value.lastIndexOf('.');
+    }
+    return false;
+  }
+
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    _processCallback(newValue.text);
-    var isErasing = newValue.text.length < oldValue.text.length;
+    var newText = newValue.text;
+    var oldText = oldValue.text;
+    /// если реально используется запятая как разделитель мантиссы
+    /// то сначала надо превратить число в обычное и только после этого парсить
+    var usesCommaForMantissa = _usesCommasForMantissa(newText);
+    if (usesCommaForMantissa) {
+      newText = _swapCommasAndPeriods(newText);
+      oldText = _swapCommasAndPeriods(oldText);
+    }
+    _processCallback(newText);
+    var isErasing = newText.length < oldText.length;
     if (isErasing) {
+      // var formatAfterErase = toCurrencyString(
+      //   newText, 
+      //   mantissaLength: mantissaLength, 
+      //   leadingSymbol: leadingSymbol,
+      //   thousandSeparator: thousandSeparator,
+      //   trailingSymbol: trailingSymbol,
+      //   useSymbolPadding: useSymbolPadding
+      // );
+      // print(formatAfterErase);
       return newValue;
+      // return TextEditingValue(
+      //   selection: newValue.selection,
+      //   text: formatAfterErase
+      // );
     } 
 
-    var numPeriods = _countSymbolsInString(newValue.text, '.');
+    var numPeriods = _countSymbolsInString(newText, '.');
     if (numPeriods > 1) {
       var newSelectionIndex = newValue.selection.end;
-      var oldPeriodIndex = oldValue.text.indexOf('.');
+      var oldPeriodIndex = oldText.indexOf('.');
       if (newSelectionIndex - oldPeriodIndex != 1) {
         // этот хак позволит переключиться за точку, если 2 точки рядом
         // но не даст ввести еще одну точку, если между ними есть другой символ
@@ -104,20 +135,28 @@ class MoneyInputFormatter extends TextInputFormatter {
     fractionLength += trailingLength;
 
     var formattedValue = toCurrencyString(
-      newValue.text, 
+      newText, 
       mantissaLength: mantissaLength,
       thousandSeparator: thousandSeparator,
       leadingSymbol: leadingSymbol,
       trailingSymbol: trailingSymbol,
       useSymbolPadding: useSymbolPadding
     );
+    /// тут нужная повторная проверка, т.к. toCurrencyString опять свопнет запятые
+    /// и сделает из 1,000,000.00 это 1.000.000,00. Нужно это временно снова превратить в 
+    /// обычное число, чтобы правильно найти точки и перевести в double
+    usesCommaForMantissa = _usesCommasForMantissa(formattedValue);
+    if (usesCommaForMantissa) {
+      formattedValue = _swapCommasAndPeriods(formattedValue);
+    }
+
 
     var lastDotIndex = formattedValue.lastIndexOf('.');
     // если в строке уже есть точка, либо если выделение справа от точки
     // начинаем редактировать дробную часть заменой символов и смещением вправо
-    var moveSelection = formattedValue == oldValue.text || 
+    var moveSelection = formattedValue == oldText || 
         (lastDotIndex > -1 && newValue.selection.end > lastDotIndex);
-    var endOffset = max(oldValue.text.length - oldValue.selection.end, 0);
+    var endOffset = max(oldText.length - oldValue.selection.end, 0);
     var numTrailingZeroes = _countTrailingZeroes(formattedValue, trailingSymbolLength: trailingLength);
     var selectionEnd = formattedValue.length - endOffset;
     // проверяет чтобы курсор выделения не находился внутри дробной части
@@ -126,14 +165,14 @@ class MoneyInputFormatter extends TextInputFormatter {
     if (notInMantissaPart) {
       if (fractionLength > 0) {
         // если автоматически добавилась дробная часть, когда ее еще не было 
-        var addedMoreSymbols = formattedValue.length - oldValue.text.length > 1;
+        var addedMoreSymbols = formattedValue.length - oldText.length > 1;
         // +1 чтобы учесть точку
         selectionEnd -= (fractionLength + 1);
         if (addedMoreSymbols) {
           // случай, если дробная часть добавилась, но выделение было не в конце строки
           // (а перед трейлинг символом или его пробелом), нужно сдвинуть выделение так
           // чтобы оно было ровно перед точкой дробной части
-          var selectionCompensation = oldValue.text.length - oldValue.selection.end;
+          var selectionCompensation = oldText.length - oldValue.selection.end;
           selectionEnd += selectionCompensation;
         }
       }
@@ -150,10 +189,18 @@ class MoneyInputFormatter extends TextInputFormatter {
           // выделение сразу после точки и начать правку мантсисы
           selectionEnd = formattedValue.length - fractionLength;
         } else {
-          selectionEnd = oldValue.selection.end + (formattedValue.length - oldValue.text.length);
+          selectionEnd = oldValue.selection.end + (formattedValue.length - oldText.length);
         }
       }
     }
+    if (!_usesCommasForMantissa(formattedValue)) {
+      /// а здесь, если число было нормальным, но надо вернуть со свопнутыми запятыми
+      if (thousandSeparator == ThousandSeparator.Period || 
+        thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
+        formattedValue = _swapCommasAndPeriods(formattedValue);
+      }
+    }
+
     return TextEditingValue(
       selection: TextSelection.collapsed(offset: min(selectionEnd, formattedValue.length)),
       text: formattedValue
@@ -230,18 +277,31 @@ String toCurrencyString(String value, {
   assert(thousandSeparator != null);
   assert(mantissaLength != null);
 
+  /// если нужно, чтобы точки заменились на запятые и наоборот
+  var swapCommasAndPreriods = false;
   String tSeparator;
   switch (thousandSeparator) {
     case ThousandSeparator.Comma:
       tSeparator = ',';
       break;
+    case ThousandSeparator.Period:
+      /// вначале все равно запятая, а потом делается своп, если нужен
+      /// разделитель тысяч в виде точек
+      tSeparator = ',';
+      swapCommasAndPreriods = true;
+      break;
     case ThousandSeparator.None:
       tSeparator = '';
       break;
-    case ThousandSeparator.Space:
+    case ThousandSeparator.SpaceAndPeriodMantissa:
       tSeparator = ' ';
       break;
+    case ThousandSeparator.SpaceAndCommaMantissa:
+      tSeparator = ' ';
+      swapCommasAndPreriods = true;
+      break;
   }
+
   value = value.replaceAll(_multiPeriodRegExp, '.');
   value = toNumericString(value, allowPeriod: mantissaLength > 0);
   var isNegative = value.contains('-');
@@ -310,9 +370,9 @@ String toCurrencyString(String value, {
   var mantissa = '';
   var split = value.split('');
   var mantissaList = <String>[];
-  var periodIndex = value.indexOf('.');
-  if (periodIndex > -1) {
-    var start = periodIndex + 1;
+  var mantissaSeparatorIndex = value.indexOf('.');
+  if (mantissaSeparatorIndex > -1) {
+    var start = mantissaSeparatorIndex + 1;
     var end = start + mantissaLength;
     for (var i = start; i < end; i++) {
       if (i < split.length) {
@@ -327,8 +387,8 @@ String toCurrencyString(String value, {
     mantissaList.join(''), mantissaLength
   ) : '';
   var maxIndex = split.length - 1;
-  if (periodIndex > 0 && noShortening) {
-    maxIndex = periodIndex - 1;
+  if (mantissaSeparatorIndex > 0 && noShortening) {
+    maxIndex = mantissaSeparatorIndex - 1;
   }
   var digitCounter = 0;
   if (maxIndex > -1) {
@@ -372,8 +432,24 @@ String toCurrencyString(String value, {
   } else {
     result = '$reversed$mantissa';
   }
+
+  if (swapCommasAndPreriods) {
+    return _swapCommasAndPeriods(result);
+  }
   return result;
 }
+
+/// просто меняет точки и запятые местами
+String _swapCommasAndPeriods(String input) {
+  var temp = input;
+  if (temp.indexOf('.,') > -1) {
+    temp = temp.replaceAll('.,', ',,');
+  }
+  temp = temp.replaceAll('.', 'PERIOD').replaceAll(',', 'COMMA');
+  temp = temp.replaceAll('PERIOD', ',').replaceAll('COMMA', '.');
+  return temp;
+}
+
 String _getRoundedValue(String numericString, double roundTo) {
     assert(roundTo != null && roundTo != 0.0);
     assert(numericString != null);

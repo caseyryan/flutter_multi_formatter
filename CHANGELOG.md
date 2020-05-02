@@ -1,4 +1,9 @@
+## [1.1.6]
+
+- Added a possibility to use a period as a thousand separator
+
 ## [1.1.5]
+
 - Added support for 6 card systems for now. If the card number is detected 
 as one of the supported systems, e.g. Mastercard, it will be formatted automatically
 and the callback with CardSystemData argument will be called

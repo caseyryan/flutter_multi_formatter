@@ -63,6 +63,9 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 String toCurrencyString(String value, {
     int mantissaLength = 2,
+    /// in case you need a period as a thousand separator
+    /// simply change ThousandSeparator.Comma to ThousandSeparator.Period
+    /// and you will get 1.000.000,00 instead of 1,000,000.00
     ThousandSeparator thousandSeparator = ThousandSeparator.Comma,
     ShorteningPolicy shorteningPolicy = ShorteningPolicy.NoShortening,
     String leadingSymbol = '',
