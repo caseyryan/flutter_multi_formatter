@@ -750,7 +750,7 @@ class _PhoneCodes {
    },
    {
       'country': 'Guyana',
-      'phoneCode': '595',
+      'phoneCode': '592',
       'countryCode': 'GY',
       'phoneMask': '+000 000 0000',
    },
