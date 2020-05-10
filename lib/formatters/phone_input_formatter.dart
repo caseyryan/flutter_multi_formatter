@@ -552,7 +552,7 @@ class _PhoneCodes {
    },
    {
       'country': 'Cyprus',
-      'phoneCode': '537',
+      'phoneCode': '357',
       'countryCode': 'CY',
       'phoneMask': '+000 0 000 0000',
    },
