@@ -404,7 +404,7 @@ class _PhoneCodes {
       'country': 'Brazil',
       'phoneCode': '55',
       'countryCode': 'BR',
-      'phoneMask': '+00 000 000 0000',
+      'phoneMask': '+00 (00) 00000-0000',
     },
     {
       'country': 'British Indian Ocean Territory',
