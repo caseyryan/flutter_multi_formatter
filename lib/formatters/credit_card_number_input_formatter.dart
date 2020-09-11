@@ -135,6 +135,10 @@ String formatAsCardNumber(
 
 }
 
+CardSystemData getCardSystemData(String cardNumber) {
+  return _CardSystemDatas.getCardSystemDataByNumber(cardNumber);
+}
+
 String _formatByMask(String text, String mask) {
   var chars = text.split('');
   var result = <String>[];
