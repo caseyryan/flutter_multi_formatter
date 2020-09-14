@@ -102,7 +102,7 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
 /// checks not only for length and characters but also
 /// for card system code code. If it's not found the succession of numbers
 /// will not be marked as a valid card number
-bool isCardValidNumber(String cardNumber) {
+bool isCardValidNumber(String cardNumber, {bool checkLength = false}) {
   cardNumber = toNumericString(cardNumber);
   if (cardNumber == null || cardNumber.isEmpty) {
     return false;
@@ -113,7 +113,7 @@ bool isCardValidNumber(String cardNumber) {
   }
   var formatted = _formatByMask(cardNumber, countryData.numberMask);
   var reprocessed = toNumericString(formatted);
-  return reprocessed == cardNumber;
+  return reprocessed == cardNumber && (checkLength == false || reprocessed.length == countryData.numDigits);
 }
 
 String formatAsCardNumber(
@@ -159,13 +159,20 @@ class CardSystemData {
   final String system;
   final String systemCode;
   final String numberMask;
+  final int numDigits;
 
-  CardSystemData._init({this.numberMask, this.system, this.systemCode});
+  CardSystemData._init({
+    this.numberMask,
+    this.system,
+    this.systemCode,
+    this.numDigits
+  });
 
   factory CardSystemData.fromMap(Map value) {
     return CardSystemData._init(
       system: value['system'],
       systemCode: value['systemCode'],
+      numDigits: value['numDigits'],
       numberMask: value['numberMask'],
     );
   }
