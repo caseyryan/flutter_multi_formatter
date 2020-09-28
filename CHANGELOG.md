@@ -1,3 +1,5 @@
+## [1.1.8]
+- Apllied some formatting
 ## [1.1.7]
 
 - Phone maskes now are not restricted by length. The number is masked as before
