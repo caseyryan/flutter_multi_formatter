@@ -1,3 +1,10 @@
+## [1.1.7]
+
+- Phone maskes now are not restricted by length. The number is masked as before
+and a country is detected but now you can enter any number of digits after the 
+mask if filled. This is necessary for some countries that have a 
+variable number of digits in their phone numbers e.g. Estonia
+
 ## [1.1.6]
 
 - Added a possibility to use a period as a thousand separator
