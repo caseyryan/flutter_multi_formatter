@@ -31,12 +31,10 @@ import 'formatter_utils.dart';
 import 'money_input_enums.dart';
 
 class MoneyInputFormatter extends TextInputFormatter {
-
   static const String DOLLAR_SIGN = '\$';
   static const String EURO_SIGN = '€';
   static const String POUND_SIGN = '£';
   static const String YEN_SIGN = '￥';
-
 
   final ThousandSeparator thousandSeparator;
   final int mantissaLength;
@@ -51,33 +49,32 @@ class MoneyInputFormatter extends TextInputFormatter {
   /// [ShorteningPolicy.NoShortening] displays a value of 1234456789.34 as 1,234,456,789.34
   /// but [ShorteningPolicy.RoundToThousands] displays the same value as 1,234,456K
   /// [mantissaLength] specifies how many digits will be added after a period sign
-  /// [leadingSymbol] any symbol (except for the ones that contain digits) the will be 
+  /// [leadingSymbol] any symbol (except for the ones that contain digits) the will be
   /// added in front of the resulting string. E.g. $ or €
   /// some of the signs are available via constants like [MoneyInputFormatter.EURO_SIGN]
-  /// but you can basically add any string instead of it. The main rule is that the string 
+  /// but you can basically add any string instead of it. The main rule is that the string
   /// must not contain digits, preiods, commas and dashes
-  /// [trailingSymbol] is the same as leading but this symbol will be added at the 
+  /// [trailingSymbol] is the same as leading but this symbol will be added at the
   /// end of your resulting string like 1,250€ instead of €1,250
   /// [useSymbolPadding] adds a space between the number and trailing / leading symbols
   /// like 1,250€ -> 1,250 € or €1,250€ -> € 1,250
   /// [onValueChange] a callback that will be called on a number change
-  MoneyInputFormatter({
-    this.thousandSeparator = ThousandSeparator.Comma, 
-    this.mantissaLength = 2,
-    this.leadingSymbol = '',
-    this.trailingSymbol = '',
-    this.useSymbolPadding = false,
-    this.onValueChange
-  }) : 
-    assert(trailingSymbol != null),
-    assert(leadingSymbol != null),
-    assert(mantissaLength != null),
-    assert(thousandSeparator != null),
-    assert(useSymbolPadding != null);
+  MoneyInputFormatter(
+      {this.thousandSeparator = ThousandSeparator.Comma,
+      this.mantissaLength = 2,
+      this.leadingSymbol = '',
+      this.trailingSymbol = '',
+      this.useSymbolPadding = false,
+      this.onValueChange})
+      : assert(trailingSymbol != null),
+        assert(leadingSymbol != null),
+        assert(mantissaLength != null),
+        assert(thousandSeparator != null),
+        assert(useSymbolPadding != null);
 
   /// просто, чтобы проверить не используется ли запятая для дробной части
   bool _usesCommasForMantissa(String value) {
-    if (thousandSeparator == ThousandSeparator.Period || 
+    if (thousandSeparator == ThousandSeparator.Period ||
         thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
       return value.lastIndexOf(',') > value.lastIndexOf('.');
     }
@@ -85,9 +82,11 @@ class MoneyInputFormatter extends TextInputFormatter {
   }
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     var newText = newValue.text;
     var oldText = oldValue.text;
+
     /// если реально используется запятая как разделитель мантиссы
     /// то сначала надо превратить число в обычное и только после этого парсить
     var usesCommaForMantissa = _usesCommasForMantissa(newText);
@@ -99,8 +98,8 @@ class MoneyInputFormatter extends TextInputFormatter {
     var isErasing = newText.length < oldText.length;
     if (isErasing) {
       // var formatAfterErase = toCurrencyString(
-      //   newText, 
-      //   mantissaLength: mantissaLength, 
+      //   newText,
+      //   mantissaLength: mantissaLength,
       //   leadingSymbol: leadingSymbol,
       //   thousandSeparator: thousandSeparator,
       //   trailingSymbol: trailingSymbol,
@@ -112,7 +111,7 @@ class MoneyInputFormatter extends TextInputFormatter {
       //   selection: newValue.selection,
       //   text: formatAfterErase
       // );
-    } 
+    }
 
     var numPeriods = _countSymbolsInString(newText, '.');
     if (numPeriods > 1) {
@@ -124,47 +123,47 @@ class MoneyInputFormatter extends TextInputFormatter {
         return oldValue;
       }
     }
-    
+
     var fractionLength = mantissaLength;
     var trailingLength = trailingSymbol.length;
     if (useSymbolPadding) {
       if (trailingSymbol.isNotEmpty) {
         trailingLength += 1;
-      } 
+      }
     }
     fractionLength += trailingLength;
 
-    var formattedValue = toCurrencyString(
-      newText, 
-      mantissaLength: mantissaLength,
-      thousandSeparator: thousandSeparator,
-      leadingSymbol: leadingSymbol,
-      trailingSymbol: trailingSymbol,
-      useSymbolPadding: useSymbolPadding
-    );
+    var formattedValue = toCurrencyString(newText,
+        mantissaLength: mantissaLength,
+        thousandSeparator: thousandSeparator,
+        leadingSymbol: leadingSymbol,
+        trailingSymbol: trailingSymbol,
+        useSymbolPadding: useSymbolPadding);
+
     /// тут нужная повторная проверка, т.к. toCurrencyString опять свопнет запятые
-    /// и сделает из 1,000,000.00 это 1.000.000,00. Нужно это временно снова превратить в 
+    /// и сделает из 1,000,000.00 это 1.000.000,00. Нужно это временно снова превратить в
     /// обычное число, чтобы правильно найти точки и перевести в double
     usesCommaForMantissa = _usesCommasForMantissa(formattedValue);
     if (usesCommaForMantissa) {
       formattedValue = _swapCommasAndPeriods(formattedValue);
     }
 
-
     var lastDotIndex = formattedValue.lastIndexOf('.');
     // если в строке уже есть точка, либо если выделение справа от точки
     // начинаем редактировать дробную часть заменой символов и смещением вправо
-    var moveSelection = formattedValue == oldText || 
+    var moveSelection = formattedValue == oldText ||
         (lastDotIndex > -1 && newValue.selection.end > lastDotIndex);
     var endOffset = max(oldText.length - oldValue.selection.end, 0);
-    var numTrailingZeroes = _countTrailingZeroes(formattedValue, trailingSymbolLength: trailingLength);
+    var numTrailingZeroes = _countTrailingZeroes(formattedValue,
+        trailingSymbolLength: trailingLength);
     var selectionEnd = formattedValue.length - endOffset;
     // проверяет чтобы курсор выделения не находился внутри дробной части
-    bool notInMantissaPart = numTrailingZeroes == fractionLength && endOffset <= fractionLength;
+    bool notInMantissaPart =
+        numTrailingZeroes == fractionLength && endOffset <= fractionLength;
 
     if (notInMantissaPart) {
       if (fractionLength > 0) {
-        // если автоматически добавилась дробная часть, когда ее еще не было 
+        // если автоматически добавилась дробная часть, когда ее еще не было
         var addedMoreSymbols = formattedValue.length - oldText.length > 1;
         // +1 чтобы учесть точку
         selectionEnd -= (fractionLength + 1);
@@ -181,35 +180,39 @@ class MoneyInputFormatter extends TextInputFormatter {
       if (moveSelection) {
         if (selectionEnd + 1 <= formattedValue.length - trailingLength) {
           selectionEnd += 1;
-        } 
+        }
       } else {
-        var value = double.tryParse(toNumericString(formattedValue, allowPeriod: true)) ?? 0.0;
+        var value = double.tryParse(
+                toNumericString(formattedValue, allowPeriod: true)) ??
+            0.0;
         if (value == 0.0 && formattedValue.length > fractionLength) {
           // если ввели первый 0, то строка автоматом становится $0.00 и надо поставить
           // выделение сразу после точки и начать правку мантсисы
           selectionEnd = formattedValue.length - fractionLength;
         } else {
-          selectionEnd = oldValue.selection.end + (formattedValue.length - oldText.length);
+          selectionEnd =
+              oldValue.selection.end + (formattedValue.length - oldText.length);
         }
       }
     }
     if (!_usesCommasForMantissa(formattedValue)) {
       /// а здесь, если число было нормальным, но надо вернуть со свопнутыми запятыми
-      if (thousandSeparator == ThousandSeparator.Period || 
-        thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
+      if (thousandSeparator == ThousandSeparator.Period ||
+          thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
         formattedValue = _swapCommasAndPeriods(formattedValue);
       }
     }
 
     return TextEditingValue(
-      selection: TextSelection.collapsed(offset: min(selectionEnd, formattedValue.length)),
-      text: formattedValue
-    );
+        selection: TextSelection.collapsed(
+            offset: min(selectionEnd, formattedValue.length)),
+        text: formattedValue);
   }
 
   void _processCallback(String value) {
     if (onValueChange != null) {
-      onValueChange(double.tryParse(toNumericString(value, allowPeriod: true)) ?? 0.0);
+      onValueChange(
+          double.tryParse(toNumericString(value, allowPeriod: true)) ?? 0.0);
     }
   }
 }
@@ -233,6 +236,7 @@ int _countTrailingZeroes(String value, {int trailingSymbolLength = 0}) {
   }
   return counter + trailingSymbolLength;
 }
+
 int _countSymbolsInString(String string, String symbolToCount) {
   var counter = 0;
   for (var i = 0; i < string.length; i++) {
@@ -246,29 +250,27 @@ RegExp _multiPeriodRegExp = RegExp(r'\.+');
 /// [thousandSeparator] specifies what symbol will be used to separate
 /// each block of 3 digits, e.g. [ThousandSeparator.Comma] will format
 /// a million as 1,000,000
-/// [shorteningPolicy] is used to round values using K for thousands, M for 
+/// [shorteningPolicy] is used to round values using K for thousands, M for
 /// millions and B for billions
 /// [ShorteningPolicy.NoShortening] displays a value of 1234456789.34 as 1,234,456,789.34
 /// but [ShorteningPolicy.RoundToThousands] displays the same value as 1,234,456K
 /// [mantissaLength] specifies how many digits will be added after a period sign
-/// [leadingSymbol] any symbol (except for the ones that contain digits) the will be 
+/// [leadingSymbol] any symbol (except for the ones that contain digits) the will be
 /// added in front of the resulting string. E.g. $ or €
 /// some of the signs are available via constants like [MoneyInputFormatter.EURO_SIGN]
-/// but you can basically add any string instead of it. The main rule is that the string 
+/// but you can basically add any string instead of it. The main rule is that the string
 /// must not contain digits, preiods, commas and dashes
-/// [trailingSymbol] is the same as leading but this symbol will be added at the 
+/// [trailingSymbol] is the same as leading but this symbol will be added at the
 /// end of your resulting string like 1,250€ instead of €1,250
 /// [useSymbolPadding] adds a space between the number and trailing / leading symbols
 /// like 1,250€ -> 1,250 € or €1,250€ -> € 1,250
-String toCurrencyString(String value, {
-    int mantissaLength = 2,
+String toCurrencyString(String value,
+    {int mantissaLength = 2,
     ThousandSeparator thousandSeparator = ThousandSeparator.Comma,
     ShorteningPolicy shorteningPolicy = ShorteningPolicy.NoShortening,
     String leadingSymbol = '',
     String trailingSymbol = '',
-    bool useSymbolPadding = false
-  }) {
-
+    bool useSymbolPadding = false}) {
   assert(value != null);
   assert(leadingSymbol != null);
   assert(trailingSymbol != null);
@@ -285,6 +287,7 @@ String toCurrencyString(String value, {
       tSeparator = ',';
       break;
     case ThousandSeparator.Period:
+
       /// вначале все равно запятая, а потом делается своп, если нужен
       /// разделитель тысяч в виде точек
       tSeparator = ',';
@@ -305,7 +308,7 @@ String toCurrencyString(String value, {
   value = value.replaceAll(_multiPeriodRegExp, '.');
   value = toNumericString(value, allowPeriod: mantissaLength > 0);
   var isNegative = value.contains('-');
-  // парсинг нужен, чтобы избежать лишних 
+  // парсинг нужен, чтобы избежать лишних
   // символов внутри числа типа -- или множества точек
   var parsed = (double.tryParse(value) ?? 0.0);
   if (parsed == 0.0) {
@@ -314,11 +317,11 @@ String toCurrencyString(String value, {
       // print('CONTAINS MINUS $containsMinus');
       // parsed = parsed.abs();
       if (!containsMinus) {
-        value = '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
+        value =
+            '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
       } else {
         value = '${parsed.toStringAsFixed(mantissaLength)}';
       }
-      
     } else {
       value = parsed.toStringAsFixed(mantissaLength);
     }
@@ -351,16 +354,13 @@ String toCurrencyString(String value, {
       if (intValStr.length < 7) {
         minShorteningLength = 4;
         value = '${_getRoundedValue(value, 1000)}K';
-      } 
-      else if (intValStr.length < 10) {
+      } else if (intValStr.length < 10) {
         minShorteningLength = 7;
         value = '${_getRoundedValue(value, 1000000)}M';
-      }
-      else if (intValStr.length < 13) {
+      } else if (intValStr.length < 13) {
         minShorteningLength = 10;
         value = '${_getRoundedValue(value, 1000000000)}B';
-      }
-      else {
+      } else {
         minShorteningLength = 13;
         value = '${_getRoundedValue(value, 1000000000000)}T';
       }
@@ -383,9 +383,9 @@ String toCurrencyString(String value, {
     }
   }
 
-  mantissa = noShortening ? _postProcessMantissa(
-    mantissaList.join(''), mantissaLength
-  ) : '';
+  mantissa = noShortening
+      ? _postProcessMantissa(mantissaList.join(''), mantissaLength)
+      : '';
   var maxIndex = split.length - 1;
   if (mantissaSeparatorIndex > 0 && noShortening) {
     maxIndex = mantissaSeparatorIndex - 1;
@@ -403,7 +403,9 @@ String toCurrencyString(String value, {
       } else {
         if (value.length >= minShorteningLength) {
           if (!isDigit(split[i])) digitCounter = 1;
-          if (digitCounter % 3 == 1 && digitCounter > 1 && i > (isNegative ? 1 : 0)) {
+          if (digitCounter % 3 == 1 &&
+              digitCounter > 1 &&
+              i > (isNegative ? 1 : 0)) {
             list.add(tSeparator);
           }
         }
@@ -425,7 +427,7 @@ String toCurrencyString(String value, {
 
   if (trailingSymbol.isNotEmpty) {
     if (useSymbolPadding) {
-       result = '$reversed$mantissa $trailingSymbol';
+      result = '$reversed$mantissa $trailingSymbol';
     } else {
       result = '$reversed$mantissa$trailingSymbol';
     }
@@ -451,8 +453,8 @@ String _swapCommasAndPeriods(String input) {
 }
 
 String _getRoundedValue(String numericString, double roundTo) {
-    assert(roundTo != null && roundTo != 0.0);
-    assert(numericString != null);
+  assert(roundTo != null && roundTo != 0.0);
+  assert(numericString != null);
   var numericValue = double.tryParse(numericString) ?? 0.0;
   var result = numericValue / roundTo;
   // например для 1700, при округлении до 1000 надо вернуть 1.7, а не 1
@@ -460,11 +462,11 @@ String _getRoundedValue(String numericString, double roundTo) {
   String prepared;
   if (remainder != 0.0) {
     prepared = result.toStringAsFixed(2);
-    if (prepared[prepared.length -1] == '0') {
+    if (prepared[prepared.length - 1] == '0') {
       prepared = prepared.substring(0, prepared.length - 1);
     }
     return prepared;
-  } 
+  }
   return result.toInt().toString();
 }
 
