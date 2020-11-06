@@ -30,13 +30,12 @@ String toNumericString(String inputString, {bool allowPeriod = false}) {
   if (inputString == null) return '';
   var regExp = allowPeriod ? _digitWithPeriodRegex : _digitRegex;
   return inputString.splitMapJoin(regExp,
-      onMatch: (m) => m.group(0),
-      onNonMatch: (nm) => ''
-  );
+      onMatch: (m) => m.group(0), onNonMatch: (nm) => '');
 }
+
 bool isDigit(String character) {
   if (character == null || character.isEmpty || character.length > 1) {
     return false;
-  } 
+  }
   return _digitRegex.stringMatch(character) != null;
 }

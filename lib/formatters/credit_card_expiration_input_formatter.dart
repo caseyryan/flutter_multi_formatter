@@ -27,11 +27,10 @@ THE SOFTWARE.
 import 'formatter_utils.dart';
 import 'masked_input_formatter.dart';
 
-
 class CreditCardExpirationDateFormatter extends MaskedInputFormater {
   CreditCardExpirationDateFormatter() : super('00/00');
 
-  @override 
+  @override
   String applyMask(String text) {
     var result = super.applyMask(text);
     var numericString = toNumericString(result);
@@ -44,8 +43,7 @@ class CreditCardExpirationDateFormatter extends MaskedInputFormater {
         stringBuffer.write('0');
         stringBuffer.write(firstDigit);
         ammendedMonth = stringBuffer.toString();
-      } 
-      else if (firstDigit == 1) {
+      } else if (firstDigit == 1) {
         if (allDigits.length > 1) {
           stringBuffer.write(firstDigit);
           var secondDigit = int.parse(allDigits[1]);

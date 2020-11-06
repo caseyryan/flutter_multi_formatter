@@ -36,31 +36,27 @@ class CardSystem {
   static const String JCB = 'JCB';
   static const String DISCOVER = 'Discover';
   static const String MAESTRO = 'Maestro';
-  static const String AMERICAN_EXPRESS= 'Amex';
+  static const String AMERICAN_EXPRESS = 'Amex';
 }
 
-
 class CreditCardNumberInputFormatter extends TextInputFormatter {
-
-
   final ValueChanged<CardSystemData> onCardSystemSelected;
   final bool useSeparators;
 
   CardSystemData _cardSystemData;
-  CreditCardNumberInputFormatter({
-    this.onCardSystemSelected,
-    this.useSeparators = true
-  });
+  CreditCardNumberInputFormatter(
+      {this.onCardSystemSelected, this.useSeparators = true});
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     var isErasing = newValue.text.length < oldValue.text.length;
     if (isErasing) {
       if (newValue.text.isEmpty) {
         _clearCountry();
       }
       return newValue;
-    } 
+    }
     var onlyNumbers = toNumericString(newValue.text);
     String maskedValue = _applyMask(onlyNumbers);
     if (maskedValue.length == oldValue.text.length) {
@@ -69,15 +65,16 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     var endOffset = max(oldValue.text.length - oldValue.selection.end, 0);
     var selectionEnd = maskedValue.length - endOffset;
     return TextEditingValue(
-      selection: TextSelection.collapsed(offset: selectionEnd),
-      text: maskedValue
-    );
+        selection: TextSelection.collapsed(offset: selectionEnd),
+        text: maskedValue);
   }
+
   /// this is a small dirty hask to be able to remove the first character
   Future _clearCountry() async {
     await Future.delayed(Duration(milliseconds: 5));
     _updateCardSystemData(null);
   }
+
   void _updateCardSystemData(CardSystemData cardSystemData) {
     _cardSystemData = cardSystemData;
     if (onCardSystemSelected != null) {
@@ -89,23 +86,21 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     if (numericString.isEmpty) {
       _updateCardSystemData(null);
     } else {
-      
-      var countryData = _CardSystemDatas.getCardSystemDataByNumber(numericString);
+      var countryData =
+          _CardSystemDatas.getCardSystemDataByNumber(numericString);
       if (countryData != null) {
         _updateCardSystemData(countryData);
       }
     }
     if (_cardSystemData != null) {
       return _formatByMask(numericString, _cardSystemData.numberMask);
-    } 
+    }
     return numericString;
   }
-  
 }
 
-
-/// checks not only for length and characters but also 
-/// for card system code code. If it's not found the succession of numbers 
+/// checks not only for length and characters but also
+/// for card system code code. If it's not found the succession of numbers
 /// will not be marked as a valid card number
 bool isCardValidNumber(String cardNumber) {
   cardNumber = toNumericString(cardNumber);
@@ -121,18 +116,16 @@ bool isCardValidNumber(String cardNumber) {
   return reprocessed == cardNumber;
 }
 
-
 String formatAsCardNumber(
-    String cardNumber, {
-      bool useSeparators = true,
-  }) {
+  String cardNumber, {
+  bool useSeparators = true,
+}) {
   if (!isCardValidNumber(cardNumber)) {
     return cardNumber;
   }
   cardNumber = toNumericString(cardNumber);
   var cardSystemData = _CardSystemDatas.getCardSystemDataByNumber(cardNumber);
   return _formatByMask(cardNumber, cardSystemData.numberMask);
-
 }
 
 String _formatByMask(String text, String mask) {
@@ -142,7 +135,7 @@ String _formatByMask(String text, String mask) {
   for (var i = 0; i < mask.length; i++) {
     if (index >= chars.length) {
       break;
-    } 
+    }
     var curChar = chars[index];
     if (mask[i] == '0') {
       if (isDigit(curChar)) {
@@ -151,8 +144,7 @@ String _formatByMask(String text, String mask) {
       } else {
         break;
       }
-    }
-    else {
+    } else {
       result.add(mask[i]);
     }
   }
@@ -160,16 +152,11 @@ String _formatByMask(String text, String mask) {
 }
 
 class CardSystemData {
-
   final String system;
   final String systemCode;
   final String numberMask;
 
-  CardSystemData._init({
-    this.numberMask,
-    this.system,
-    this.systemCode
-  });
+  CardSystemData._init({this.numberMask, this.system, this.systemCode});
 
   factory CardSystemData.fromMap(Map value) {
     return CardSystemData._init(
@@ -178,40 +165,38 @@ class CardSystemData {
       numberMask: value['numberMask'],
     );
   }
-  @override 
+  @override
   String toString() {
-    return '[CardSystemData(system: $system,' + 
-    ' systemCode: $systemCode]';
+    return '[CardSystemData(system: $system,' + ' systemCode: $systemCode]';
   }
 }
 
 class _CardSystemDatas {
-
   /// рекурсивно ищет в номере карты код системы, начиная с конца
   /// нужно для того, чтобы даже после setState и обнуления данных карты
   /// снова правильно отформатировать ее номер
-  static CardSystemData getCardSystemDataByNumber(String cardNumber, {int subscringLength}) {
+  static CardSystemData getCardSystemDataByNumber(String cardNumber,
+      {int subscringLength}) {
     if (cardNumber.isEmpty) return null;
     subscringLength = subscringLength ?? cardNumber.length;
-    
+
     if (subscringLength < 1) return null;
     var systemCode = cardNumber.substring(0, subscringLength);
 
-    var rawData = _data.firstWhere(
-      (data) {
-        var numericValue = toNumericString(data['systemCode']);
-        var numDigits = data['numDigits'];
-        return numericValue == systemCode && 
-          numDigits >= cardNumber.length && 
+    var rawData = _data.firstWhere((data) {
+      var numericValue = toNumericString(data['systemCode']);
+      var numDigits = data['numDigits'];
+      return numericValue == systemCode &&
+          numDigits >= cardNumber.length &&
           numDigits <= _maxDigitsInCard;
-      }, 
-      orElse: () => null
-    );
+    }, orElse: () => null);
     if (rawData != null) {
       return CardSystemData.fromMap(rawData);
     }
-    return getCardSystemDataByNumber(cardNumber, subscringLength: subscringLength -1);
+    return getCardSystemDataByNumber(cardNumber,
+        subscringLength: subscringLength - 1);
   }
+
   static int get _maxDigitsInCard {
     return _data.map((data) {
       int numDigits = data['numDigits'];
@@ -220,65 +205,65 @@ class _CardSystemDatas {
   }
 
   static List<Map<String, dynamic>> _data = <Map<String, dynamic>>[
-   {
+    {
       'system': CardSystem.VISA,
       'systemCode': '4',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
-   },
-   {
+    },
+    {
       'system': CardSystem.MASTERCARD,
       'systemCode': '5',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
-   },
-   {
+    },
+    {
       'system': CardSystem.AMERICAN_EXPRESS,
       'systemCode': '3',
       'numberMask': '0000 000000 00000',
       'numDigits': 15,
-   },
-   {
+    },
+    {
       'system': CardSystem.JCB,
       'systemCode': '35',
       'numberMask': '0000 0000 0000 0000 000',
       'numDigits': 19,
-   },
-   {
+    },
+    {
       'system': CardSystem.JCB,
       'systemCode': '35',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
-   },
-   {
+    },
+    {
       'system': CardSystem.VISA,
       'systemCode': '4',
       'numberMask': '00000 00000 00000 0000',
       'numDigits': 19,
-   },
-   {
+    },
+    {
       'system': CardSystem.DISCOVER,
       'systemCode': '60',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
-   },
-   {
+    },
+    {
       'system': CardSystem.DISCOVER,
       'systemCode': '60',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 19,
-   },
-   {
+    },
+    {
       'system': CardSystem.MAESTRO,
       'systemCode': '67',
       'numberMask': '0000 0000 0000 0000 0',
       'numDigits': 17,
-   },
-   {
+    },
+    {
       'system': CardSystem.MAESTRO,
       'systemCode': '67',
       'numberMask': '00000000 0000000000',
       'numDigits': 18,
-   },
-];
+    },
+  ];
 }

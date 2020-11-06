@@ -30,9 +30,7 @@ import 'package:flutter/services.dart';
 
 import 'formatter_utils.dart';
 
-
 class MaskedInputFormater extends TextInputFormatter {
-
   final String mask;
 
   final String _anyCharMask = '#';
@@ -40,39 +38,37 @@ class MaskedInputFormater extends TextInputFormatter {
   final RegExp anyCharMatcher;
   String _lastValue;
 
-  /// [mask] is a string that must contain # (hash) and 0 (zero) 
+  /// [mask] is a string that must contain # (hash) and 0 (zero)
   /// as maskable characters. # means any possible character,
-  /// 0 means only digits. So if you want to match e.g. a 
-  /// string like this GGG-FB-897-R5 you need 
+  /// 0 means only digits. So if you want to match e.g. a
+  /// string like this GGG-FB-897-R5 you need
   /// a mask like this ###-##-000-#0
   /// a mask like ###-### will also match 123-034 but a mask like
   /// 000-000 will only match digits and won't allow a string like Gtt-RBB
-  /// 
-  /// # will match literally any character unless 
-  /// you supply an [anyCharMatcher] parameter with a RegExp 
-  /// to constrain its values. e.g. RegExp(r'[a-z]+') will make # 
-  /// match only lowercase latin characters and everything else will be 
+  ///
+  /// # will match literally any character unless
+  /// you supply an [anyCharMatcher] parameter with a RegExp
+  /// to constrain its values. e.g. RegExp(r'[a-z]+') will make #
+  /// match only lowercase latin characters and everything else will be
   /// ignored
-  MaskedInputFormater(this.mask, {
-    this.anyCharMatcher
-  }) : assert(mask != null);
+  MaskedInputFormater(this.mask, {this.anyCharMatcher}) : assert(mask != null);
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     var isErasing = newValue.text.length < oldValue.text.length;
     if (isErasing || _lastValue == newValue.text) {
       return newValue;
-    } 
+    }
     var maskedValue = applyMask(newValue.text);
     var endOffset = max(oldValue.text.length - oldValue.selection.end, 0);
     var selectionEnd = maskedValue.length - endOffset;
     _lastValue = maskedValue;
     return TextEditingValue(
-      selection: TextSelection.collapsed(offset: selectionEnd),
-      text: maskedValue
-    );
+        selection: TextSelection.collapsed(offset: selectionEnd),
+        text: maskedValue);
   }
-  
+
   bool _isMatchingRestrictor(String character) {
     if (anyCharMatcher == null) {
       return true;
@@ -99,16 +95,14 @@ class MaskedInputFormater extends TextInputFormatter {
         } else {
           break;
         }
-      } 
-      else if (mask[i] == _onlyDigitMask) {
+      } else if (mask[i] == _onlyDigitMask) {
         if (isDigit(curChar)) {
           result.add(curChar);
           index++;
         } else {
           break;
         }
-      }
-      else {
+      } else {
         result.add(mask[i]);
         result.add(curChar);
         continue;
@@ -117,5 +111,4 @@ class MaskedInputFormater extends TextInputFormatter {
 
     return result.join();
   }
-
 }

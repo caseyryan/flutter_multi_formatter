@@ -28,7 +28,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class Unfocuser extends StatefulWidget {
-
   final Widget child;
 
   const Unfocuser({Key key, this.child}) : super(key: key);
@@ -38,28 +37,24 @@ class Unfocuser extends StatefulWidget {
 }
 
 class _UnfocuserState extends State<Unfocuser> {
-
   RenderBox _lastRenderBox;
 
   @override
   Widget build(BuildContext context) {
-    
     return Listener(
       onPointerUp: (e) {
         var rb = context.findRenderObject() as RenderBox;
         var result = BoxHitTestResult();
         rb.hitTest(result, position: e.position);
-        
-        if (result.path.any((entry) =>
-        entry.target.runtimeType == IgnoreUnfocuserRenderBox)) {
+
+        if (result.path.any(
+            (entry) => entry.target.runtimeType == IgnoreUnfocuserRenderBox)) {
           return;
         }
-        var isEditable = result.path.any(
-                (entry) =>
+        var isEditable = result.path.any((entry) =>
             entry.target.runtimeType == RenderEditable ||
-                entry.target.runtimeType == RenderParagraph ||
-                entry.target.runtimeType == ForceUnfocuserRenderBox
-        );
+            entry.target.runtimeType == RenderParagraph ||
+            entry.target.runtimeType == ForceUnfocuserRenderBox);
 
         var currentFocus = FocusScope.of(context);
         if (!isEditable) {
@@ -69,10 +64,9 @@ class _UnfocuserState extends State<Unfocuser> {
           }
         } else {
           for (var entry in result.path) {
-            var isEditable =
-                entry.target.runtimeType == RenderEditable ||
-                    entry.target.runtimeType == RenderParagraph ||
-                    entry.target.runtimeType == ForceUnfocuserRenderBox;
+            var isEditable = entry.target.runtimeType == RenderEditable ||
+                entry.target.runtimeType == RenderParagraph ||
+                entry.target.runtimeType == ForceUnfocuserRenderBox;
 
             if (isEditable) {
               var renderBox = (entry.target as RenderBox);
@@ -88,7 +82,6 @@ class _UnfocuserState extends State<Unfocuser> {
     );
   }
 }
-
 
 class IgnoreUnfocuser extends SingleChildRenderObjectWidget {
   final Widget child;
@@ -113,4 +106,5 @@ class ForceUnfocuser extends SingleChildRenderObjectWidget {
 }
 
 class IgnoreUnfocuserRenderBox extends RenderPointerListener {}
+
 class ForceUnfocuserRenderBox extends RenderPointerListener {}
