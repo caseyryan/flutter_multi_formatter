@@ -548,7 +548,7 @@ class _PhoneCodes {
     },
     {
       'country': 'Cyprus',
-      'phoneCode': '537',
+      'phoneCode': '357',
       'countryCode': 'CY',
       'phoneMask': '+000 0 000 0000',
     },
@@ -746,7 +746,7 @@ class _PhoneCodes {
     },
     {
       'country': 'Guyana',
-      'phoneCode': '595',
+      'phoneCode': '592',
       'countryCode': 'GY',
       'phoneMask': '+000 000 0000',
     },
@@ -1673,6 +1673,7 @@ class _PhoneCodes {
       'phoneCode': '1340',
       'countryCode': 'VI',
       'phoneMask': '+0 (000) 000 0000',
-    }
-  ];
+   }
+];
+
 }
