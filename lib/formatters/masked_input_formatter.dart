@@ -105,6 +105,7 @@ class MaskedInputFormater extends TextInputFormatter {
       } else {
         result.add(mask[i]);
         result.add(curChar);
+        index++;
         continue;
       }
     }
