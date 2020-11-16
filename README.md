@@ -2,6 +2,7 @@
 
 This package contains formatters for international phone numbers, credit / debit cards, currencies and 
 a masked formatter
+https://pub.dev/packages/flutter_multi_formatter
 
 Formatting a phone
 
