@@ -73,19 +73,19 @@ String toCurrencyString(String value, {
     bool useSymbolPadding = false
 });
 
-print(toCurrencyString('123456', leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN)); // $123,456.00
+print(toCurrencyString('123456', leadingSymbol: MoneySymbols.DOLLAR_SIGN)); // $123,456.00
 
 /// the values can also be shortened to thousands, millions, billions... 
 /// in this case a 1000 will be displayed as 1K, and 1250000 will turn to this 1.25M
 var result = toCurrencyString(
     '125000', 
-    leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN,
+    leadingSymbol: MoneySymbols.DOLLAR_SIGN,
     shorteningPolicy: ShorteningPolicy.RoundToThousands
 ); // $125K
 
 result = toCurrencyString(
     '1250000', 
-    leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN,
+    leadingSymbol: MoneySymbols.DOLLAR_SIGN,
     shorteningPolicy: ShorteningPolicy.RoundToMillions
 ); // 1.25M
 
@@ -103,10 +103,10 @@ environment:
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 var someNumericValue = 123456;
-print(someNumericValue.toCurrencyString(leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN)); // $123,456.00
+print(someNumericValue.toCurrencyString(leadingSymbol: MoneySymbols.DOLLAR_SIGN)); // $123,456.00
 
 var someNumericStringValue = '123456';
-print(someNumericStringValue.toCurrencyString(trailingSymbol: MoneyInputFormatter.EURO_SIGN)); // 123,456.00€
+print(someNumericStringValue.toCurrencyString(trailingSymbol: MoneySymbols.EURO_SIGN)); // 123,456.00€
 
 ```
 
@@ -275,7 +275,7 @@ TextFormField(
     keyboardType: TextInputType.number,
     inputFormatters: [
         MoneyInputFormatter(
-            leadingSymbol: MoneyInputFormatter.DOLLAR_SIGN
+            leadingSymbol: MoneySymbols.DOLLAR_SIGN
         )
     ],
 ),
@@ -285,7 +285,7 @@ TextFormField(
     keyboardType: TextInputType.number,
     inputFormatters: [
         MoneyInputFormatter(
-            trailingSymbol: MoneyInputFormatter.EURO_SIGN,
+            trailingSymbol: MoneySymbols.EURO_SIGN,
             useSymbolPadding: true,
             mantissaLength: 3 // the length of the fractional side
         )
