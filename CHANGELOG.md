@@ -1,3 +1,5 @@
+## [1.2.1]
+- Flutter version lowered to 1.22.3
 ## [1.2.0]
 - Fixed an issue with double zeroes when applying more period after erasing
 - Fixed a bug with format when using periods as thousand separators. Now 
