@@ -1,3 +1,15 @@
+## [1.2.0]
+- Fixed an issue with double zeroes when applying more period after erasing
+- Fixed a bug with format when using periods as thousand separators. Now 
+the automatic formatting does not depend on whether you select commas or periods 
+- Now the text is formatting not only while typing but also when erasing
+- The plugin now requires a minumum version of flutter 1.22.4 because 
+of a critical but with a base TextInputFormatter in previous releases and 
+dart sdk 2.10.2 or newer. Sorry for this but it was really necessary
+- Added more money symbols. Now there are stored in string constants inside 
+MoneySymbols class. Just use MoneySymbols.BITCOIN_SIGN if you need Ƀ for example
+- Fixed some phone masks for different countries
+
 ## [1.1.8]
 - Apllied some formatting
 ## [1.1.7]
