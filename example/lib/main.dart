@@ -4,7 +4,6 @@ import 'package:example/pages/phone_format_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -22,25 +21,20 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   void openPage(Widget page) {
-    Navigator.of(context).push(CupertinoPageRoute(
-      builder: (BuildContext context) {
-        return page;
-      }
-    ));
+    Navigator.of(context)
+        .push(CupertinoPageRoute(builder: (BuildContext context) {
+      return page;
+    }));
   }
-
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: Text('Formatters Demo App'),
@@ -48,7 +42,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.all(
+            30.0,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -58,12 +54,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   textColor: Colors.white,
                   color: Colors.lightGreen,
                   onPressed: () {
-                    openPage(PhoneFormatPage());
+                    openPage(
+                      PhoneFormatPage(),
+                    );
                   },
                   child: Row(
                     children: <Widget>[
                       Icon(Icons.phone),
-                      Expanded(child: Center(child: Text('Phone Formatter Demo'))),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'Phone Formatter Demo',
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -77,12 +81,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   textColor: Colors.white,
                   color: Colors.lightBlue,
                   onPressed: () {
-                    openPage(CreditCardFormatPage());
+                    openPage(
+                      CreditCardFormatPage(),
+                    );
                   },
                   child: Row(
                     children: <Widget>[
                       Icon(Icons.credit_card),
-                      Expanded(child: Center(child: Text('Credit Card Formatter Demo'))),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'Credit Card Formatter Demo',
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -96,12 +108,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   textColor: Colors.white,
                   color: Colors.orange,
                   onPressed: () {
-                    openPage(MoneyFormatPage());
+                    openPage(
+                      MoneyFormatPage(),
+                    );
                   },
                   child: Row(
                     children: <Widget>[
                       Icon(Icons.attach_money),
-                      Expanded(child: Center(child: Text('Money formatter'))),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'Money formatter',
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

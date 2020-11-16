@@ -25,15 +25,37 @@ THE SOFTWARE.
 */
 
 import 'dart:math';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+
 import 'formatter_utils.dart';
 import 'money_input_enums.dart';
 
-class MoneyInputFormatter extends TextInputFormatter {
+final RegExp _repeatingDots = RegExp(r'\.{2,}');
+final RegExp _repeatingCommas = RegExp(r',{2,}');
+final RegExp _repeatingSpaces = RegExp(r'\s{2,}');
+
+
+class MoneySymbols {
   static const String DOLLAR_SIGN = '\$';
   static const String EURO_SIGN = '€';
   static const String POUND_SIGN = '£';
+  static const String YEN_SIGN = '￥';
+  static const String ETHERIUM_SIGN = 'Ξ';
+  static const String BITCOIN_SIGN = 'Ƀ';
+  static const String SWISS_FRANK_SIGN = '₣';
+}
+
+class MoneyInputFormatter extends TextInputFormatter {
+  
+  @Deprecated('use MoneySymbols.DOLLAR_SIGN instead')
+  static const String DOLLAR_SIGN = '\$';
+  @Deprecated('use MoneySymbols.EURO_SIGN instead')
+  static const String EURO_SIGN = '€';
+  @Deprecated('use MoneySymbols.POUND_SIGN instead')
+  static const String POUND_SIGN = '£';
+  @Deprecated('use MoneySymbols.YEN_SIGN instead')
   static const String YEN_SIGN = '￥';
 
   final ThousandSeparator thousandSeparator;
@@ -51,7 +73,7 @@ class MoneyInputFormatter extends TextInputFormatter {
   /// [mantissaLength] specifies how many digits will be added after a period sign
   /// [leadingSymbol] any symbol (except for the ones that contain digits) the will be
   /// added in front of the resulting string. E.g. $ or €
-  /// some of the signs are available via constants like [MoneyInputFormatter.EURO_SIGN]
+  /// some of the signs are available via constants like [MoneySymbols.EURO_SIGN]
   /// but you can basically add any string instead of it. The main rule is that the string
   /// must not contain digits, preiods, commas and dashes
   /// [trailingSymbol] is the same as leading but this symbol will be added at the
@@ -59,182 +81,257 @@ class MoneyInputFormatter extends TextInputFormatter {
   /// [useSymbolPadding] adds a space between the number and trailing / leading symbols
   /// like 1,250€ -> 1,250 € or €1,250€ -> € 1,250
   /// [onValueChange] a callback that will be called on a number change
-  MoneyInputFormatter(
-      {this.thousandSeparator = ThousandSeparator.Comma,
-      this.mantissaLength = 2,
-      this.leadingSymbol = '',
-      this.trailingSymbol = '',
-      this.useSymbolPadding = false,
-      this.onValueChange})
-      : assert(trailingSymbol != null),
+  MoneyInputFormatter({
+    this.thousandSeparator = ThousandSeparator.Comma,
+    this.mantissaLength = 2,
+    this.leadingSymbol = '',
+    this.trailingSymbol = '',
+    this.useSymbolPadding = false,
+    this.onValueChange,
+  })  : assert(trailingSymbol != null),
         assert(leadingSymbol != null),
         assert(mantissaLength != null),
         assert(thousandSeparator != null),
         assert(useSymbolPadding != null);
 
-  /// просто, чтобы проверить не используется ли запятая для дробной части
-  bool _usesCommasForMantissa(String value) {
-    if (thousandSeparator == ThousandSeparator.Period ||
-        thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
-      return value.lastIndexOf(',') > value.lastIndexOf('.');
+  bool isZero(String text) {
+    var numeriString = toNumericString(text, allowPeriod: true);
+    var value = double.tryParse(numeriString) ?? 0.0;
+    return value == 0.0;
+  }
+
+  String _stripRepeatingSeparators(String input) {
+    return input
+        .replaceAll(_repeatingDots, '.')
+        .replaceAll(_repeatingCommas, ',')
+        .replaceAll(_repeatingSpaces, ' ');
+  }
+
+  bool _usesCommasForMantissa() {
+    return (thousandSeparator == ThousandSeparator.Period ||
+        thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa);
+  }
+
+  /// used for putting correct commas and dots to a
+  /// resulting string, after it has been brought to
+  /// default view with commas as thousand separator
+  String _prepareDotsAndCommas(String value) {
+    if (_usesCommasForMantissa()) {
+      return _swapCommasAndPeriods(value);
     }
-    return false;
+    return value;
   }
 
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    int leadingLength = leadingSymbol.length;
     var newText = newValue.text;
     var oldText = oldValue.text;
-
-    /// если реально используется запятая как разделитель мантиссы
-    /// то сначала надо превратить число в обычное и только после этого парсить
-    var usesCommaForMantissa = _usesCommasForMantissa(newText);
+    newText = _stripRepeatingSeparators(newText);
+    oldText = _stripRepeatingSeparators(oldText);
+    var usesCommaForMantissa = _usesCommasForMantissa();
     if (usesCommaForMantissa) {
       newText = _swapCommasAndPeriods(newText);
       oldText = _swapCommasAndPeriods(oldText);
+      oldValue = oldValue.copyWith(text: oldText);
+      newValue = newValue.copyWith(text: newText);
+    }
+
+    var isErasing = newValue.text.length < oldValue.text.length;
+    TextSelection selection;
+
+    /// mantissa must always be a period here because the string at this
+    /// point is always formmated using commas as thousand separators
+    /// for simplicity
+    var mantissaSymbol = '.';
+    var leadingZeroWithDot = '${leadingSymbol}0$mantissaSymbol';
+    var leadingZeroWithoutDot = '$leadingSymbol$mantissaSymbol';
+
+    if (isErasing) {
+      if (newValue.selection.end < leadingLength) {
+        selection = TextSelection.collapsed(
+          offset: leadingLength,
+        );
+        return TextEditingValue(
+          selection: selection,
+          text: _prepareDotsAndCommas(oldText),
+        );
+      }
+    }
+
+    if (newText.startsWith(leadingZeroWithoutDot)) {
+      newText = newText.replaceFirst(leadingZeroWithoutDot, leadingZeroWithDot);
     }
     _processCallback(newText);
-    var isErasing = newText.length < oldText.length;
+
     if (isErasing) {
-      // var formatAfterErase = toCurrencyString(
-      //   newText,
-      //   mantissaLength: mantissaLength,
-      //   leadingSymbol: leadingSymbol,
-      //   thousandSeparator: thousandSeparator,
-      //   trailingSymbol: trailingSymbol,
-      //   useSymbolPadding: useSymbolPadding
-      // );
-      // print(formatAfterErase);
-      return newValue;
-      // return TextEditingValue(
-      //   selection: newValue.selection,
-      //   text: formatAfterErase
-      // );
-    }
+      /// erases and reformats the whole string
+      selection = newValue.selection;
 
-    var numPeriods = _countSymbolsInString(newText, '.');
-    if (numPeriods > 1) {
-      var newSelectionIndex = newValue.selection.end;
-      var oldPeriodIndex = oldText.indexOf('.');
-      if (newSelectionIndex - oldPeriodIndex != 1) {
-        // этот хак позволит переключиться за точку, если 2 точки рядом
-        // но не даст ввести еще одну точку, если между ними есть другой символ
-        return oldValue;
+      /// here we always have a fraction part
+      var lastSeparatorIndex = oldText.lastIndexOf('.');
+      if (selection.end == lastSeparatorIndex) {
+        /// if a caret was right after the mantissa separator then
+        /// we need to bring it before the separator
+        /// instead of erasing it
+        selection = TextSelection.collapsed(
+          offset: oldValue.selection.extentOffset - 1,
+        );
+        return TextEditingValue(
+          selection: selection,
+          text: _prepareDotsAndCommas(oldText),
+        );
       }
-    }
 
-    var fractionLength = mantissaLength;
-    var trailingLength = trailingSymbol.length;
-    if (useSymbolPadding) {
-      if (trailingSymbol.isNotEmpty) {
-        trailingLength += 1;
+      var isAfterSeparator = lastSeparatorIndex < selection.extentOffset;
+      if (isAfterSeparator && lastSeparatorIndex > -1) {
+        /// if the erasing started before the separator
+        /// allow erasing everything
+        return newValue.copyWith(
+          text: _prepareDotsAndCommas(newValue.text),
+        );
       }
-    }
-    fractionLength += trailingLength;
+      var numSeparatorsBefore = _countSymbolsInString(
+        newText,
+        ',',
+      );
 
-    var formattedValue = toCurrencyString(newText,
+      newText = toCurrencyString(
+        newText,
         mantissaLength: mantissaLength,
-        thousandSeparator: thousandSeparator,
         leadingSymbol: leadingSymbol,
         trailingSymbol: trailingSymbol,
-        useSymbolPadding: useSymbolPadding);
-
-    /// тут нужная повторная проверка, т.к. toCurrencyString опять свопнет запятые
-    /// и сделает из 1,000,000.00 это 1.000.000,00. Нужно это временно снова превратить в
-    /// обычное число, чтобы правильно найти точки и перевести в double
-    usesCommaForMantissa = _usesCommasForMantissa(formattedValue);
-    if (usesCommaForMantissa) {
-      formattedValue = _swapCommasAndPeriods(formattedValue);
-    }
-
-    var lastDotIndex = formattedValue.lastIndexOf('.');
-    // если в строке уже есть точка, либо если выделение справа от точки
-    // начинаем редактировать дробную часть заменой символов и смещением вправо
-    var moveSelection = formattedValue == oldText ||
-        (lastDotIndex > -1 && newValue.selection.end > lastDotIndex);
-    var endOffset = max(oldText.length - oldValue.selection.end, 0);
-    var numTrailingZeroes = _countTrailingZeroes(formattedValue,
-        trailingSymbolLength: trailingLength);
-    var selectionEnd = formattedValue.length - endOffset;
-    // проверяет чтобы курсор выделения не находился внутри дробной части
-    bool notInMantissaPart =
-        numTrailingZeroes == fractionLength && endOffset <= fractionLength;
-
-    if (notInMantissaPart) {
-      if (fractionLength > 0) {
-        // если автоматически добавилась дробная часть, когда ее еще не было
-        var addedMoreSymbols = formattedValue.length - oldText.length > 1;
-        // +1 чтобы учесть точку
-        selectionEnd -= (fractionLength + 1);
-        if (addedMoreSymbols) {
-          // случай, если дробная часть добавилась, но выделение было не в конце строки
-          // (а перед трейлинг символом или его пробелом), нужно сдвинуть выделение так
-          // чтобы оно было ровно перед точкой дробной части
-          var selectionCompensation = oldText.length - oldValue.selection.end;
-          selectionEnd += selectionCompensation;
+        thousandSeparator: ThousandSeparator.Comma,
+        useSymbolPadding: useSymbolPadding,
+      );
+      var numSeparatorsAfter = _countSymbolsInString(
+        newText,
+        ',',
+      );
+      var selectionOffset = numSeparatorsAfter - numSeparatorsBefore;
+      int offset = selection.extentOffset + selectionOffset;
+      if (leadingLength > 0) {
+        leadingLength = leadingSymbol.length;
+        if (offset < leadingLength) {
+          offset += leadingLength;
         }
       }
-    } else {
-      // переключиться за точку
-      if (moveSelection) {
-        if (selectionEnd + 1 <= formattedValue.length - trailingLength) {
-          selectionEnd += 1;
+      selection = TextSelection.collapsed(
+        offset: offset,
+      );
+
+      if (newText.contains(leadingZeroWithDot)) {
+        newText = newText.replaceAll(
+          leadingZeroWithDot,
+          leadingZeroWithoutDot,
+        );
+        offset -= 1;
+        if (offset < leadingLength) {
+          offset = leadingLength;
         }
-      } else {
-        var value = double.tryParse(
-                toNumericString(formattedValue, allowPeriod: true)) ??
-            0.0;
-        if (value == 0.0 && formattedValue.length > fractionLength) {
-          // если ввели первый 0, то строка автоматом становится $0.00 и надо поставить
-          // выделение сразу после точки и начать правку мантсисы
-          selectionEnd = formattedValue.length - fractionLength;
-        } else {
-          selectionEnd =
-              oldValue.selection.end + (formattedValue.length - oldText.length);
-        }
+        selection = TextSelection.collapsed(
+          offset: offset,
+        );
       }
+
+      return TextEditingValue(
+        selection: selection,
+        text: _prepareDotsAndCommas(newText),
+      );
     }
-    if (!_usesCommasForMantissa(formattedValue)) {
-      /// а здесь, если число было нормальным, но надо вернуть со свопнутыми запятыми
-      if (thousandSeparator == ThousandSeparator.Period ||
-          thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
-        formattedValue = _swapCommasAndPeriods(formattedValue);
+
+    /// stop isErasing
+
+    bool oldStartsWithLeading = leadingSymbol.isNotEmpty &&
+        oldValue.text.startsWith(
+          leadingSymbol,
+        );
+
+    /// count the number of thousand separators in an old string
+    /// then check how many of there are there in the new one and if
+    /// the number is different add this number to the selection offset
+    String oldSubstrBeforeSelection =
+        oldValue.text.substring(0, oldValue.selection.end);
+    int numThousandSeparatorsInOldSub = _countSymbolsInString(
+      oldSubstrBeforeSelection,
+      ',',
+    );
+
+    var formattedValue = toCurrencyString(
+      newText,
+      leadingSymbol: leadingSymbol,
+      mantissaLength: mantissaLength,
+
+      /// we always need a comma here because
+      /// this value is not final. The correct symbol will be
+      /// added in _prepareDotsAndCommas() method
+      thousandSeparator: ThousandSeparator.Comma,
+      trailingSymbol: trailingSymbol,
+      useSymbolPadding: useSymbolPadding,
+    );
+
+    String newSubstrBeforeSelection =
+        formattedValue.substring(0, oldValue.selection.end);
+    int numThousandSeparatorsInNewSub =
+        _countSymbolsInString(newSubstrBeforeSelection, ',');
+
+    int numAddedSeparators =
+        numThousandSeparatorsInNewSub - numThousandSeparatorsInOldSub;
+
+    bool newStartsWithLeading =
+        leadingSymbol.isNotEmpty && formattedValue.startsWith(leadingSymbol);
+
+    /// if an old string did not contain a leading symbol but
+    /// the new one does then wee need to add a length of the leading
+    /// to the selection offset
+    bool addedLeading = !oldStartsWithLeading && newStartsWithLeading;
+
+    var selectionIndex = oldValue.selection.end + numAddedSeparators;
+
+    int wholePartSubStart = 0;
+    if (addedLeading) {
+      wholePartSubStart = leadingSymbol.length;
+      selectionIndex += leadingSymbol.length;
+    }
+    var mantissaIndex = formattedValue.indexOf(mantissaSymbol);
+    if (mantissaIndex > wholePartSubStart) {
+      var wholePartSubstring = formattedValue.substring(
+        wholePartSubStart,
+        mantissaIndex,
+      );
+      if (selectionIndex < mantissaIndex) {
+        if (wholePartSubstring == '0' ||
+            wholePartSubstring == '${leadingSymbol}0') {
+          /// if the whole part contains 0 only, then we need
+          /// to bring the selection after the
+          /// fractional part right away
+          selectionIndex += 1;
+        }
       }
     }
 
+    var selectionEnd = min(
+      selectionIndex + 1,
+      formattedValue.length,
+    );
     return TextEditingValue(
-        selection: TextSelection.collapsed(
-            offset: min(selectionEnd, formattedValue.length)),
-        text: formattedValue);
+      selection: TextSelection.collapsed(
+        offset: selectionEnd,
+      ),
+      text: _prepareDotsAndCommas(formattedValue),
+    );
   }
 
   void _processCallback(String value) {
     if (onValueChange != null) {
-      onValueChange(
-          double.tryParse(toNumericString(value, allowPeriod: true)) ?? 0.0);
+      var numericValue = toNumericString(value, allowPeriod: true);
+      var val = double.tryParse(numericValue) ?? 0.0;
+      onValueChange(val);
     }
   }
-}
-
-/// нужно только если есть дробная часть
-/// чтобы поставить выделение в нужное место
-int _countTrailingZeroes(String value, {int trailingSymbolLength = 0}) {
-  if (!value.contains('.')) return 0;
-  if (value.length <= trailingSymbolLength) return 0;
-  var i = value.length - trailingSymbolLength;
-  var counter = 0;
-  while (i-- > 0) {
-    var lastChar = value[i];
-    if (isDigit(lastChar)) {
-      if (lastChar == '0') {
-        counter++;
-      } else {
-        break;
-      }
-    }
-  }
-  return counter + trailingSymbolLength;
 }
 
 int _countSymbolsInString(String string, String symbolToCount) {
@@ -244,8 +341,6 @@ int _countSymbolsInString(String string, String symbolToCount) {
   }
   return counter;
 }
-
-RegExp _multiPeriodRegExp = RegExp(r'\.+');
 
 /// [thousandSeparator] specifies what symbol will be used to separate
 /// each block of 3 digits, e.g. [ThousandSeparator.Comma] will format
@@ -257,20 +352,22 @@ RegExp _multiPeriodRegExp = RegExp(r'\.+');
 /// [mantissaLength] specifies how many digits will be added after a period sign
 /// [leadingSymbol] any symbol (except for the ones that contain digits) the will be
 /// added in front of the resulting string. E.g. $ or €
-/// some of the signs are available via constants like [MoneyInputFormatter.EURO_SIGN]
+/// some of the signs are available via constants like [MoneySymbols.EURO_SIGN]
 /// but you can basically add any string instead of it. The main rule is that the string
 /// must not contain digits, preiods, commas and dashes
 /// [trailingSymbol] is the same as leading but this symbol will be added at the
 /// end of your resulting string like 1,250€ instead of €1,250
 /// [useSymbolPadding] adds a space between the number and trailing / leading symbols
 /// like 1,250€ -> 1,250 € or €1,250€ -> € 1,250
-String toCurrencyString(String value,
-    {int mantissaLength = 2,
-    ThousandSeparator thousandSeparator = ThousandSeparator.Comma,
-    ShorteningPolicy shorteningPolicy = ShorteningPolicy.NoShortening,
-    String leadingSymbol = '',
-    String trailingSymbol = '',
-    bool useSymbolPadding = false}) {
+String toCurrencyString(
+  String value, {
+  int mantissaLength = 2,
+  ThousandSeparator thousandSeparator = ThousandSeparator.Comma,
+  ShorteningPolicy shorteningPolicy = ShorteningPolicy.NoShortening,
+  String leadingSymbol = '',
+  String trailingSymbol = '',
+  bool useSymbolPadding = false,
+}) {
   assert(value != null);
   assert(leadingSymbol != null);
   assert(trailingSymbol != null);
@@ -279,7 +376,6 @@ String toCurrencyString(String value,
   assert(thousandSeparator != null);
   assert(mantissaLength != null);
 
-  /// если нужно, чтобы точки заменились на запятые и наоборот
   var swapCommasAndPreriods = false;
   String tSeparator;
   switch (thousandSeparator) {
@@ -287,9 +383,6 @@ String toCurrencyString(String value,
       tSeparator = ',';
       break;
     case ThousandSeparator.Period:
-
-      /// вначале все равно запятая, а потом делается своп, если нужен
-      /// разделитель тысяч в виде точек
       tSeparator = ',';
       swapCommasAndPreriods = true;
       break;
@@ -305,17 +398,16 @@ String toCurrencyString(String value,
       break;
   }
 
-  value = value.replaceAll(_multiPeriodRegExp, '.');
+  value = value.replaceAll(_repeatingDots, '.');
   value = toNumericString(value, allowPeriod: mantissaLength > 0);
   var isNegative = value.contains('-');
-  // парсинг нужен, чтобы избежать лишних
-  // символов внутри числа типа -- или множества точек
+
+  /// parsing here is done to avoid any unnecessary symbols inside
+  /// a number
   var parsed = (double.tryParse(value) ?? 0.0);
   if (parsed == 0.0) {
     if (isNegative) {
       var containsMinus = parsed.toString().contains('-');
-      // print('CONTAINS MINUS $containsMinus');
-      // parsed = parsed.abs();
       if (!containsMinus) {
         value =
             '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
@@ -349,7 +441,7 @@ String toCurrencyString(String value,
       value = '${_getRoundedValue(value, 1000000000000)}T';
       break;
     case ShorteningPolicy.Automatic:
-      // тут просто по длине строки определяет какое сокращение использовать
+      // find out what shortening to use base on the length of the string
       var intValStr = (int.tryParse(value) ?? 0).toString();
       if (intValStr.length < 7) {
         minShorteningLength = 4;
@@ -457,7 +549,9 @@ String _getRoundedValue(String numericString, double roundTo) {
   assert(numericString != null);
   var numericValue = double.tryParse(numericString) ?? 0.0;
   var result = numericValue / roundTo;
-  // например для 1700, при округлении до 1000 надо вернуть 1.7, а не 1
+
+  /// e.g. for a number of 1700 return 1.7, instead of 1
+  /// after rounding to 1000
   var remainder = result.remainder(1.0);
   String prepared;
   if (remainder != 0.0) {
@@ -470,8 +564,8 @@ String _getRoundedValue(String numericString, double roundTo) {
   return result.toInt().toString();
 }
 
-/// просто добавляет точку к существующей дробной части
-/// либо создает пустую дробную часть, если она не заполнена, но указан длина
+/// simply adds a period to an existing fractional part
+/// or adds an empty fractional part if it was not filled
 String _postProcessMantissa(String mantissaValue, int mantissaLength) {
   if (mantissaLength < 1) return '';
   if (mantissaValue.isNotEmpty) return '.$mantissaValue';
