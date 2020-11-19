@@ -36,7 +36,6 @@ final RegExp _repeatingDots = RegExp(r'\.{2,}');
 final RegExp _repeatingCommas = RegExp(r',{2,}');
 final RegExp _repeatingSpaces = RegExp(r'\s{2,}');
 
-
 class MoneySymbols {
   static const String DOLLAR_SIGN = '\$';
   static const String EURO_SIGN = '€';
@@ -48,7 +47,6 @@ class MoneySymbols {
 }
 
 class MoneyInputFormatter extends TextInputFormatter {
-  
   @Deprecated('use MoneySymbols.DOLLAR_SIGN instead')
   static const String DOLLAR_SIGN = '\$';
   @Deprecated('use MoneySymbols.EURO_SIGN instead')
@@ -141,6 +139,7 @@ class MoneyInputFormatter extends TextInputFormatter {
     }
 
     var isErasing = newValue.text.length < oldValue.text.length;
+
     TextSelection selection;
 
     /// mantissa must always be a period here because the string at this
@@ -159,6 +158,10 @@ class MoneyInputFormatter extends TextInputFormatter {
           selection: selection,
           text: _prepareDotsAndCommas(oldText),
         );
+      }
+    } else {
+      if (oldValue.text.length < 1) {
+        return newValue;
       }
     }
 
@@ -253,8 +256,11 @@ class MoneyInputFormatter extends TextInputFormatter {
     /// count the number of thousand separators in an old string
     /// then check how many of there are there in the new one and if
     /// the number is different add this number to the selection offset
-    String oldSubstrBeforeSelection =
-        oldValue.text.substring(0, oldValue.selection.end);
+    var oldSelectionEnd = oldValue.selection.end;
+    TextEditingValue value = oldSelectionEnd > -1 ? oldValue : newValue;
+    String oldSubstrBeforeSelection = oldSelectionEnd > -1
+        ? value.text.substring(0, value.selection.end)
+        : '';
     int numThousandSeparatorsInOldSub = _countSymbolsInString(
       oldSubstrBeforeSelection,
       ',',
@@ -273,8 +279,9 @@ class MoneyInputFormatter extends TextInputFormatter {
       useSymbolPadding: useSymbolPadding,
     );
 
-    String newSubstrBeforeSelection =
-        formattedValue.substring(0, oldValue.selection.end);
+    String newSubstrBeforeSelection = oldSelectionEnd > -1
+        ? formattedValue.substring(0, value.selection.end)
+        : '';
     int numThousandSeparatorsInNewSub =
         _countSymbolsInString(newSubstrBeforeSelection, ',');
 
@@ -289,7 +296,7 @@ class MoneyInputFormatter extends TextInputFormatter {
     /// to the selection offset
     bool addedLeading = !oldStartsWithLeading && newStartsWithLeading;
 
-    var selectionIndex = oldValue.selection.end + numAddedSeparators;
+    var selectionIndex = value.selection.end + numAddedSeparators;
 
     int wholePartSubStart = 0;
     if (addedLeading) {

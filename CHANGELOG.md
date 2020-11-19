@@ -1,3 +1,5 @@
+## [1.2.2]
+- Fixed a bug with inability to enter a text when in was first empty
 ## [1.2.1]
 - Flutter version lowered to 1.22.3
 ## [1.2.0]

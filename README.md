@@ -97,7 +97,7 @@ but before using it, make sure you use dart sdk version 2.6+
 open pubspec.yaml and check this section:
 ```
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=2.10.2 <3.0.0"
 ```
 
 ```dart

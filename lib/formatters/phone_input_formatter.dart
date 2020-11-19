@@ -1673,7 +1673,6 @@ class _PhoneCodes {
       'phoneCode': '1340',
       'countryCode': 'VI',
       'phoneMask': '+0 (000) 000 0000',
-   }
-];
-
+    }
+  ];
 }
