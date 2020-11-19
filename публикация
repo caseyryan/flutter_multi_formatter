@@ -1,4 +1,4 @@
-pub publish --dry-run проверка
-pub publish
+flutter pub publish --dry-run проверка
+flutter pub publish
 
 flutter dartfmt . чтобы отформатировать всё файлы как надо
