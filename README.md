@@ -115,6 +115,11 @@ print(someNumericStringValue.toCurrencyString(trailingSymbol: MoneySymbols.EURO_
 ```
 
 ***Restrict characters in a string ***
+
+You can also restrict some characters or allow them. 
+For this purpose use RestrictingInputFormatter.restrictFromString() 
+and RestrictingInputFormatter.allowFromString() constructors 
+
 ```dart 
 
 @override
