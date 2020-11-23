@@ -34,6 +34,9 @@ MaskedInputFormater
 CreditCardNumberInputFormatter
 CreditCardCvcInputFormatter
 CreditCardExpirationDateFormatter
+/// for any onputs where you need to restrict or
+/// allow some characters
+RestrictingInputFormatter
 /// for currencies
 MoneyInputFormatter
 ```
@@ -108,6 +111,80 @@ print(someNumericValue.toCurrencyString(leadingSymbol: MoneySymbols.DOLLAR_SIGN)
 
 var someNumericStringValue = '123456';
 print(someNumericStringValue.toCurrencyString(trailingSymbol: MoneySymbols.EURO_SIGN)); // 123,456.00€
+
+```
+
+***Restrict characters in a string ***
+```dart 
+
+@override
+Widget build(BuildContext context) {
+return Unfocuser(
+    child: Scaffold(
+    body: SingleChildScrollView(
+        child: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Form(
+            key: _formKey,
+            child: Column(
+            children: <Widget>[
+                TextFormField(
+                keyboardType: TextInputType.phone,
+                inputFormatters: [
+                    /// this will not allow to enter any 
+                    /// characters contained in restrictedChars string
+                    /// notice that you need to excape two characters only
+                    /// A backslash \\ and the second is dollar sign \$
+                    /// other chars do not have to be excaped
+                    RestrictingInputFormatter
+                        .restrictFromString(restrictedChars: ';^\\\$()[](){}*|/',
+                    )
+                    ]
+                ),
+            ],
+            ),
+        ),
+        ),
+    ),
+    ),
+);
+}
+
+```
+
+***Allow characters in a string ***
+```dart 
+
+@override
+Widget build(BuildContext context) {
+return Unfocuser(
+    child: Scaffold(
+    body: SingleChildScrollView(
+        child: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Form(
+            key: _formKey,
+            child: Column(
+            children: <Widget>[
+                TextFormField(
+                keyboardType: TextInputType.phone,
+                inputFormatters: [
+                    /// it works exactly the same as restrictFromString 
+                    /// but the other way round. It will only allow to enter 
+                    /// the characters from the string
+                    RestrictingInputFormatter
+                        .allowFromString(allowedChars: ';^\\\$()[](){}*|/',
+                    )
+                    ]
+                ),
+            ],
+            ),
+        ),
+        ),
+    ),
+    ),
+);
+}
 
 ```
 

@@ -36,7 +36,6 @@ final RegExp _repeatingDots = RegExp(r'\.{2,}');
 final RegExp _repeatingCommas = RegExp(r',{2,}');
 final RegExp _repeatingSpaces = RegExp(r'\s{2,}');
 
-
 class MoneySymbols {
   static const String DOLLAR_SIGN = '\$';
   static const String EURO_SIGN = '€';
@@ -48,7 +47,6 @@ class MoneySymbols {
 }
 
 class MoneyInputFormatter extends TextInputFormatter {
-  
   @Deprecated('use MoneySymbols.DOLLAR_SIGN instead')
   static const String DOLLAR_SIGN = '\$';
   @Deprecated('use MoneySymbols.EURO_SIGN instead')
@@ -141,10 +139,9 @@ class MoneyInputFormatter extends TextInputFormatter {
       oldValue = oldValue.copyWith(text: oldText);
       newValue = newValue.copyWith(text: newText);
     }
-    
 
     var isErasing = newValue.text.length < oldValue.text.length;
-    
+
     TextSelection selection;
 
     /// mantissa must always be a period here because the string at this
@@ -164,8 +161,7 @@ class MoneyInputFormatter extends TextInputFormatter {
           text: _prepareDotsAndCommas(oldText),
         );
       }
-    }
-    else {
+    } else {
       if (maxTextLength != null) {
         if (newValue.text.length > maxTextLength) {
           /// we limit string length but only if it's the whole part
@@ -174,12 +170,12 @@ class MoneyInputFormatter extends TextInputFormatter {
           /// the main part
           var lastSeparatorIndex = oldText.lastIndexOf('.');
           var isAfterMantissa = newValue.selection.end > lastSeparatorIndex + 1;
-          
+
           if (!newValue.text.contains('..')) {
             if (!isAfterMantissa) {
               return oldValue;
             }
-          } 
+          }
         }
       }
 
@@ -281,8 +277,9 @@ class MoneyInputFormatter extends TextInputFormatter {
     /// the number is different add this number to the selection offset
     var oldSelectionEnd = oldValue.selection.end;
     TextEditingValue value = oldSelectionEnd > -1 ? oldValue : newValue;
-    String oldSubstrBeforeSelection = oldSelectionEnd > -1 ?
-        value.text.substring(0, value.selection.end) : '';
+    String oldSubstrBeforeSelection = oldSelectionEnd > -1
+        ? value.text.substring(0, value.selection.end)
+        : '';
     int numThousandSeparatorsInOldSub = _countSymbolsInString(
       oldSubstrBeforeSelection,
       ',',
@@ -301,8 +298,9 @@ class MoneyInputFormatter extends TextInputFormatter {
       useSymbolPadding: useSymbolPadding,
     );
 
-    String newSubstrBeforeSelection = oldSelectionEnd > -1 ?
-        formattedValue.substring(0, value.selection.end) : '';
+    String newSubstrBeforeSelection = oldSelectionEnd > -1
+        ? formattedValue.substring(0, value.selection.end)
+        : '';
     int numThousandSeparatorsInNewSub =
         _countSymbolsInString(newSubstrBeforeSelection, ',');
 
@@ -351,8 +349,6 @@ class MoneyInputFormatter extends TextInputFormatter {
       ),
       text: _prepareDotsAndCommas(formattedValue),
     );
-
-    
   }
 
   void _processCallback(String value) {

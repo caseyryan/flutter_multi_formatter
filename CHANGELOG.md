@@ -1,3 +1,8 @@
+## [1.3.0]
+- Added RestrictingInputFormatter that allows to restrict or to allow 
+some characters in an input field
+## [1.2.3]
+- Added a possibility to limit text length while formatting
 ## [1.2.2]
 - Fixed a bug with inability to enter a text when in was first empty
 ## [1.2.1]
