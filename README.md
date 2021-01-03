@@ -8,6 +8,33 @@ Formatting a phone
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/phone_format.gif?raw=true" width="240"/>
 
+<span style="color:yellow">
+IMPORTANT NOTE! As from version 1.3.3 you can add your own phone masks
+like this (just do it somewhere in your code before using the formatter)
+You can completely replace main mask or add a few versions of alternative 
+masks
+</span>
+```dart
+PhoneInputFormatter.replacePhoneMask(
+    countryCode: 'RU',
+    newMask: '+0 (000) 000 00 00',
+);
+PhoneInputFormatter.addAlternativePhoneMasks(
+    countryCode: 'BR',
+    alternativeMasks: [
+    '+00 (00) 0000-0000',
+    '+(00) 00000',
+    '+00 (00) 00-0000',
+    ],
+);
+/// There is also a possibility to enter endless phones 
+/// by setting allowEndlessPhone to true 
+PhoneInputFormatter(
+    onCountrySelected: _onCountrySelected,
+    allowEndlessPhone: true,
+)
+```
+
 Formatting a credit / debit card
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/card_format.gif?raw=true" width="240"/>
@@ -34,7 +61,7 @@ MaskedInputFormater
 CreditCardNumberInputFormatter
 CreditCardCvcInputFormatter
 CreditCardExpirationDateFormatter
-/// for any onputs where you need to restrict or
+/// for any inputs where you need to restrict or
 /// allow some characters
 RestrictingInputFormatter
 /// for currencies
@@ -114,7 +141,7 @@ print(someNumericStringValue.toCurrencyString(trailingSymbol: MoneySymbols.EURO_
 
 ```
 
-***Restrict characters in a string ***
+## Restrict characters in a string
 
 You can also restrict some characters or allow them. 
 For this purpose use RestrictingInputFormatter.restrictFromString() 
@@ -157,7 +184,7 @@ return Unfocuser(
 
 ```
 
-***Allow characters in a string ***
+## Allow characters in a string
 ```dart 
 
 @override
