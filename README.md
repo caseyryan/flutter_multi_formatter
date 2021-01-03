@@ -14,6 +14,7 @@ like this (just do it somewhere in your code before using the formatter)
 You can completely replace main mask or add a few versions of alternative 
 masks
 </span>
+
 ```dart
 PhoneInputFormatter.replacePhoneMask(
     countryCode: 'RU',
