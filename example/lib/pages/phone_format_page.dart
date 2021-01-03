@@ -66,13 +66,15 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                     inputFormatters: [
                       PhoneInputFormatter(
                         onCountrySelected: _onCountrySelected,
-                        allowEndlessPhone: true,
+                        allowEndlessPhone: false,
                       )
                     ],
                   ),
-                  _getText(_countryData == null
-                      ? 'A country is not detected'
-                      : 'The country is: ${_countryData.country}'),
+                  _getText(
+                    _countryData == null
+                        ? 'A country is not detected'
+                        : 'The country is: ${_countryData.country}',
+                  ),
                   SizedBox(
                     height: 10.0,
                   ),
@@ -113,7 +115,7 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                         if (_formKey.currentState.validate()) {
                           _phoneController.text = formatAsPhoneNumber(
                             _phoneController.text,
-                            allowEndlessPhone: true,
+                            allowEndlessPhone: false,
                           );
                         }
                       },

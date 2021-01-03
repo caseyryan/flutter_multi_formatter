@@ -73,11 +73,17 @@ class PhoneInputFormatter extends TextInputFormatter {
       if (isRussianWrongNumber) {
         onlyNumbers = '7${onlyNumbers[1]}';
         _countryData = null;
-        _applyMask('7', allowEndlessPhone);
+        _applyMask(
+          '7',
+          allowEndlessPhone,
+        );
       }
     }
 
-    maskedValue = _applyMask(onlyNumbers, allowEndlessPhone);
+    maskedValue = _applyMask(
+      onlyNumbers,
+      allowEndlessPhone,
+    );
     // if (maskedValue.length == oldValue.text.length && onlyNumbers != '7') {
     if (maskedValue == oldValue.text && onlyNumbers != '7') {
       if (isErasing) {
@@ -221,11 +227,16 @@ bool isPhoneValid(
   String phone, {
   bool allowEndlessPhone = false,
 }) {
-  phone = toNumericString(phone, allowHyphen: false);
+  phone = toNumericString(
+    phone,
+    allowHyphen: false,
+  );
   if (phone == null || phone.isEmpty) {
     return false;
   }
-  var countryData = _PhoneCodes.getCountryDataByPhone(phone);
+  var countryData = _PhoneCodes.getCountryDataByPhone(
+    phone,
+  );
   if (countryData == null) {
     return false;
   }
@@ -233,8 +244,13 @@ bool isPhoneValid(
     phone,
     countryData.phoneMask,
     countryData.altMasks,
+    0,
+    allowEndlessPhone,
   );
-  var rpeprocessed = toNumericString(formatted, allowHyphen: false);
+  var rpeprocessed = toNumericString(
+    formatted,
+    allowHyphen: false,
+  );
   if (allowEndlessPhone) {
     var contains = phone.contains(rpeprocessed);
     return contains;
