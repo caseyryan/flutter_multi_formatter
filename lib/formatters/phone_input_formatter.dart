@@ -126,8 +126,13 @@ class PhoneInputFormatter extends TextInputFormatter {
       }
     }
     if (_countryData != null) {
-      return _formatByMask(numericString, _countryData.phoneMask,
-          _countryData.altMasks, 0, allowEndlessPhone);
+      return _formatByMask(
+        numericString,
+        _countryData.phoneMask,
+        _countryData.altMasks,
+        0,
+        allowEndlessPhone,
+      );
     }
     return numericString;
   }
@@ -311,6 +316,7 @@ String _formatByMask(
         altMasks[altMaskIndex],
         altMasks,
         altMaskIndex + 1,
+        allowEndlessPhone,
       );
       // print('RETURN 1 $formatResult');
       return formatResult;
