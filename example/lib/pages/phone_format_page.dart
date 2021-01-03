@@ -34,18 +34,6 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
 
   @override
   Widget build(BuildContext context) {
-    PhoneInputFormatter.replacePhoneMask(
-      countryCode: 'RU',
-      newMask: '+0 (000) 000 00 00',
-    );
-    PhoneInputFormatter.addAlternativePhoneMasks(
-      countryCode: 'BR',
-      alternativeMasks: [
-        '+00 (00) 0000-0000',
-        '+(00) 00000',
-        '+00 (00) 00-0000',
-      ],
-    );
     return Unfocuser(
       child: Scaffold(
         appBar: AppBar(
@@ -67,14 +55,19 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                       ' you can apply your own mechanism to display a country'),
                   TextFormField(
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Type a phone number',
-                        hintStyle:
-                            TextStyle(color: Colors.black.withOpacity(.3)),
-                        errorStyle: TextStyle(color: Colors.red)),
+                      border: OutlineInputBorder(),
+                      hintText: 'Type a phone number',
+                      hintStyle: TextStyle(color: Colors.black.withOpacity(.3)),
+                      errorStyle: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
                     keyboardType: TextInputType.phone,
                     inputFormatters: [
-                      PhoneInputFormatter(onCountrySelected: _onCountrySelected)
+                      PhoneInputFormatter(
+                        onCountrySelected: _onCountrySelected,
+                        allowEndlessPhone: true,
+                      )
                     ],
                   ),
                   _getText(_countryData == null
@@ -83,20 +76,26 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                   SizedBox(
                     height: 10.0,
                   ),
-                  _getText('You can also use formatAsPhoneNumber(string) ' +
-                      'function to format a string containing a phone number. E.g ' +
-                      '79998885544 will be formatted to +7 (999) 888-55-44'),
+                  _getText(
+                    'You can also use formatAsPhoneNumber(string) ' +
+                        'function to format a string containing a phone number. E.g ' +
+                        '79998885544 will be formatted to +7 (999) 888-55-44',
+                  ),
                   TextFormField(
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Type a phone to format',
-                        hintStyle:
-                            TextStyle(color: Colors.black.withOpacity(.3)),
-                        errorStyle: TextStyle(color: Colors.red)),
+                      border: OutlineInputBorder(),
+                      hintText: 'Type a phone to format',
+                      hintStyle: TextStyle(
+                        color: Colors.black.withOpacity(.3),
+                      ),
+                      errorStyle: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
                     keyboardType: TextInputType.phone,
                     controller: _phoneController,
                     validator: (String value) {
-                      if (!isPhoneValid(value)) {
+                      if (!isPhoneValid(value, allowEndlessPhone: true)) {
                         return 'Phone is invalid';
                       }
                       return null;
@@ -112,13 +111,21 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                       color: Colors.blue,
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
-                          _phoneController.text =
-                              formatAsPhoneNumber(_phoneController.text);
+                          _phoneController.text = formatAsPhoneNumber(
+                            _phoneController.text,
+                            allowEndlessPhone: true,
+                          );
                         }
                       },
                       child: Row(
                         children: <Widget>[
-                          Expanded(child: Center(child: Text('Apply Format'))),
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                'Apply Format',
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),

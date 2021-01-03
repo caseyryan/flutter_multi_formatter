@@ -8,6 +8,33 @@ Formatting a phone
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/phone_format.gif?raw=true" width="240"/>
 
+<span style="color:yellow">
+IMPORTANT NOTE! As from version 1.3.3 you can add your own phone masks
+like this (just do it somewhere in your code before using the formatter)
+You can completely replace main mask or add a few versions of alternative 
+masks
+</span>
+```dart
+PhoneInputFormatter.replacePhoneMask(
+    countryCode: 'RU',
+    newMask: '+0 (000) 000 00 00',
+);
+PhoneInputFormatter.addAlternativePhoneMasks(
+    countryCode: 'BR',
+    alternativeMasks: [
+    '+00 (00) 0000-0000',
+    '+(00) 00000',
+    '+00 (00) 00-0000',
+    ],
+);
+/// There is also a possibility to enter endless phones 
+/// by setting allowEndlessPhone to true 
+PhoneInputFormatter(
+    onCountrySelected: _onCountrySelected,
+    allowEndlessPhone: true,
+)
+```
+
 Formatting a credit / debit card
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/card_format.gif?raw=true" width="240"/>
