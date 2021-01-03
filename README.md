@@ -30,6 +30,10 @@ PhoneInputFormatter.addAlternativePhoneMasks(
 );
 /// There is also a possibility to enter endless phones 
 /// by setting allowEndlessPhone to true 
+/// this means that you can enter a phone number of any length
+/// its part that matches a mask will be formatted 
+/// and the rest will be entered unformatted
+/// is will allow you to support any phones (even those that are not supported by the formatter yet)
 PhoneInputFormatter(
     onCountrySelected: _onCountrySelected,
     allowEndlessPhone: true,
