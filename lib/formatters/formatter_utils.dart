@@ -24,11 +24,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 final RegExp _digitRegex = RegExp(r'[-0-9]+');
+final RegExp _positiveDigitRegex = RegExp(r'[0-9]+');
 final RegExp _digitWithPeriodRegex = RegExp(r'[-0-9]+(\.[0-9]+)?');
 
-String toNumericString(String inputString, {bool allowPeriod = false}) {
+String toNumericString(
+  String inputString, {
+  bool allowPeriod = false,
+  bool allowHyphen = true,
+}) {
   if (inputString == null) return '';
-  var regExp = allowPeriod ? _digitWithPeriodRegex : _digitRegex;
+  var regexWithoutPeriod = allowHyphen ? _digitRegex : _positiveDigitRegex;
+  var regExp = allowPeriod ? _digitWithPeriodRegex : regexWithoutPeriod;
   return inputString.splitMapJoin(regExp,
       onMatch: (m) => m.group(0), onNonMatch: (nm) => '');
 }

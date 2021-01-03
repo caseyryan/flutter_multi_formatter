@@ -13,6 +13,7 @@ class RestrictingInputFormatter extends TextInputFormatter {
   /// string of restricted characters
   /// [restrictedChars] a string containing all characters
   /// that will be restricted. E.g. "()*^%#"
+  @Deprecated('Use a Flutter\'s build-in FilteringTextInputFormatter instead')
   factory RestrictingInputFormatter.restrictFromString({
     @required String restrictedChars,
   }) {

@@ -25,22 +25,28 @@ THE SOFTWARE.
 */
 
 import 'dart:math';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'phone_input_enums.dart';
 import 'formatter_utils.dart';
+import 'phone_input_enums.dart';
 
 class PhoneInputFormatter extends TextInputFormatter {
   final ValueChanged<PhoneCountryData> onCountrySelected;
   final bool useSeparators;
 
   PhoneCountryData _countryData;
-  PhoneInputFormatter({this.onCountrySelected, this.useSeparators = true});
+  PhoneInputFormatter({
+    this.onCountrySelected,
+    this.useSeparators = true,
+  });
 
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     var isErasing = newValue.text.length < oldValue.text.length;
     if (isErasing) {
       if (newValue.text.isEmpty) {
@@ -48,7 +54,9 @@ class PhoneInputFormatter extends TextInputFormatter {
       }
       return newValue;
     }
-    var onlyNumbers = toNumericString(newValue.text);
+    var onlyNumbers = toNumericString(
+      newValue.text,
+    );
     if (onlyNumbers.length == 2) {
       /// хак специально для России, со вводом номера с восьмерки
       /// меняем ее на 7
@@ -63,14 +71,18 @@ class PhoneInputFormatter extends TextInputFormatter {
     }
 
     String maskedValue = _applyMask(onlyNumbers);
-    if (maskedValue.length == oldValue.text.length && onlyNumbers != '7') {
+    // if (maskedValue.length == oldValue.text.length && onlyNumbers != '7') {
+    if (maskedValue == oldValue.text && onlyNumbers != '7') {
       return oldValue;
     }
     var endOffset = max(oldValue.text.length - oldValue.selection.end, 0);
     var selectionEnd = maskedValue.length - endOffset;
     return TextEditingValue(
-        selection: TextSelection.collapsed(offset: selectionEnd),
-        text: maskedValue);
+      selection: TextSelection.collapsed(
+        offset: selectionEnd,
+      ),
+      text: maskedValue,
+    );
   }
 
   /// this is a small dirty hask to be able to remove the firt characted
@@ -96,15 +108,16 @@ class PhoneInputFormatter extends TextInputFormatter {
       }
     }
     if (_countryData != null) {
-      return _formatByMask(numericString, _countryData.phoneMask);
+      return _formatByMask(
+        numericString,
+        _countryData.phoneMask,
+        _countryData.altMasks,
+      );
     }
     return numericString;
   }
 }
 
-/// this method was supposed to match the whole phone number before
-/// but now (as from version 1.1.7) phone masks are not restricted
-/// by length so it only checks if any part of number was matchet at all
 bool isPhoneValid(String phone) {
   phone = toNumericString(phone);
   if (phone == null || phone.isEmpty) {
@@ -114,7 +127,11 @@ bool isPhoneValid(String phone) {
   if (countryData == null) {
     return false;
   }
-  var formatted = _formatByMask(phone, countryData.phoneMask);
+  var formatted = _formatByMask(
+    phone,
+    countryData.phoneMask,
+    countryData.altMasks,
+  );
   var reprocessed = toNumericString(formatted);
   return reprocessed == phone;
 }
@@ -139,41 +156,69 @@ String formatAsPhoneNumber(
   }
   phone = toNumericString(phone);
   var countryData = _PhoneCodes.getCountryDataByPhone(phone);
-  return _formatByMask(phone, countryData.phoneMask);
+  return _formatByMask(
+    phone,
+    countryData.phoneMask,
+    countryData.altMasks,
+  );
 }
 
-String _formatByMask(String text, String mask) {
-  var chars = text.split('');
+String _formatByMask(
+  String text,
+  String mask,
+  List<String> altMasks, [
+  int altMaskIndex = 0,
+]) {
+  text = toNumericString(text, allowHyphen: false);
+  // print("TEXT $text, MASK $mask");
   var result = <String>[];
-  var index = 0;
+  var indexInText = 0;
   for (var i = 0; i < mask.length; i++) {
-    if (index >= chars.length) {
+    if (indexInText >= text.length) {
       break;
     }
-    var curChar = chars[index];
-    if (mask[i] == '0') {
+    var curMaskChar = mask[i];
+    if (curMaskChar == '0') {
+      var curChar = text[indexInText];
       if (isDigit(curChar)) {
         result.add(curChar);
-        index++;
+        indexInText++;
       } else {
         break;
       }
-    } else {
-      result.add(mask[i]);
+    } 
+    else {
+      result.add(curMaskChar);
     }
   }
 
-  var actualDigitsInMask = toNumericString(mask).replaceAll(',', '');
+  var actualDigitsInMask = toNumericString(
+    mask,
+    allowHyphen: false,
+  ).replaceAll(',', '');
   if (actualDigitsInMask.length < text.length) {
+    if (altMasks != null && altMaskIndex < altMasks.length) {
+      var formatResult = _formatByMask(
+        text,
+        altMasks[altMaskIndex],
+        altMasks,
+        altMaskIndex + 1,
+      );
+      print('RETURN 1 $formatResult');
+      return formatResult;
+    }
+
     /// тупо разрешает ввод любого количества цифр после маски
     /// потому что хз какие там телефоны в разных прибалтиках или еще где-то
-    result.add(' ');
-    for (var i = actualDigitsInMask.length; i < text.length; i++) {
-      result.add(text[i]);
-    }
+    // result.add(' ');
+    // for (var i = actualDigitsInMask.length; i < text.length; i++) {
+    //   result.add(text[i]);
+    // }
   }
 
-  return result.join();
+  final jointResult = result.join();
+  print('RETURN 2 $jointResult');
+  return jointResult;
 }
 
 /// returns a list of country datas with a country code of
@@ -196,8 +241,23 @@ class PhoneCountryData {
   final String countryCode;
   final String phoneMask;
 
-  PhoneCountryData._init(
-      {this.country, this.countryCode, this.phoneCode, this.phoneMask});
+  /// this field is used for those countries
+  /// there there is more than one possible masks
+  /// e.g. Brazil. In most cases this field is null
+  /// IMPORTANT! all masks MUST be placed in an ascending order
+  /// e.g. the shortest possible mask must be placed in a phoneMask
+  /// variable, the longer ones must be in altMasks list starting from
+  /// the shortest. That's because they are checked in a direct order
+  /// on a user input
+  final List<String> altMasks;
+
+  PhoneCountryData._init({
+    this.country,
+    this.countryCode,
+    this.phoneCode,
+    this.phoneMask,
+    this.altMasks,
+  });
 
   String countryCodeToString() {
     return '+$phoneCode';
@@ -209,6 +269,7 @@ class PhoneCountryData {
       phoneCode: value['phoneCode'],
       countryCode: value['countryCode'],
       phoneMask: value['phoneMask'],
+      altMasks: value['altMasks'],
     );
   }
   @override
@@ -222,8 +283,10 @@ class _PhoneCodes {
   /// рекурсивно ищет в номере телефона код страны, начиная с конца
   /// нужно для того, чтобы даже после setState и обнуления данных страны
   /// снова правильно отформатировать телефон
-  static PhoneCountryData getCountryDataByPhone(String phone,
-      {int subscringLength}) {
+  static PhoneCountryData getCountryDataByPhone(
+    String phone, {
+    int subscringLength,
+  }) {
     if (phone.isEmpty) return null;
     subscringLength = subscringLength ?? phone.length;
 
@@ -240,7 +303,8 @@ class _PhoneCodes {
   }
 
   static List<PhoneCountryData> getAllCountryDatasByPhoneCode(
-      String phoneCode) {
+    String phoneCode,
+  ) {
     var list = <PhoneCountryData>[];
     _data.forEach((data) {
       var c = toNumericString(data['phoneCode']);
@@ -251,7 +315,7 @@ class _PhoneCodes {
     return list;
   }
 
-  static List<Map<String, String>> _data = <Map<String, String>>[
+  static List<Map<String, dynamic>> _data = <Map<String, dynamic>>[
     {
       'country': 'Afghanistan',
       'phoneCode': '93',
@@ -412,7 +476,8 @@ class _PhoneCodes {
       'country': 'Brazil',
       'phoneCode': '55',
       'countryCode': 'BR',
-      'phoneMask': '+00 (00) 00000-0000',
+      'phoneMask': '+00 (00) 0000-0000',
+      'altMasks': ['+00 (00) 00000-0000'],
     },
     {
       'country': 'British Indian Ocean Territory',
@@ -616,7 +681,12 @@ class _PhoneCodes {
       'country': 'Estonia',
       'phoneCode': '372',
       'countryCode': 'EE',
-      'phoneMask': '+000 000 0000',
+      'phoneMask': '+000 000 000',
+      'altMasks': [
+        '+000 000 0000',
+        '+000 0000 0000',
+        '+000 000000000',
+      ]
     },
     {
       'country': 'Ethiopia',
@@ -1564,7 +1634,7 @@ class _PhoneCodes {
       'country': 'Russia',
       'phoneCode': '7',
       'countryCode': 'RU',
-      'phoneMask': '+0 (000) 000 00 00',
+      'phoneMask': '+0 (000) 000-00-00',
     },
     {
       'country': 'Saint Barthélemy',

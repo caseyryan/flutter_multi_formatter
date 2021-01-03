@@ -34,7 +34,7 @@ MaskedInputFormater
 CreditCardNumberInputFormatter
 CreditCardCvcInputFormatter
 CreditCardExpirationDateFormatter
-/// for any onputs where you need to restrict or
+/// for any inputs where you need to restrict or
 /// allow some characters
 RestrictingInputFormatter
 /// for currencies
@@ -114,7 +114,7 @@ print(someNumericStringValue.toCurrencyString(trailingSymbol: MoneySymbols.EURO_
 
 ```
 
-***Restrict characters in a string ***
+## Restrict characters in a string
 
 You can also restrict some characters or allow them. 
 For this purpose use RestrictingInputFormatter.restrictFromString() 
@@ -157,7 +157,7 @@ return Unfocuser(
 
 ```
 
-***Allow characters in a string ***
+## Allow characters in a string
 ```dart 
 
 @override
