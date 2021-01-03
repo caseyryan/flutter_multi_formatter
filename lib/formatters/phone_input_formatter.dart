@@ -52,7 +52,6 @@ class PhoneInputFormatter extends TextInputFormatter {
       if (newValue.text.isEmpty) {
         _clearCountry();
       }
-      return newValue;
     }
     var onlyNumbers = toNumericString(
       newValue.text,
@@ -115,6 +114,89 @@ class PhoneInputFormatter extends TextInputFormatter {
       );
     }
     return numericString;
+  }
+
+  /// adds a list of alternative phone maskes to a country
+  /// data. This method can be used if some mask is lacking
+  /// [countryCode] must be exactrly 2 uppercase letters like RU, or US
+  /// or ES, or DE.
+  /// [alternativeMasks] a list of masks like 
+  /// ['+00 (00) 00000-0000', '+00 (00) 0000-0000'] that will be used
+  /// as an alternative. The list might be in any order
+  /// [mergeWithExisting] if this is true, new masks will be added to 
+  /// an existing list. If false, the new list will completely replace the 
+  /// existing one
+  static void addAlternativePhoneMasks({
+    @required String countryCode,
+    @required List<String> alternativeMasks,
+    bool mergeWithExisting = false,
+  }) {
+    assert(alternativeMasks != null && alternativeMasks.isNotEmpty);
+    final countryData = _findCountryDataByCountryCode(countryCode);
+    String currentMask = countryData['phoneMask'];
+    alternativeMasks.sort((a, b) => a.length.compareTo(b.length));
+    if (alternativeMasks.first.length < currentMask.length) {
+      countryData['phoneMask'] = alternativeMasks.first;
+      alternativeMasks.removeAt(0);
+      if (!alternativeMasks.contains(currentMask)) {
+        alternativeMasks.add(currentMask);
+      }
+      alternativeMasks.sort((a, b) => a.length.compareTo(b.length));
+      if (!mergeWithExisting || countryData['altMasks'] == null) {
+        countryData['altMasks'] = alternativeMasks;
+      }
+      else {
+        final existingList = countryData['altMasks'];
+        alternativeMasks.forEach((m) { 
+          existingList.add(m);
+        });
+      }
+    }
+    print(
+      'Alternative masks for country "${countryData['country']}"' + 
+      ' is now ${countryData['altMasks']}'
+    );
+
+  }
+
+  /// Replaces an existing phone mask for the given country
+  /// e.g. Russian mask right now is +0 (000) 000-00-00
+  /// if you want to replace it by +0 (000) 000 00 00
+  /// simply call this method like this
+  /// PhoneInputFormatter.replacePhoneMask(
+  ///   countryCode: 'RU',
+  ///   newMask: '+0 (000) 000 00 00',
+  /// );
+  static void replacePhoneMask({
+    @required String countryCode,
+    @required String newMask,
+  }) {
+    checkMask(newMask);
+    assert(newMask != null);
+    final countryData = _findCountryDataByCountryCode(countryCode);
+    var currentMask = countryData['phoneMask'];
+    if (currentMask != newMask) {
+      print(
+          'Phone mask for country "${countryData['country']}"' + 
+          ' was replaced from $currentMask to $newMask',
+        );
+      countryData['phoneMask'] = newMask;
+    }
+  }
+
+  static Map<String, dynamic> _findCountryDataByCountryCode(
+    String countryCode,
+  ) {
+    assert(countryCode != null && countryCode.length == 2);
+    countryCode = countryCode.toUpperCase();
+    var countryData = _PhoneCodes._data.firstWhere(
+      (m) => m['countryCode'] == countryCode,
+      orElse: () => null,
+    );
+    if (countryData == null) {
+      throw 'A country with a code of $countryCode is not found';
+    }
+    return countryData;
   }
 }
 
@@ -186,8 +268,7 @@ String _formatByMask(
       } else {
         break;
       }
-    } 
-    else {
+    } else {
       result.add(curMaskChar);
     }
   }
@@ -204,7 +285,7 @@ String _formatByMask(
         altMasks,
         altMaskIndex + 1,
       );
-      print('RETURN 1 $formatResult');
+      // print('RETURN 1 $formatResult');
       return formatResult;
     }
 
@@ -217,7 +298,7 @@ String _formatByMask(
   }
 
   final jointResult = result.join();
-  print('RETURN 2 $jointResult');
+  // print('RETURN 2 $jointResult');
   return jointResult;
 }
 
@@ -477,7 +558,9 @@ class _PhoneCodes {
       'phoneCode': '55',
       'countryCode': 'BR',
       'phoneMask': '+00 (00) 0000-0000',
-      'altMasks': ['+00 (00) 00000-0000'],
+      'altMasks': [
+        '+00 (00) 00000-0000',
+      ],
     },
     {
       'country': 'British Indian Ocean Territory',

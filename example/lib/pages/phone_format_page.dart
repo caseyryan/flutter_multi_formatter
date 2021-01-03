@@ -34,6 +34,18 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
 
   @override
   Widget build(BuildContext context) {
+    PhoneInputFormatter.replacePhoneMask(
+      countryCode: 'RU',
+      newMask: '+0 (000) 000 00 00',
+    );
+    PhoneInputFormatter.addAlternativePhoneMasks(
+      countryCode: 'BR',
+      alternativeMasks: [
+        '+00 (00) 0000-0000',
+        '+(00) 00000',
+        '+00 (00) 00-0000',
+      ],
+    );
     return Unfocuser(
       child: Scaffold(
         appBar: AppBar(

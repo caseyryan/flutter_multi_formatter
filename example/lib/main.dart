@@ -27,14 +27,18 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   void openPage(Widget page) {
-    Navigator.of(context)
-        .push(CupertinoPageRoute(builder: (BuildContext context) {
-      return page;
-    }));
+    Navigator.of(context).push(
+      CupertinoPageRoute(
+        builder: (BuildContext context) {
+          return page;
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Formatters Demo App'),

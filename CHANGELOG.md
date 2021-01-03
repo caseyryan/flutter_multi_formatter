@@ -1,3 +1,17 @@
+## [1.3.3]
+- Added support for alternative phone masks. As some countries might 
+have different phone masks there is a need for supporting this feature. 
+Now some country datas e.g. Brazil or Estonia have several phone masks.
+You don't need to set up something for it, this is totally automatic.
+Everything is used just like before and the relevant mask is detected and 
+applied internally
+- Fixed a bug when a phone was not formatted on erasing
+- Added support for custom phone masks. If, for some reason a phone mask 
+is not present in current database or you want to change mask format for some
+country you can easeily do so by using static methods PhoneInputFormatter.addAlternativePhoneMasks() or PhoneInputFormatter.replacePhoneMask() 
+somewhere in your app, e.g. main() method so that the changes were available
+right away
+
 ## [1.3.0]
 - Added RestrictingInputFormatter that allows to restrict or to allow 
 some characters in an input field

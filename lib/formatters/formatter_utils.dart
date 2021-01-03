@@ -26,6 +26,7 @@ THE SOFTWARE.
 final RegExp _digitRegex = RegExp(r'[-0-9]+');
 final RegExp _positiveDigitRegex = RegExp(r'[0-9]+');
 final RegExp _digitWithPeriodRegex = RegExp(r'[-0-9]+(\.[0-9]+)?');
+final RegExp _oneDashRegExp = RegExp(r'[-]{2,}');
 
 String toNumericString(
   String inputString, {
@@ -37,6 +38,22 @@ String toNumericString(
   var regExp = allowPeriod ? _digitWithPeriodRegex : regexWithoutPeriod;
   return inputString.splitMapJoin(regExp,
       onMatch: (m) => m.group(0), onNonMatch: (nm) => '');
+}
+
+void checkMask(String mask) {
+  var _oneDashRegExp = RegExp(r'[-]{2,}');
+  if (_oneDashRegExp.hasMatch(mask)) {
+    throw('A mask cannot contain more than one dash (-) symbols in a row');
+    // return false;
+  }
+  var _startPlusRegExp = RegExp(r'^\+{1}[)(\d]+');
+  if (!_startPlusRegExp.hasMatch(mask)) {
+    throw('A mask must start with a + sign followed by a digit of a rounded brace');
+  }
+  var _maskContentsRegexp = RegExp(r'^[-0-9)( +]{3,}$');
+  if (!_maskContentsRegexp.hasMatch(mask)) {
+    throw('A mask can only contain digits, a plus sign, spaces and dashes');
+  }
 }
 
 bool isDigit(String character) {
