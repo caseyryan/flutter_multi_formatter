@@ -8,12 +8,12 @@ Formatting a phone
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/phone_format.gif?raw=true" width="240"/>
 
-<span style="color:yellow">
+```
 IMPORTANT NOTE! As from version 1.3.3 you can add your own phone masks
 like this (just do it somewhere in your code before using the formatter)
 You can completely replace main mask or add a few versions of alternative 
-masks
-</span>
+masks. Here is the example:
+```
 
 ```dart
 PhoneInputFormatter.replacePhoneMask(
