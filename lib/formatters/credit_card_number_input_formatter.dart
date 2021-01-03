@@ -113,7 +113,8 @@ bool isCardValidNumber(String cardNumber, {bool checkLength = false}) {
   }
   var formatted = _formatByMask(cardNumber, countryData.numberMask);
   var reprocessed = toNumericString(formatted);
-  return reprocessed == cardNumber && (checkLength == false || reprocessed.length == countryData.numDigits);
+  return reprocessed == cardNumber &&
+      (checkLength == false || reprocessed.length == countryData.numDigits);
 }
 
 String formatAsCardNumber(
@@ -161,12 +162,8 @@ class CardSystemData {
   final String numberMask;
   final int numDigits;
 
-  CardSystemData._init({
-    this.numberMask,
-    this.system,
-    this.systemCode,
-    this.numDigits
-  });
+  CardSystemData._init(
+      {this.numberMask, this.system, this.systemCode, this.numDigits});
 
   factory CardSystemData.fromMap(Map value) {
     return CardSystemData._init(
