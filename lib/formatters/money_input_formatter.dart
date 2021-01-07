@@ -102,10 +102,7 @@ class MoneyInputFormatter extends TextInputFormatter {
   }
 
   String _stripRepeatingSeparators(String input) {
-    return input
-        .replaceAll(_repeatingDots, '.')
-        .replaceAll(_repeatingCommas, ',')
-        .replaceAll(_repeatingSpaces, ' ');
+    return input.replaceAll(_repeatingDots, '.').replaceAll(_repeatingCommas, ',').replaceAll(_repeatingSpaces, ' ');
   }
 
   bool _usesCommasForMantissa() {
@@ -246,19 +243,20 @@ class MoneyInputFormatter extends TextInputFormatter {
         offset: offset,
       );
 
-      if (newText.contains(leadingZeroWithDot)) {
-        newText = newText.replaceAll(
-          leadingZeroWithDot,
-          leadingZeroWithoutDot,
-        );
-        offset -= 1;
-        if (offset < leadingLength) {
-          offset = leadingLength;
-        }
-        selection = TextSelection.collapsed(
-          offset: offset,
-        );
-      }
+      // Do not know what that does
+      // if (newText.contains(leadingZeroWithDot)) {
+      //   newText = newText.replaceAll(
+      //     leadingZeroWithDot,
+      //     leadingZeroWithoutDot,
+      //   );
+      //   offset -= 1;
+      //   if (offset < leadingLength) {
+      //     offset = leadingLength;
+      //   }
+      //   selection = TextSelection.collapsed(
+      //     offset: offset,
+      //   );
+      // }
 
       return TextEditingValue(
         selection: selection,
@@ -278,9 +276,7 @@ class MoneyInputFormatter extends TextInputFormatter {
     /// the number is different add this number to the selection offset
     var oldSelectionEnd = oldValue.selection.end;
     TextEditingValue value = oldSelectionEnd > -1 ? oldValue : newValue;
-    String oldSubstrBeforeSelection = oldSelectionEnd > -1
-        ? value.text.substring(0, value.selection.end)
-        : '';
+    String oldSubstrBeforeSelection = oldSelectionEnd > -1 ? value.text.substring(0, value.selection.end) : '';
     int numThousandSeparatorsInOldSub = _countSymbolsInString(
       oldSubstrBeforeSelection,
       ',',
@@ -299,17 +295,12 @@ class MoneyInputFormatter extends TextInputFormatter {
       useSymbolPadding: useSymbolPadding,
     );
 
-    String newSubstrBeforeSelection = oldSelectionEnd > -1
-        ? formattedValue.substring(0, value.selection.end)
-        : '';
-    int numThousandSeparatorsInNewSub =
-        _countSymbolsInString(newSubstrBeforeSelection, ',');
+    String newSubstrBeforeSelection = oldSelectionEnd > -1 ? formattedValue.substring(0, value.selection.end) : '';
+    int numThousandSeparatorsInNewSub = _countSymbolsInString(newSubstrBeforeSelection, ',');
 
-    int numAddedSeparators =
-        numThousandSeparatorsInNewSub - numThousandSeparatorsInOldSub;
+    int numAddedSeparators = numThousandSeparatorsInNewSub - numThousandSeparatorsInOldSub;
 
-    bool newStartsWithLeading =
-        leadingSymbol.isNotEmpty && formattedValue.startsWith(leadingSymbol);
+    bool newStartsWithLeading = leadingSymbol.isNotEmpty && formattedValue.startsWith(leadingSymbol);
 
     /// if an old string did not contain a leading symbol but
     /// the new one does then wee need to add a length of the leading
@@ -330,8 +321,7 @@ class MoneyInputFormatter extends TextInputFormatter {
         mantissaIndex,
       );
       if (selectionIndex < mantissaIndex) {
-        if (wholePartSubstring == '0' ||
-            wholePartSubstring == '${leadingSymbol}0') {
+        if (wholePartSubstring == '0' || wholePartSubstring == '${leadingSymbol}0') {
           /// if the whole part contains 0 only, then we need
           /// to bring the selection after the
           /// fractional part right away
@@ -436,8 +426,7 @@ String toCurrencyString(
     if (isNegative) {
       var containsMinus = parsed.toString().contains('-');
       if (!containsMinus) {
-        value =
-            '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
+        value = '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
       } else {
         value = '${parsed.toStringAsFixed(mantissaLength)}';
       }
@@ -502,9 +491,7 @@ String toCurrencyString(
     }
   }
 
-  mantissa = noShortening
-      ? _postProcessMantissa(mantissaList.join(''), mantissaLength)
-      : '';
+  mantissa = noShortening ? _postProcessMantissa(mantissaList.join(''), mantissaLength) : '';
   var maxIndex = split.length - 1;
   if (mantissaSeparatorIndex > 0 && noShortening) {
     maxIndex = mantissaSeparatorIndex - 1;
@@ -522,9 +509,7 @@ String toCurrencyString(
       } else {
         if (value.length >= minShorteningLength) {
           if (!isDigit(split[i])) digitCounter = 1;
-          if (digitCounter % 3 == 1 &&
-              digitCounter > 1 &&
-              i > (isNegative ? 1 : 0)) {
+          if (digitCounter % 3 == 1 && digitCounter > 1 && i > (isNegative ? 1 : 0)) {
             list.add(tSeparator);
           }
         }
