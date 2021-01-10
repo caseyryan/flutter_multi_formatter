@@ -29,7 +29,7 @@ final RegExp _digitWithPeriodRegex = RegExp(r'[-0-9]+(\.[0-9]+)?');
 final RegExp _oneDashRegExp = RegExp(r'[-]{2,}');
 final RegExp _startPlusRegExp = RegExp(r'^\+{1}[)(\d]+');
 final RegExp _maskContentsRegexp = RegExp(r'^[-0-9)( +]{3,}$');
-final RegExp _isNotDigit = RegExp(r'^[-\+ )(]+$');
+// final RegExp _isNotDigit = RegExp(r'^[-\+ )(]+$');
 
 String toNumericString(
   String inputString, {
@@ -39,8 +39,7 @@ String toNumericString(
   if (inputString == null) return '';
   var regexWithoutPeriod = allowHyphen ? _digitRegex : _positiveDigitRegex;
   var regExp = allowPeriod ? _digitWithPeriodRegex : regexWithoutPeriod;
-  return inputString.splitMapJoin(regExp,
-      onMatch: (m) => m.group(0), onNonMatch: (nm) => '');
+  return inputString.splitMapJoin(regExp, onMatch: (m) => m.group(0), onNonMatch: (nm) => '');
 }
 
 void checkMask(String mask) {
