@@ -23,13 +23,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-final RegExp _digitRegex = RegExp(r'[-0-9]+');
-final RegExp _positiveDigitRegex = RegExp(r'[0-9]+');
-final RegExp _digitWithPeriodRegex = RegExp(r'[-0-9]+(\.[0-9]+)?');
+final RegExp _digitRegExp = RegExp(r'[-0-9]+');
+final RegExp _positiveDigitRegExp = RegExp(r'[0-9]+');
+final RegExp _digitWithPeriodRegExp = RegExp(r'[-0-9]+(\.[0-9]+)?');
 final RegExp _oneDashRegExp = RegExp(r'[-]{2,}');
 final RegExp _startPlusRegExp = RegExp(r'^\+{1}[)(\d]+');
-final RegExp _maskContentsRegexp = RegExp(r'^[-0-9)( +]{3,}$');
-final RegExp _isNotDigit = RegExp(r'^[-\+ )(]+$');
+final RegExp _maskContentsRegExp = RegExp(r'^[-0-9)( +]{3,}$');
+final RegExp _isMaskSymbolRegExp = RegExp(r'^[-\+ )(]+$');
 
 String toNumericString(
   String inputString, {
@@ -37,8 +37,8 @@ String toNumericString(
   bool allowHyphen = true,
 }) {
   if (inputString == null) return '';
-  var regexWithoutPeriod = allowHyphen ? _digitRegex : _positiveDigitRegex;
-  var regExp = allowPeriod ? _digitWithPeriodRegex : regexWithoutPeriod;
+  var regexWithoutPeriod = allowHyphen ? _digitRegExp : _positiveDigitRegExp;
+  var regExp = allowPeriod ? _digitWithPeriodRegExp : regexWithoutPeriod;
   return inputString.splitMapJoin(regExp,
       onMatch: (m) => m.group(0), onNonMatch: (nm) => '');
 }
@@ -51,7 +51,7 @@ void checkMask(String mask) {
   if (!_startPlusRegExp.hasMatch(mask)) {
     throw ('A mask must start with a + sign followed by a digit of a rounded brace');
   }
-  if (!_maskContentsRegexp.hasMatch(mask)) {
+  if (!_maskContentsRegExp.hasMatch(mask)) {
     throw ('A mask can only contain digits, a plus sign, spaces and dashes');
   }
 }
@@ -60,15 +60,15 @@ bool isUnmaskableSymbol(String symbol) {
   if (symbol == null || symbol.length > 1) {
     return false;
   }
-  // return _isNotDigit.hasMatch(symbol);
-  var matches = RegExp(r'^[-\+ )(]+$').allMatches(symbol);
-  print('NUM MATCHES ${matches.toList().length} FOR $symbol');
-  return false;
+  return _isMaskSymbolRegExp.hasMatch(symbol);
+  // var matches = RegExp(r'^[-\+ )(]+$').allMatches(symbol);
+  // print('NUM MATCHES ${matches.toList().length} FOR $symbol');
+  // return false;
 }
 
 bool isDigit(String character) {
   if (character == null || character.isEmpty || character.length > 1) {
     return false;
   }
-  return _digitRegex.stringMatch(character) != null;
+  return _digitRegExp.stringMatch(character) != null;
 }

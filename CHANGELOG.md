@@ -1,3 +1,5 @@
+## [1.3.4]
+- Fixed a bug in isPhoneValid method which didn't allow to check the phone correctly
 ## [1.3.3]
 - Added support for alternative phone masks. As some countries might 
 have different phone masks there is a need for supporting this feature. 

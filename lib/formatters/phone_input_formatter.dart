@@ -255,7 +255,13 @@ bool isPhoneValid(
     var contains = phone.contains(rpeprocessed);
     return contains;
   }
-  return rpeprocessed == phone;
+  var correctLength = formatted.length == countryData.phoneMask.length;
+  if (correctLength != true && countryData.altMasks != null) {
+    return countryData.altMasks.any(
+      (altMask) => formatted.length == altMask.length,
+    );
+  }
+  return correctLength;
 }
 
 /// [allowEndlessPhone] if this is true,
