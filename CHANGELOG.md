@@ -1,3 +1,5 @@
+## [1.3.5]
+- Fixed a bug which caused erasing 2 more zeroes when erasing just one
 ## [1.3.4]
 - Fixed a bug in isPhoneValid method which didn't allow to check the phone correctly
 ## [1.3.3]
