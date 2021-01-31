@@ -157,6 +157,7 @@ and RestrictingInputFormatter.allowFromString() constructors
 @override
 Widget build(BuildContext context) {
 return Unfocuser(
+    minScrollDistance: 20.0, // this means if you drag more that 20.0 pixels the Unfocuser will not trigger and will consider it scrolling. If you want it to always trigger, set this value to 0.0 or null
     child: Scaffold(
     body: SingleChildScrollView(
         child: Padding(

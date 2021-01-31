@@ -27,10 +27,23 @@ THE SOFTWARE.
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+/// [minScrollDistance] if you do not want Unfocuser
+/// to remove current focus on scroll, set this value
+/// as you prefer. By default it's set to 10 pixels
+/// this means that if you touch the screen and drag
+/// more that 10 pixels it will be considered as
+/// scrolling and unfocuser will not trigger
+/// In case you want it to always unfocus current text field
+/// just set this value to 0.0
 class Unfocuser extends StatefulWidget {
   final Widget child;
+  final double minScrollDistance;
 
-  const Unfocuser({Key key, this.child}) : super(key: key);
+  const Unfocuser({
+    Key key,
+    this.child,
+    this.minScrollDistance = 10.0,
+  }) : super(key: key);
 
   @override
   _UnfocuserState createState() => _UnfocuserState();
@@ -38,14 +51,29 @@ class Unfocuser extends StatefulWidget {
 
 class _UnfocuserState extends State<Unfocuser> {
   RenderBox _lastRenderBox;
+  Offset _touchStartPosition;
 
   @override
   Widget build(BuildContext context) {
     return Listener(
+      onPointerDown: (e) {
+        _touchStartPosition = e.position;
+      },
       onPointerUp: (e) {
+        var touchStopPosition = e.position;
+        if (widget.minScrollDistance != null &&
+            widget.minScrollDistance > 0.0 &&
+            _touchStartPosition != null) {
+          var difference = _touchStartPosition - touchStopPosition;
+          _touchStartPosition = null;
+          if (difference.distance > widget.minScrollDistance) {
+            return;
+          }
+        }
+
         var rb = context.findRenderObject() as RenderBox;
         var result = BoxHitTestResult();
-        rb.hitTest(result, position: e.position);
+        rb.hitTest(result, position: touchStopPosition);
 
         if (result.path.any(
             (entry) => entry.target.runtimeType == IgnoreUnfocuserRenderBox)) {

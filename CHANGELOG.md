@@ -1,3 +1,7 @@
+## [1.3.6]
+Unfocuser now has a parameter called minScrollDistance
+it allows you to not trigger Unfocuser on scroll. Any value greater 
+than this will be considered as scrolling and the Unfocuser will not trigger. If you want it to always unfocus current text input, set this value to 0.0, or null.
 ## [1.3.5]
 - Fixed a bug which caused erasing 2 more zeroes when erasing just one
 ## [1.3.4]

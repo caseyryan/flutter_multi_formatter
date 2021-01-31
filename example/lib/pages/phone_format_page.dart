@@ -35,6 +35,7 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
   @override
   Widget build(BuildContext context) {
     return Unfocuser(
+      minScrollDistance: 10.0,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,

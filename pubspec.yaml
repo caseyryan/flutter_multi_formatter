@@ -1,6 +1,6 @@
 name: flutter_multi_formatter
 description: A package of formatters for international phone numbers, credit / debit cards and a masked formatter
-version: 1.3.5
+version: 1.3.6
 homepage: https://github.com/caseyryan/flutter_multi_formatter
 
 environment:
