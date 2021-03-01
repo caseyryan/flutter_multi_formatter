@@ -30,13 +30,13 @@ import 'package:flutter/services.dart';
 
 import 'formatter_utils.dart';
 
-class MaskedInputFormater extends TextInputFormatter {
+class MaskedInputFormatter extends TextInputFormatter {
   final String mask;
 
   final String _anyCharMask = '#';
   final String _onlyDigitMask = '0';
   final RegExp anyCharMatcher;
-  String _lastValue;
+  String _lastValue = '';
 
   /// [mask] is a string that must contain # (hash) and 0 (zero)
   /// as maskable characters. # means any possible character,
@@ -51,22 +51,28 @@ class MaskedInputFormater extends TextInputFormatter {
   /// to constrain its values. e.g. RegExp(r'[a-z]+') will make #
   /// match only lowercase latin characters and everything else will be
   /// ignored
-  MaskedInputFormater(this.mask, {this.anyCharMatcher}) : assert(mask != null);
+  MaskedInputFormatter(this.mask, {this.anyCharMatcher}) : assert(mask != null);
+
+  bool get isFilled => mask.length == _lastValue.length;
 
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-    var isErasing = newValue.text.length < oldValue.text.length;
+    final bool isErasing = newValue.text.length < oldValue.text.length;
+
     if (isErasing || _lastValue == newValue.text) {
+      _lastValue = newValue.text;
       return newValue;
     }
-    var maskedValue = applyMask(newValue.text);
-    var endOffset = max(oldValue.text.length - oldValue.selection.end, 0);
-    var selectionEnd = maskedValue.length - endOffset;
-    _lastValue = maskedValue;
+
+    final String masked = applyMask(newValue.text);
+    final end = newValue.text.length - newValue.selection.end;
+
+    _lastValue = masked;
     return TextEditingValue(
-        selection: TextSelection.collapsed(offset: selectionEnd),
-        text: maskedValue);
+      text: masked,
+      selection: TextSelection.collapsed(offset: masked.length - end),
+    );
   }
 
   bool _isMatchingRestrictor(String character) {
@@ -77,34 +83,38 @@ class MaskedInputFormater extends TextInputFormatter {
   }
 
   String applyMask(String text) {
-    var chars = text.split('');
-    var result = <String>[];
-    var maxIndex = min(mask.length, chars.length);
-    var index = 0;
-    for (var i = 0; i < maxIndex; i++) {
-      var curChar = chars[index];
-      if (curChar == mask[i]) {
-        result.add(curChar);
+    final List<String> chars = text.split('');
+    final List<String> result = <String>[];
+
+    final int maxIndex = min(mask.length, chars.length);
+
+    int index = 0;
+    for (int i = 0; i < maxIndex; i++) {
+      final String currentChar = chars[index];
+
+      if (currentChar == mask[i]) {
+        result.add(currentChar);
         index++;
         continue;
       }
+
       if (mask[i] == _anyCharMask) {
-        if (_isMatchingRestrictor(curChar)) {
-          result.add(curChar);
+        if (_isMatchingRestrictor(currentChar)) {
+          result.add(currentChar);
           index++;
         } else {
           break;
         }
       } else if (mask[i] == _onlyDigitMask) {
-        if (isDigit(curChar)) {
-          result.add(curChar);
+        if (isDigit(currentChar)) {
+          result.add(currentChar);
           index++;
         } else {
           break;
         }
       } else {
         result.add(mask[i]);
-        result.add(curChar);
+        result.add(currentChar);
         index++;
         continue;
       }
