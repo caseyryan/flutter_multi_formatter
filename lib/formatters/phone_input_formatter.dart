@@ -24,8 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import 'dart:math';
-
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -37,6 +36,7 @@ class PhoneInputFormatter extends TextInputFormatter {
   final bool allowEndlessPhone;
 
   PhoneCountryData _countryData;
+  String _lastValue = '';
 
   /// [onCountrySelected] when you enter a phone
   /// and a country is detected
@@ -49,15 +49,28 @@ class PhoneInputFormatter extends TextInputFormatter {
     this.allowEndlessPhone = false,
   });
 
+  String get masked => _lastValue;
+
+  String get unmasked => '+${toNumericString(_lastValue, allowHyphen: false)}';
+
+  bool get isFilled => isPhoneValid(masked);
+
+  String mask(String value) {
+    return formatEditUpdate(
+      TextEditingValue.empty,
+      TextEditingValue(text: value),
+    ).text;
+  }
+
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
     var isErasing = newValue.text.length < oldValue.text.length;
-    var onlyNumbers = toNumericString(
-      newValue.text,
-    );
+    _lastValue = newValue.text;
+
+    var onlyNumbers = toNumericString(newValue.text);
     String maskedValue;
     if (isErasing) {
       if (newValue.text.isEmpty) {
@@ -80,10 +93,7 @@ class PhoneInputFormatter extends TextInputFormatter {
       }
     }
 
-    maskedValue = _applyMask(
-      onlyNumbers,
-      allowEndlessPhone,
-    );
+    maskedValue = _applyMask(onlyNumbers, allowEndlessPhone);
     // if (maskedValue.length == oldValue.text.length && onlyNumbers != '7') {
     if (maskedValue == oldValue.text && onlyNumbers != '7') {
       if (isErasing) {
@@ -99,12 +109,12 @@ class PhoneInputFormatter extends TextInputFormatter {
       return oldValue;
     }
 
-    var endOffset = max(oldValue.text.length - oldValue.selection.end, 0);
-    var selectionEnd = maskedValue.length - endOffset;
+    final endOffset = newValue.text.length - newValue.selection.end;
+    final selectionEnd = maskedValue.length - endOffset;
+
+    _lastValue = maskedValue;
     return TextEditingValue(
-      selection: TextSelection.collapsed(
-        offset: selectionEnd,
-      ),
+      selection: TextSelection.collapsed(offset: selectionEnd),
       text: maskedValue,
     );
   }
@@ -410,6 +420,7 @@ class PhoneCountryData {
       altMasks: value['altMasks'],
     );
   }
+
   @override
   String toString() {
     return '[PhoneCountryData(country: $country,' +

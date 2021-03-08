@@ -27,7 +27,7 @@ THE SOFTWARE.
 import 'formatter_utils.dart';
 import 'masked_input_formatter.dart';
 
-class CreditCardExpirationDateFormatter extends MaskedInputFormater {
+class CreditCardExpirationDateFormatter extends MaskedInputFormatter {
   CreditCardExpirationDateFormatter() : super('00/00');
 
   @override
