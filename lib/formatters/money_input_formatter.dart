@@ -133,8 +133,6 @@ class MoneyInputFormatter extends TextInputFormatter {
       oldValue = oldValue.copyWith(text: oldText);
       newValue = newValue.copyWith(text: newText);
     }
-    
-
 
     var isErasing = newValue.text.length < oldValue.text.length;
 
@@ -262,7 +260,7 @@ class MoneyInputFormatter extends TextInputFormatter {
           );
         }
       }
-      
+
       var preparedText = _prepareDotsAndCommas(newText);
       return TextEditingValue(
         selection: selection,
@@ -388,6 +386,7 @@ class MoneyInputFormatter extends TextInputFormatter {
         thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa);
     return value;
   }
+
   bool _usesSpacesForThousands() {
     var value = (thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa ||
         thousandSeparator == ThousandSeparator.SpaceAndPeriodMantissa);
@@ -621,8 +620,7 @@ String _swapCommasAndPeriods(String input) {
   return temp;
 }
 
-
-/// in case spaces are used as thousands separators 
+/// in case spaces are used as thousands separators
 /// they must be replaced with commas here to simplify parsing
 String _replaceSpacesWithCommas(String value) {
   if (value.length < 2) return value;
@@ -633,14 +631,12 @@ String _replaceSpacesWithCommas(String value) {
     if (char == ' ') {
       /// we only need to allow spaces as padding
       /// before and after currency symbol
-      if (i != 1 && i != presplit.length -2) {
+      if (i != 1 && i != presplit.length - 2) {
         stringBuffer.write(',');
-      }
-      else {
+      } else {
         stringBuffer.write(char);
       }
-    }
-    else {
+    } else {
       stringBuffer.write(char);
     }
   }
