@@ -127,16 +127,17 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                         ' to one of the predefined enum values. This example uses ThousandSeparator.Space'),
                 TextFormField(
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter a numeric value',
-                      hintStyle: TextStyle(
-                        color: Colors.black.withOpacity(
-                          .3,
-                        ),
+                    border: OutlineInputBorder(),
+                    hintText: 'Space separation',
+                    hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(
+                        .3,
                       ),
-                      errorStyle: TextStyle(
-                        color: Colors.red,
-                      )),
+                    ),
+                    errorStyle: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     MoneyInputFormatter(

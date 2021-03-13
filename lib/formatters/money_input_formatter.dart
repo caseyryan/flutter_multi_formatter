@@ -91,42 +91,21 @@ class MoneyInputFormatter extends TextInputFormatter {
     this.maxTextLength,
   });
 
-  bool isZero(String text) {
-    var numeriString = toNumericString(text, allowPeriod: true);
-    var value = double.tryParse(numeriString) ?? 0.0;
-    return value == 0.0;
-  }
-
-  String _stripRepeatingSeparators(String input) {
-    return input
-        .replaceAll(_repeatingDots, '.')
-        .replaceAll(_repeatingCommas, ',')
-        .replaceAll(_repeatingSpaces, ' ');
-  }
-
-  bool _usesCommasForMantissa() {
-    return (thousandSeparator == ThousandSeparator.Period ||
-        thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa);
-  }
-
-  /// used for putting correct commas and dots to a
-  /// resulting string, after it has been brought to
-  /// default view with commas as thousand separator
-  String _prepareDotsAndCommas(String value) {
-    if (_usesCommasForMantissa()) {
-      return _swapCommasAndPeriods(value);
-    }
-    return value;
-  }
-
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
     int leadingLength = leadingSymbol.length;
+    int trailingLength = trailingSymbol.length;
+    if (leadingLength > 0 && trailingLength > 0) {
+      throw 'You cannot use trailing an leading symbols at the same time';
+    }
     var newText = newValue.text;
     var oldText = oldValue.text;
+    if (oldValue == newValue) {
+      return newValue;
+    }
     newText = _stripRepeatingSeparators(newText);
     oldText = _stripRepeatingSeparators(oldText);
     var usesCommaForMantissa = _usesCommasForMantissa();
@@ -199,9 +178,12 @@ class MoneyInputFormatter extends TextInputFormatter {
         selection = TextSelection.collapsed(
           offset: oldValue.selection.extentOffset - 1,
         );
+        // print('OLD TEXT $oldText');
+        var preparedText = _prepareDotsAndCommas(oldText);
+        // print('PREPARED TEXT $preparedText');
         return TextEditingValue(
           selection: selection,
-          text: _prepareDotsAndCommas(oldText),
+          text: preparedText,
         );
       }
 
@@ -217,7 +199,7 @@ class MoneyInputFormatter extends TextInputFormatter {
         newText,
         ',',
       );
-
+      print('NEFORE $newText');
       newText = toCurrencyString(
         newText,
         mantissaLength: mantissaLength,
@@ -226,6 +208,7 @@ class MoneyInputFormatter extends TextInputFormatter {
         thousandSeparator: ThousandSeparator.Comma,
         useSymbolPadding: useSymbolPadding,
       );
+      print('ANEFORE $newText');
       var numSeparatorsAfter = _countSymbolsInString(
         newText,
         ',',
@@ -242,24 +225,30 @@ class MoneyInputFormatter extends TextInputFormatter {
         offset: offset,
       );
 
-      // Do not know what that does
-      // if (newText.contains(leadingZeroWithDot)) {
-      //   newText = newText.replaceAll(
-      //     leadingZeroWithDot,
-      //     leadingZeroWithoutDot,
-      //   );
-      //   offset -= 1;
-      //   if (offset < leadingLength) {
-      //     offset = leadingLength;
-      //   }
-      //   selection = TextSelection.collapsed(
-      //     offset: offset,
-      //   );
-      // }
+      
+      if (leadingLength > 0) {
+        /// this code removes odd zeroes after a leading symbol
+        /// do NOT remove this code
+        if (newText.contains(leadingZeroWithDot)) {
+          newText = newText.replaceAll(
+            leadingZeroWithDot,
+            leadingZeroWithoutDot,
+          );
+          offset -= 1;
+          if (offset < leadingLength) {
+            offset = leadingLength;
+          }
+          selection = TextSelection.collapsed(
+            offset: offset,
+          );
+        }
+      }
 
+      /// стирание
+      var preparedText = _prepareDotsAndCommas(newText);
       return TextEditingValue(
         selection: selection,
-        text: _prepareDotsAndCommas(newText),
+        text: preparedText,
       );
     }
 
@@ -297,16 +286,23 @@ class MoneyInputFormatter extends TextInputFormatter {
     );
 
     String newSubstrBeforeSelection = oldSelectionEnd > -1
-        ? formattedValue.substring(0, value.selection.end)
+        ? formattedValue.substring(
+            0,
+            value.selection.end,
+          )
         : '';
-    int numThousandSeparatorsInNewSub =
-        _countSymbolsInString(newSubstrBeforeSelection, ',');
+    int numThousandSeparatorsInNewSub = _countSymbolsInString(
+      newSubstrBeforeSelection,
+      ',',
+    );
 
     int numAddedSeparators =
         numThousandSeparatorsInNewSub - numThousandSeparatorsInOldSub;
 
-    bool newStartsWithLeading =
-        leadingSymbol.isNotEmpty && formattedValue.startsWith(leadingSymbol);
+    bool newStartsWithLeading = leadingSymbol.isNotEmpty &&
+        formattedValue.startsWith(
+          leadingSymbol,
+        );
 
     /// if an old string did not contain a leading symbol but
     /// the new one does then wee need to add a length of the leading
@@ -341,12 +337,53 @@ class MoneyInputFormatter extends TextInputFormatter {
       selectionIndex + 1,
       formattedValue.length,
     );
+    var preparedText = _prepareDotsAndCommas(formattedValue);
     return TextEditingValue(
       selection: TextSelection.collapsed(
         offset: selectionEnd,
       ),
-      text: _prepareDotsAndCommas(formattedValue),
+      text: preparedText,
     );
+  }
+
+  bool isZero(String text) {
+    var numeriString = toNumericString(text, allowPeriod: true);
+    var value = double.tryParse(numeriString) ?? 0.0;
+    return value == 0.0;
+  }
+
+  String _stripRepeatingSeparators(String input) {
+    return input
+        .replaceAll(_repeatingDots, '.')
+        .replaceAll(_repeatingCommas, ',')
+        .replaceAll(_repeatingSpaces, ' ');
+  }
+
+  bool _usesCommasForMantissa() {
+    return (thousandSeparator == ThousandSeparator.Period ||
+        thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa);
+  }
+
+  /// used for putting correct commas and dots to a
+  /// resulting string, after it has been brought to
+  /// default view with commas as thousand separator
+  String _prepareDotsAndCommas(String value) {
+    var useCommasForMantissa = _usesCommasForMantissa();
+    if (useCommasForMantissa) {
+      value = _swapCommasAndPeriods(value);
+    }
+    return value;
+    // print('VALUE IS $value');
+    // var formatted = toCurrencyString(
+    //   value,
+    //   mantissaLength: mantissaLength,
+    //   leadingSymbol: leadingSymbol,
+    //   thousandSeparator: thousandSeparator,
+    //   useSymbolPadding: useSymbolPadding,
+    //   trailingSymbol: trailingSymbol,
+    // );
+    // // print('FORMATTED VALUE IS $formatted');
+    // return formatted;
   }
 
   void _processCallback(String value) {
@@ -413,7 +450,7 @@ String toCurrencyString(
       swapCommasAndPreriods = true;
       break;
   }
-
+  // print(thousandSeparator);
   value = value.replaceAll(_repeatingDots, '.');
   value = toNumericString(value, allowPeriod: mantissaLength > 0);
   var isNegative = value.contains('-');
