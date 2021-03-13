@@ -14,7 +14,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  lint: ^1.5.1
 
 # flutter pub publish
 # To format every file in directory use:
