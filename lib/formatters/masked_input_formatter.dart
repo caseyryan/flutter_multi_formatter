@@ -31,11 +31,11 @@ import 'package:flutter/services.dart';
 import 'formatter_utils.dart';
 
 class MaskedInputFormatter extends TextInputFormatter {
-  final String mask;
+  final String? mask;
 
   final String _anyCharMask = '#';
   final String _onlyDigitMask = '0';
-  final RegExp anyCharMatcher;
+  final RegExp? anyCharMatcher;
   String _lastValue = '';
 
   /// [mask] is a string that must contain # (hash) and 0 (zero)
@@ -53,7 +53,7 @@ class MaskedInputFormatter extends TextInputFormatter {
   /// ignored
   MaskedInputFormatter(this.mask, {this.anyCharMatcher}) : assert(mask != null);
 
-  bool get isFilled => mask.length == _lastValue.length;
+  bool get isFilled => mask!.length == _lastValue.length;
 
   @override
   TextEditingValue formatEditUpdate(
@@ -79,33 +79,33 @@ class MaskedInputFormatter extends TextInputFormatter {
     if (anyCharMatcher == null) {
       return true;
     }
-    return anyCharMatcher.stringMatch(character) != null;
+    return anyCharMatcher!.stringMatch(character) != null;
   }
 
   String applyMask(String text) {
     final List<String> chars = text.split('');
     final List<String> result = <String>[];
 
-    final int maxIndex = min(mask.length, chars.length);
+    final int maxIndex = min(mask!.length, chars.length);
 
     int index = 0;
     for (int i = 0; i < maxIndex; i++) {
       final String currentChar = chars[index];
 
-      if (currentChar == mask[i]) {
+      if (currentChar == mask![i]) {
         result.add(currentChar);
         index++;
         continue;
       }
 
-      if (mask[i] == _anyCharMask) {
+      if (mask![i] == _anyCharMask) {
         if (_isMatchingRestrictor(currentChar)) {
           result.add(currentChar);
           index++;
         } else {
           break;
         }
-      } else if (mask[i] == _onlyDigitMask) {
+      } else if (mask![i] == _onlyDigitMask) {
         if (isDigit(currentChar)) {
           result.add(currentChar);
           index++;
@@ -113,7 +113,7 @@ class MaskedInputFormatter extends TextInputFormatter {
           break;
         }
       } else {
-        result.add(mask[i]);
+        result.add(mask![i]);
         result.add(currentChar);
         index++;
         continue;

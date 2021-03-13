@@ -32,10 +32,10 @@ import 'formatter_utils.dart';
 import 'phone_input_enums.dart';
 
 class PhoneInputFormatter extends TextInputFormatter {
-  final ValueChanged<PhoneCountryData> onCountrySelected;
+  final ValueChanged<PhoneCountryData?>? onCountrySelected;
   final bool allowEndlessPhone;
 
-  PhoneCountryData _countryData;
+  PhoneCountryData? _countryData;
   String _lastValue = '';
 
   /// [onCountrySelected] when you enter a phone
@@ -125,10 +125,10 @@ class PhoneInputFormatter extends TextInputFormatter {
     _updateCountryData(null);
   }
 
-  void _updateCountryData(PhoneCountryData countryData) {
+  void _updateCountryData(PhoneCountryData? countryData) {
     _countryData = countryData;
     if (onCountrySelected != null) {
-      onCountrySelected(_countryData);
+      onCountrySelected!(_countryData);
     }
   }
 
@@ -144,8 +144,8 @@ class PhoneInputFormatter extends TextInputFormatter {
     if (_countryData != null) {
       return _formatByMask(
         numericString,
-        _countryData.phoneMask,
-        _countryData.altMasks,
+        _countryData!.phoneMask!,
+        _countryData!.altMasks,
         0,
         allowEndlessPhone,
       );
@@ -164,11 +164,11 @@ class PhoneInputFormatter extends TextInputFormatter {
   /// an existing list. If false, the new list will completely replace the
   /// existing one
   static void addAlternativePhoneMasks({
-    @required String countryCode,
-    @required List<String> alternativeMasks,
+    required String countryCode,
+    required List<String> alternativeMasks,
     bool mergeWithExisting = false,
   }) {
-    assert(alternativeMasks != null && alternativeMasks.isNotEmpty);
+    assert(alternativeMasks.isNotEmpty);
     final countryData = _findCountryDataByCountryCode(countryCode);
     String currentMask = countryData['phoneMask'];
     alternativeMasks.sort((a, b) => a.length.compareTo(b.length));
@@ -201,11 +201,10 @@ class PhoneInputFormatter extends TextInputFormatter {
   ///   newMask: '+0 (000) 000 00 00',
   /// );
   static void replacePhoneMask({
-    @required String countryCode,
-    @required String newMask,
+    required String countryCode,
+    required String newMask,
   }) {
     checkMask(newMask);
-    assert(newMask != null);
     final countryData = _findCountryDataByCountryCode(countryCode);
     var currentMask = countryData['phoneMask'];
     if (currentMask != newMask) {
@@ -220,10 +219,10 @@ class PhoneInputFormatter extends TextInputFormatter {
   static Map<String, dynamic> _findCountryDataByCountryCode(
     String countryCode,
   ) {
-    assert(countryCode != null && countryCode.length == 2);
+    assert(countryCode.length == 2);
     countryCode = countryCode.toUpperCase();
     var countryData = _PhoneCodes._data.firstWhere(
-      (m) => m['countryCode'] == countryCode,
+      ((m) => m!['countryCode'] == countryCode),
       orElse: () => null,
     );
     if (countryData == null) {
@@ -241,7 +240,7 @@ bool isPhoneValid(
     phone,
     allowHyphen: false,
   );
-  if (phone == null || phone.isEmpty) {
+  if (phone.isEmpty) {
     return false;
   }
   var countryData = _PhoneCodes.getCountryDataByPhone(
@@ -252,7 +251,7 @@ bool isPhoneValid(
   }
   var formatted = _formatByMask(
     phone,
-    countryData.phoneMask,
+    countryData.phoneMask!,
     countryData.altMasks,
     0,
     allowEndlessPhone,
@@ -265,9 +264,9 @@ bool isPhoneValid(
     var contains = phone.contains(rpeprocessed);
     return contains;
   }
-  var correctLength = formatted.length == countryData.phoneMask.length;
+  var correctLength = formatted.length == countryData.phoneMask!.length;
   if (correctLength != true && countryData.altMasks != null) {
-    return countryData.altMasks.any(
+    return countryData.altMasks!.any(
       (altMask) => formatted.length == altMask.length,
     );
   }
@@ -276,7 +275,7 @@ bool isPhoneValid(
 
 /// [allowEndlessPhone] if this is true,
 /// the
-String formatAsPhoneNumber(
+String? formatAsPhoneNumber(
   String phone, {
   InvalidPhoneAction invalidPhoneAction = InvalidPhoneAction.ShowUnformatted,
   bool allowEndlessPhone = false,
@@ -288,20 +287,17 @@ String formatAsPhoneNumber(
     switch (invalidPhoneAction) {
       case InvalidPhoneAction.ShowUnformatted:
         return phone;
-        break;
       case InvalidPhoneAction.ReturnNull:
         return null;
-        break;
       case InvalidPhoneAction.ShowPhoneInvalidString:
         return 'invalid phone';
-        break;
     }
   }
   phone = toNumericString(phone);
-  var countryData = _PhoneCodes.getCountryDataByPhone(phone);
+  var countryData = _PhoneCodes.getCountryDataByPhone(phone)!;
   return _formatByMask(
     phone,
-    countryData.phoneMask,
+    countryData.phoneMask!,
     countryData.altMasks,
     0,
     allowEndlessPhone,
@@ -311,7 +307,7 @@ String formatAsPhoneNumber(
 String _formatByMask(
   String text,
   String mask,
-  List<String> altMasks, [
+  List<String>? altMasks, [
   int altMaskIndex = 0,
   bool allowEndlessPhone = false,
 ]) {
@@ -376,7 +372,7 @@ String _formatByMask(
 /// [returns] A list of [PhoneCountryData] datas or an empty list
 List<PhoneCountryData> getCountryDatasByPhone(String phone) {
   phone = toNumericString(phone);
-  if (phone == null || phone.isEmpty || phone.length < 11) {
+  if (phone.isEmpty || phone.length < 11) {
     return <PhoneCountryData>[];
   }
   var phoneCode = phone.substring(0, phone.length - 10);
@@ -384,10 +380,10 @@ List<PhoneCountryData> getCountryDatasByPhone(String phone) {
 }
 
 class PhoneCountryData {
-  final String country;
-  final String phoneCode;
-  final String countryCode;
-  final String phoneMask;
+  final String? country;
+  final String? phoneCode;
+  final String? countryCode;
+  final String? phoneMask;
 
   /// this field is used for those countries
   /// there there is more than one possible masks
@@ -397,7 +393,7 @@ class PhoneCountryData {
   /// variable, the longer ones must be in altMasks list starting from
   /// the shortest. That's because they are checked in a direct order
   /// on a user input
-  final List<String> altMasks;
+  final List<String>? altMasks;
 
   PhoneCountryData._init({
     this.country,
@@ -432,9 +428,9 @@ class _PhoneCodes {
   /// рекурсивно ищет в номере телефона код страны, начиная с конца
   /// нужно для того, чтобы даже после setState и обнуления данных страны
   /// снова правильно отформатировать телефон
-  static PhoneCountryData getCountryDataByPhone(
+  static PhoneCountryData? getCountryDataByPhone(
     String phone, {
-    int subscringLength,
+    int? subscringLength,
   }) {
     if (phone.isEmpty) return null;
     subscringLength = subscringLength ?? phone.length;
@@ -443,7 +439,7 @@ class _PhoneCodes {
     var phoneCode = phone.substring(0, subscringLength);
 
     var rawData = _data.firstWhere(
-        (data) => toNumericString(data['phoneCode']) == phoneCode,
+        (data) => toNumericString(data!['phoneCode']) == phoneCode,
         orElse: () => null);
     if (rawData != null) {
       return PhoneCountryData.fromMap(rawData);
@@ -456,7 +452,7 @@ class _PhoneCodes {
   ) {
     var list = <PhoneCountryData>[];
     _data.forEach((data) {
-      var c = toNumericString(data['phoneCode']);
+      var c = toNumericString(data!['phoneCode']);
       if (c == phoneCode) {
         list.add(PhoneCountryData.fromMap(data));
       }
@@ -464,7 +460,7 @@ class _PhoneCodes {
     return list;
   }
 
-  static List<Map<String, dynamic>> _data = <Map<String, dynamic>>[
+  static List<Map<String, dynamic>?> _data = <Map<String, dynamic>?>[
     {
       'country': 'Afghanistan',
       'phoneCode': '93',

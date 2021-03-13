@@ -32,7 +32,7 @@ final RegExp _maskContentsRegExp = RegExp(r'^[-0-9)( +]{3,}$');
 final RegExp _isMaskSymbolRegExp = RegExp(r'^[-\+ )(]+$');
 
 String toNumericString(
-  String inputString, {
+  String? inputString, {
   bool allowPeriod = false,
   bool allowHyphen = true,
 }) {
@@ -40,7 +40,7 @@ String toNumericString(
   var regexWithoutPeriod = allowHyphen ? _digitRegExp : _positiveDigitRegExp;
   var regExp = allowPeriod ? _digitWithPeriodRegExp : regexWithoutPeriod;
   return inputString.splitMapJoin(regExp,
-      onMatch: (m) => m.group(0), onNonMatch: (nm) => '');
+      onMatch: (m) => m.group(0)!, onNonMatch: (nm) => '');
 }
 
 void checkMask(String mask) {
@@ -56,7 +56,7 @@ void checkMask(String mask) {
   }
 }
 
-bool isUnmaskableSymbol(String symbol) {
+bool isUnmaskableSymbol(String? symbol) {
   if (symbol == null || symbol.length > 1) {
     return false;
   }
@@ -66,7 +66,7 @@ bool isUnmaskableSymbol(String symbol) {
   // return false;
 }
 
-bool isDigit(String character) {
+bool isDigit(String? character) {
   if (character == null || character.isEmpty || character.length > 1) {
     return false;
   }

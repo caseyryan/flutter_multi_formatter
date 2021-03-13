@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class RestrictingInputFormatter extends TextInputFormatter {
-  RegExp _restrictor;
-  bool _allow;
+  late RegExp _restrictor;
+  late bool _allow;
 
   RestrictingInputFormatter._internal();
 
@@ -15,9 +15,9 @@ class RestrictingInputFormatter extends TextInputFormatter {
   /// that will be restricted. E.g. "()*^%#"
   @Deprecated('Use a Flutter\'s build-in FilteringTextInputFormatter instead')
   factory RestrictingInputFormatter.restrictFromString({
-    @required String restrictedChars,
+    required String restrictedChars,
   }) {
-    assert(restrictedChars != null && restrictedChars.isNotEmpty);
+    assert(restrictedChars.isNotEmpty);
     var formatter = RestrictingInputFormatter._internal();
     formatter._allow = false;
     restrictedChars = formatter._escape(restrictedChars);
@@ -30,9 +30,9 @@ class RestrictingInputFormatter extends TextInputFormatter {
   /// [allowedChars] as string with allowed characters
   /// e.g. "&w4" will allow only ampersands w's and fours
   factory RestrictingInputFormatter.allowFromString({
-    @required String allowedChars,
+    required String allowedChars,
   }) {
-    assert(allowedChars != null && allowedChars.isNotEmpty);
+    assert(allowedChars.isNotEmpty);
     var formatter = RestrictingInputFormatter._internal();
     formatter._allow = true;
     allowedChars = formatter._escape(allowedChars);

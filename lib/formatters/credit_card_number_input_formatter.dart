@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 
 import 'dart:math';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -40,10 +41,10 @@ class CardSystem {
 }
 
 class CreditCardNumberInputFormatter extends TextInputFormatter {
-  final ValueChanged<CardSystemData> onCardSystemSelected;
+  final ValueChanged<CardSystemData?>? onCardSystemSelected;
   final bool useSeparators;
 
-  CardSystemData _cardSystemData;
+  CardSystemData? _cardSystemData;
   CreditCardNumberInputFormatter(
       {this.onCardSystemSelected, this.useSeparators = true});
 
@@ -75,10 +76,10 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     _updateCardSystemData(null);
   }
 
-  void _updateCardSystemData(CardSystemData cardSystemData) {
+  void _updateCardSystemData(CardSystemData? cardSystemData) {
     _cardSystemData = cardSystemData;
     if (onCardSystemSelected != null) {
-      onCardSystemSelected(_cardSystemData);
+      onCardSystemSelected!(_cardSystemData);
     }
   }
 
@@ -93,7 +94,7 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
       }
     }
     if (_cardSystemData != null) {
-      return _formatByMask(numericString, _cardSystemData.numberMask);
+      return _formatByMask(numericString, _cardSystemData!.numberMask!);
     }
     return numericString;
   }
@@ -104,14 +105,14 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
 /// will not be marked as a valid card number
 bool isCardValidNumber(String cardNumber, {bool checkLength = false}) {
   cardNumber = toNumericString(cardNumber);
-  if (cardNumber == null || cardNumber.isEmpty) {
+  if (cardNumber.isEmpty) {
     return false;
   }
   var countryData = _CardSystemDatas.getCardSystemDataByNumber(cardNumber);
   if (countryData == null) {
     return false;
   }
-  var formatted = _formatByMask(cardNumber, countryData.numberMask);
+  var formatted = _formatByMask(cardNumber, countryData.numberMask!);
   var reprocessed = toNumericString(formatted);
   return reprocessed == cardNumber &&
       (checkLength == false || reprocessed.length == countryData.numDigits);
@@ -125,11 +126,11 @@ String formatAsCardNumber(
     return cardNumber;
   }
   cardNumber = toNumericString(cardNumber);
-  var cardSystemData = _CardSystemDatas.getCardSystemDataByNumber(cardNumber);
-  return _formatByMask(cardNumber, cardSystemData.numberMask);
+  var cardSystemData = _CardSystemDatas.getCardSystemDataByNumber(cardNumber)!;
+  return _formatByMask(cardNumber, cardSystemData.numberMask!);
 }
 
-CardSystemData getCardSystemData(String cardNumber) {
+CardSystemData? getCardSystemData(String cardNumber) {
   return _CardSystemDatas.getCardSystemDataByNumber(cardNumber);
 }
 
@@ -157,10 +158,10 @@ String _formatByMask(String text, String mask) {
 }
 
 class CardSystemData {
-  final String system;
-  final String systemCode;
-  final String numberMask;
-  final int numDigits;
+  final String? system;
+  final String? systemCode;
+  final String? numberMask;
+  final int? numDigits;
 
   CardSystemData._init(
       {this.numberMask, this.system, this.systemCode, this.numDigits});
@@ -183,21 +184,23 @@ class _CardSystemDatas {
   /// рекурсивно ищет в номере карты код системы, начиная с конца
   /// нужно для того, чтобы даже после setState и обнуления данных карты
   /// снова правильно отформатировать ее номер
-  static CardSystemData getCardSystemDataByNumber(String cardNumber,
-      {int subscringLength}) {
+  static CardSystemData? getCardSystemDataByNumber(String cardNumber,
+      {int? subscringLength}) {
     if (cardNumber.isEmpty) return null;
     subscringLength = subscringLength ?? cardNumber.length;
 
     if (subscringLength < 1) return null;
     var systemCode = cardNumber.substring(0, subscringLength);
 
-    var rawData = _data.firstWhere((data) {
-      var numericValue = toNumericString(data['systemCode']);
-      var numDigits = data['numDigits'];
-      return numericValue == systemCode &&
-          numDigits >= cardNumber.length &&
-          numDigits <= _maxDigitsInCard;
-    }, orElse: () => null);
+    var rawData = _data.firstWhere(
+        (Map<String, dynamic> data) {
+          var numericValue = toNumericString(data['systemCode']);
+          var numDigits = data['numDigits'];
+          return numericValue == systemCode &&
+              numDigits >= cardNumber.length &&
+              numDigits <= _maxDigitsInCard;
+        } as bool Function(Map<String, dynamic>?),
+        orElse: () => null);
     if (rawData != null) {
       return CardSystemData.fromMap(rawData);
     }
@@ -207,12 +210,12 @@ class _CardSystemDatas {
 
   static int get _maxDigitsInCard {
     return _data.map((data) {
-      int numDigits = data['numDigits'];
+      int numDigits = data!['numDigits'];
       return numDigits;
     }).reduce(max);
   }
 
-  static List<Map<String, dynamic>> _data = <Map<String, dynamic>>[
+  static List<Map<String, dynamic>?> _data = <Map<String, dynamic>?>[
     {
       'system': CardSystem.VISA,
       'systemCode': '4',

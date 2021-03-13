@@ -53,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Container(
                 height: 50,
+                // ignore: deprecated_member_use
                 child: RaisedButton(
                   textColor: Colors.white,
                   color: Colors.lightGreen,
@@ -80,6 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Container(
                 height: 50,
+                // ignore: deprecated_member_use
                 child: RaisedButton(
                   textColor: Colors.white,
                   color: Colors.lightBlue,
@@ -107,6 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Container(
                 height: 50,
+                // ignore: deprecated_member_use
                 child: RaisedButton(
                   textColor: Colors.white,
                   color: Colors.orange,

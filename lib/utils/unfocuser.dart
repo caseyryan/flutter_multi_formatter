@@ -36,11 +36,11 @@ import 'package:flutter/rendering.dart';
 /// In case you want it to always unfocus current text field
 /// just set this value to 0.0
 class Unfocuser extends StatefulWidget {
-  final Widget child;
+  final Widget? child;
   final double minScrollDistance;
 
   const Unfocuser({
-    Key key,
+    Key? key,
     this.child,
     this.minScrollDistance = 10.0,
   }) : super(key: key);
@@ -50,8 +50,8 @@ class Unfocuser extends StatefulWidget {
 }
 
 class _UnfocuserState extends State<Unfocuser> {
-  RenderBox _lastRenderBox;
-  Offset _touchStartPosition;
+  RenderBox? _lastRenderBox;
+  Offset? _touchStartPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +61,8 @@ class _UnfocuserState extends State<Unfocuser> {
       },
       onPointerUp: (e) {
         var touchStopPosition = e.position;
-        if (widget.minScrollDistance != null &&
-            widget.minScrollDistance > 0.0 &&
-            _touchStartPosition != null) {
-          var difference = _touchStartPosition - touchStopPosition;
+        if (widget.minScrollDistance > 0.0 && _touchStartPosition != null) {
+          var difference = _touchStartPosition! - touchStopPosition;
           _touchStartPosition = null;
           if (difference.distance > widget.minScrollDistance) {
             return;
@@ -114,7 +112,7 @@ class _UnfocuserState extends State<Unfocuser> {
 class IgnoreUnfocuser extends SingleChildRenderObjectWidget {
   final Widget child;
 
-  IgnoreUnfocuser({@required this.child}) : super(child: child);
+  IgnoreUnfocuser({required this.child}) : super(child: child);
 
   @override
   IgnoreUnfocuserRenderBox createRenderObject(BuildContext context) {
@@ -125,7 +123,7 @@ class IgnoreUnfocuser extends SingleChildRenderObjectWidget {
 class ForceUnfocuser extends SingleChildRenderObjectWidget {
   final Widget child;
 
-  ForceUnfocuser({@required this.child}) : super(child: child);
+  ForceUnfocuser({required this.child}) : super(child: child);
 
   @override
   ForceUnfocuserRenderBox createRenderObject(BuildContext context) {

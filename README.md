@@ -1,5 +1,12 @@
 # flutter_multi_formatter
 
+
+# VERY IMPORTANT NOTE! 
+As of version 2.0.0 the package has been migrated to null-safety
+In case your project does not support nullsafety (i.e. not moved to Flutter ^2.0.0 and Dart ^2.12.0) consider fixing plugin version to 1.3.6 in your pubspec.yaml
+Version 1.3.6 was the last version without null-safety and has now been discontinued
+
+
 This package contains formatters for international phone numbers, credit / debit cards, currencies and 
 a masked formatter
 https://pub.dev/packages/flutter_multi_formatter
@@ -9,7 +16,7 @@ Formatting a phone
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/phone_format.gif?raw=true" width="240"/>
 
 ```
-IMPORTANT NOTE! As from version 1.3.3 you can add your own phone masks
+As from version 1.3.3 you can add your own phone masks
 like this (just do it somewhere in your code before using the formatter)
 You can completely replace main mask or add a few versions of alternative 
 masks. Here is the example:

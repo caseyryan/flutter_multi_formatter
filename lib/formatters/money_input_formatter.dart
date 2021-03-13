@@ -62,8 +62,8 @@ class MoneyInputFormatter extends TextInputFormatter {
   final String leadingSymbol;
   final String trailingSymbol;
   final bool useSymbolPadding;
-  final int maxTextLength;
-  final ValueChanged<double> onValueChange;
+  final int? maxTextLength;
+  final ValueChanged<double>? onValueChange;
 
   /// [thousandSeparator] specifies what symbol will be used to separate
   /// each block of 3 digits, e.g. [ThousandSeparator.Comma] will format
@@ -89,11 +89,7 @@ class MoneyInputFormatter extends TextInputFormatter {
     this.useSymbolPadding = false,
     this.onValueChange,
     this.maxTextLength,
-  })  : assert(trailingSymbol != null),
-        assert(leadingSymbol != null),
-        assert(mantissaLength != null),
-        assert(thousandSeparator != null),
-        assert(useSymbolPadding != null);
+  });
 
   bool isZero(String text) {
     var numeriString = toNumericString(text, allowPeriod: true);
@@ -164,7 +160,7 @@ class MoneyInputFormatter extends TextInputFormatter {
       }
     } else {
       if (maxTextLength != null) {
-        if (newValue.text.length > maxTextLength) {
+        if (newValue.text.length > maxTextLength!) {
           /// we limit string length but only if it's the whole part
           /// we should allow mantissa editing anyway
           /// so this code restrictss the length only if we edit
@@ -357,7 +353,7 @@ class MoneyInputFormatter extends TextInputFormatter {
     if (onValueChange != null) {
       var numericValue = toNumericString(value, allowPeriod: true);
       var val = double.tryParse(numericValue) ?? 0.0;
-      onValueChange(val);
+      onValueChange!(val);
     }
   }
 }
@@ -396,16 +392,8 @@ String toCurrencyString(
   String trailingSymbol = '',
   bool useSymbolPadding = false,
 }) {
-  assert(value != null);
-  assert(leadingSymbol != null);
-  assert(trailingSymbol != null);
-  assert(useSymbolPadding != null);
-  assert(shorteningPolicy != null);
-  assert(thousandSeparator != null);
-  assert(mantissaLength != null);
-
   var swapCommasAndPreriods = false;
-  String tSeparator;
+  String? tSeparator;
   switch (thousandSeparator) {
     case ThousandSeparator.Comma:
       tSeparator = ',';
@@ -486,7 +474,7 @@ String toCurrencyString(
       }
       break;
   }
-  var list = <String>[];
+  var list = <String?>[];
   var mantissa = '';
   var split = value.split('');
   var mantissaList = <String>[];
@@ -573,8 +561,7 @@ String _swapCommasAndPeriods(String input) {
 }
 
 String _getRoundedValue(String numericString, double roundTo) {
-  assert(roundTo != null && roundTo != 0.0);
-  assert(numericString != null);
+  assert(roundTo != 0.0);
   var numericValue = double.tryParse(numericString) ?? 0.0;
   var result = numericValue / roundTo;
 
