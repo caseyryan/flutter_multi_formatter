@@ -59,16 +59,17 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                 _getText('This input adds a EUR sign at the end'),
                 TextFormField(
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter a numeric value',
-                      hintStyle: TextStyle(
-                        color: Colors.black.withOpacity(
-                          .3,
-                        ),
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter a numeric value',
+                    hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(
+                        .3,
                       ),
-                      errorStyle: TextStyle(
-                        color: Colors.red,
-                      )),
+                    ),
+                    errorStyle: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     MoneyInputFormatter(
@@ -123,8 +124,10 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ],
                 ),
                 _getText(
-                    'You can also use another thousand separators by setting a [thousandSeparator] param ' +
-                        ' to one of the predefined enum values. This example uses ThousandSeparator.Space'),
+                  'You can also use another thousand separators by setting a [thousandSeparator] param ' +
+                      ' to one of the predefined enum values. This example uses ThousandSeparator.SpaceAndPeriodMantissa. This means that thausands' + 
+                      ' will be separated by spaces and mantissa part by comma',
+                ),
                 TextFormField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -145,6 +148,7 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                       useSymbolPadding: true,
                       thousandSeparator:
                           ThousandSeparator.SpaceAndPeriodMantissa,
+                          // ThousandSeparator.Comma,
                     )
                   ],
                 ),

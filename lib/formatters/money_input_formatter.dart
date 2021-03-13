@@ -106,6 +106,14 @@ class MoneyInputFormatter extends TextInputFormatter {
     if (oldValue == newValue) {
       return newValue;
     }
+    if (newText.contains(',.') || newText.contains('..')) {
+      /// this condition is processing a case when you press a period
+      /// after the cursor is already located in a mantissa part
+      return oldValue.copyWith(
+        selection: newValue.selection,
+      );
+    }
+
     newText = _stripRepeatingSeparators(newText);
     oldText = _stripRepeatingSeparators(oldText);
     var usesCommaForMantissa = _usesCommasForMantissa();
@@ -115,6 +123,18 @@ class MoneyInputFormatter extends TextInputFormatter {
       oldValue = oldValue.copyWith(text: oldText);
       newValue = newValue.copyWith(text: newText);
     }
+    var usesSpacesAsThousandSeparator = _usesSpacesForThousands();
+    if (usesSpacesAsThousandSeparator) {
+      /// if spaces are used as thousand separators
+      /// they must be replaced with commas here
+      /// this is used to simplify value processing further
+      newText = _replaceSpacesWithCommas(newText);
+      oldText = _replaceSpacesWithCommas(oldText);
+      oldValue = oldValue.copyWith(text: oldText);
+      newValue = newValue.copyWith(text: newText);
+    }
+    
+
 
     var isErasing = newValue.text.length < oldValue.text.length;
 
@@ -155,8 +175,10 @@ class MoneyInputFormatter extends TextInputFormatter {
         }
       }
 
-      if (oldValue.text.length < 1) {
-        return newValue;
+      if (oldValue.text.length < 1 && newValue.text.length != 1) {
+        if (leadingLength < 1) {
+          return newValue;
+        }
       }
     }
 
@@ -199,7 +221,6 @@ class MoneyInputFormatter extends TextInputFormatter {
         newText,
         ',',
       );
-      print('NEFORE $newText');
       newText = toCurrencyString(
         newText,
         mantissaLength: mantissaLength,
@@ -208,7 +229,6 @@ class MoneyInputFormatter extends TextInputFormatter {
         thousandSeparator: ThousandSeparator.Comma,
         useSymbolPadding: useSymbolPadding,
       );
-      print('ANEFORE $newText');
       var numSeparatorsAfter = _countSymbolsInString(
         newText,
         ',',
@@ -225,7 +245,6 @@ class MoneyInputFormatter extends TextInputFormatter {
         offset: offset,
       );
 
-      
       if (leadingLength > 0) {
         /// this code removes odd zeroes after a leading symbol
         /// do NOT remove this code
@@ -243,8 +262,7 @@ class MoneyInputFormatter extends TextInputFormatter {
           );
         }
       }
-
-      /// стирание
+      
       var preparedText = _prepareDotsAndCommas(newText);
       return TextEditingValue(
         selection: selection,
@@ -253,7 +271,6 @@ class MoneyInputFormatter extends TextInputFormatter {
     }
 
     /// stop isErasing
-
     bool oldStartsWithLeading = leadingSymbol.isNotEmpty &&
         oldValue.text.startsWith(
           leadingSymbol,
@@ -284,6 +301,7 @@ class MoneyInputFormatter extends TextInputFormatter {
       trailingSymbol: trailingSymbol,
       useSymbolPadding: useSymbolPadding,
     );
+    print(formattedValue);
 
     String newSubstrBeforeSelection = oldSelectionEnd > -1
         ? formattedValue.substring(
@@ -332,12 +350,18 @@ class MoneyInputFormatter extends TextInputFormatter {
         }
       }
     }
-
+    selectionIndex += 1;
+    if (oldValue.text.isEmpty && useSymbolPadding) {
+      /// to skip leading space right after a currency symbol
+      selectionIndex += 1;
+    }
     var selectionEnd = min(
-      selectionIndex + 1,
+      selectionIndex,
       formattedValue.length,
     );
-    var preparedText = _prepareDotsAndCommas(formattedValue);
+    var preparedText = _prepareDotsAndCommas(
+      formattedValue,
+    );
     return TextEditingValue(
       selection: TextSelection.collapsed(
         offset: selectionEnd,
@@ -360,8 +384,14 @@ class MoneyInputFormatter extends TextInputFormatter {
   }
 
   bool _usesCommasForMantissa() {
-    return (thousandSeparator == ThousandSeparator.Period ||
+    var value = (thousandSeparator == ThousandSeparator.Period ||
         thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa);
+    return value;
+  }
+  bool _usesSpacesForThousands() {
+    var value = (thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa ||
+        thousandSeparator == ThousandSeparator.SpaceAndPeriodMantissa);
+    return value;
   }
 
   /// used for putting correct commas and dots to a
@@ -372,18 +402,12 @@ class MoneyInputFormatter extends TextInputFormatter {
     if (useCommasForMantissa) {
       value = _swapCommasAndPeriods(value);
     }
+    if (thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
+      value = value.replaceAll('.', ' ');
+    } else if (thousandSeparator == ThousandSeparator.SpaceAndPeriodMantissa) {
+      value = value.replaceAll(',', ' ');
+    }
     return value;
-    // print('VALUE IS $value');
-    // var formatted = toCurrencyString(
-    //   value,
-    //   mantissaLength: mantissaLength,
-    //   leadingSymbol: leadingSymbol,
-    //   thousandSeparator: thousandSeparator,
-    //   useSymbolPadding: useSymbolPadding,
-    //   trailingSymbol: trailingSymbol,
-    // );
-    // // print('FORMATTED VALUE IS $formatted');
-    // return formatted;
   }
 
   void _processCallback(String value) {
@@ -595,6 +619,34 @@ String _swapCommasAndPeriods(String input) {
   temp = temp.replaceAll('.', 'PERIOD').replaceAll(',', 'COMMA');
   temp = temp.replaceAll('PERIOD', ',').replaceAll('COMMA', '.');
   return temp;
+}
+
+
+/// in case spaces are used as thousands separators 
+/// they must be replaced with commas here to simplify parsing
+String _replaceSpacesWithCommas(String value) {
+  if (value.length < 2) return value;
+  var presplit = value.split('');
+  var stringBuffer = StringBuffer();
+  for (var i = 0; i < presplit.length; i++) {
+    var char = presplit[i];
+    if (char == ' ') {
+      /// we only need to allow spaces as padding
+      /// before and after currency symbol
+      if (i != 1 && i != presplit.length -2) {
+        stringBuffer.write(',');
+      }
+      else {
+        stringBuffer.write(char);
+      }
+    }
+    else {
+      stringBuffer.write(char);
+    }
+  }
+  value = stringBuffer.toString();
+  // print('VALL $value');
+  return value;
 }
 
 String _getRoundedValue(String numericString, double roundTo) {
