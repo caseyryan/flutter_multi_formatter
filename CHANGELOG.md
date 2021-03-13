@@ -1,3 +1,7 @@
+## [2.0.0]
+- Starting from this version the package is Null-safe. This means it requires 
+a minimum version of Flutter 2.0.0 and Dart 2.12.0
+- Fixed a bug with space as thousands separators
 ## [1.3.6]
 Unfocuser now has a parameter called minScrollDistance
 it allows you to not trigger Unfocuser on scroll. Any value greater 
