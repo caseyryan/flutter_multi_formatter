@@ -192,15 +192,16 @@ class _CardSystemDatas {
     if (subscringLength < 1) return null;
     var systemCode = cardNumber.substring(0, subscringLength);
 
-    var rawData = _data.firstWhere(
-        (Map<String, dynamic> data) {
-          var numericValue = toNumericString(data['systemCode']);
-          var numDigits = data['numDigits'];
-          return numericValue == systemCode &&
-              numDigits >= cardNumber.length &&
-              numDigits <= _maxDigitsInCard;
-        } as bool Function(Map<String, dynamic>?),
-        orElse: () => null);
+    var rawData = _data.firstWhere((Map<String, dynamic>? data) {
+      if (data != null) {
+        var numericValue = toNumericString(data['systemCode']);
+        var numDigits = data['numDigits'];
+        return numericValue == systemCode &&
+            numDigits >= cardNumber.length &&
+            numDigits <= _maxDigitsInCard;
+      }
+      return false;
+    }, orElse: () => null);
     if (rawData != null) {
       return CardSystemData.fromMap(rawData);
     }
