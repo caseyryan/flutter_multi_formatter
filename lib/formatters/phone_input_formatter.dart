@@ -863,13 +863,13 @@ class _PhoneCodes {
       'country': 'France',
       'phoneCode': '33',
       'countryCode': 'FR',
-      'phoneMask': '+00 00 000 0000',
+      'phoneMask': '+00 0 00 00 00 00',
     },
     {
       'country': 'French Guiana',
       'phoneCode': '594',
       'countryCode': 'GF',
-      'phoneMask': '+000 00 0000 0000',
+      'phoneMask': '+000 000 00 00 00',
     },
     {
       'country': 'French Polynesia',
@@ -935,7 +935,7 @@ class _PhoneCodes {
       'country': 'Guadeloupe',
       'phoneCode': '590',
       'countryCode': 'GP',
-      'phoneMask': '+000 000 000000',
+      'phoneMask': '+000 000 00 00 00',
     },
     {
       'country': 'Guam',
@@ -1163,7 +1163,7 @@ class _PhoneCodes {
       'country': 'Martinique',
       'phoneCode': '596',
       'countryCode': 'MQ',
-      'phoneMask': '+000 000 000 0000',
+      'phoneMask': '+000 000 00 00 00',
     },
     {
       'country': 'Mauritania',
@@ -1181,7 +1181,7 @@ class _PhoneCodes {
       'country': 'Mayotte',
       'phoneCode': '262',
       'countryCode': 'YT',
-      'phoneMask': '+000 000 000000',
+      'phoneMask': '+000 000 00 00 00',
     },
     {
       'country': 'Mexico',
@@ -1775,7 +1775,7 @@ class _PhoneCodes {
       'country': 'Réunion',
       'phoneCode': '262',
       'countryCode': 'RE',
-      'phoneMask': '+000 000 000000',
+      'phoneMask': '+000 000 00 00 00',
     },
     {
       'country': 'Russia',
@@ -1787,7 +1787,7 @@ class _PhoneCodes {
       'country': 'Saint Barthélemy',
       'phoneCode': '590',
       'countryCode': 'BL',
-      'phoneMask': '+000 000 000000',
+      'phoneMask': '+000 000 00 00 00',
     },
     {
       'country': 'Saint Helena, Ascension and Tristan Da Cunha',
@@ -1817,7 +1817,7 @@ class _PhoneCodes {
       'country': 'Saint Pierre and Miquelon',
       'phoneCode': '508',
       'countryCode': 'PM',
-      'phoneMask': '(508) 00 00 00',
+      'phoneMask': '+508 00 00 00',
     },
     {
       'country': 'Saint Vincent and the Grenadines',
