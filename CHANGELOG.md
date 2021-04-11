@@ -1,3 +1,8 @@
+## [2.0.2]
+Updated phone masks for France and oversees territories
+## [2.0.1]
+Fixed a bug when null sefaty version threw an error trying to cast
+bool Function(Map<String, dynamic>)->bool Function(Map<String, dynamic>?)
 ## [2.0.0]
 - Starting from this version the package is Null-safe. This means it requires 
 a minimum version of Flutter 2.0.0 and Dart 2.12.0
