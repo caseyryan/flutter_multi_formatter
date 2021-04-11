@@ -100,6 +100,18 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
   }
 }
 
+addCustomSystemData(
+        {required String system,
+        required String systemCode,
+        required String numberMask,
+        required int numDigits}) =>
+    _CardSystemDatas._add(CardSystemData._init(
+            system: system,
+            systemCode: systemCode,
+            numDigits: numDigits,
+            numberMask: numberMask)
+        .toMap());
+
 /// checks not only for length and characters but also
 /// for card system code code. If it's not found the succession of numbers
 /// will not be marked as a valid card number
@@ -166,6 +178,13 @@ class CardSystemData {
   CardSystemData._init(
       {this.numberMask, this.system, this.systemCode, this.numDigits});
 
+  toMap() => {
+        'system': system,
+        'numberMask': numberMask,
+        'systemCode': systemCode,
+        'numDigits': numDigits
+      };
+
   factory CardSystemData.fromMap(Map value) {
     return CardSystemData._init(
       system: value['system'],
@@ -181,6 +200,8 @@ class CardSystemData {
 }
 
 class _CardSystemDatas {
+  static _add(CardSystemData data) => _CardSystemDatas._data.add(data.toMap());
+
   /// рекурсивно ищет в номере карты код системы, начиная с конца
   /// нужно для того, чтобы даже после setState и обнуления данных карты
   /// снова правильно отформатировать ее номер
