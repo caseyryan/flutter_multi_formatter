@@ -46,12 +46,16 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
   final bool useSeparators;
 
   CardSystemData? _cardSystemData;
-  CreditCardNumberInputFormatter(
-      {this.onCardSystemSelected, this.useSeparators = true});
+  CreditCardNumberInputFormatter({
+    this.onCardSystemSelected,
+    this.useSeparators = true,
+  });
 
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     var isErasing = newValue.text.length < oldValue.text.length;
     if (isErasing) {
       if (newValue.text.isEmpty) {
@@ -67,8 +71,9 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     var endOffset = max(oldValue.text.length - oldValue.selection.end, 0);
     var selectionEnd = maskedValue.length - endOffset;
     return TextEditingValue(
-        selection: TextSelection.collapsed(offset: selectionEnd),
-        text: maskedValue);
+      selection: TextSelection.collapsed(offset: selectionEnd),
+      text: maskedValue,
+    );
   }
 
   /// this is a small dirty hask to be able to remove the first character
@@ -77,7 +82,9 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     _updateCardSystemData(null);
   }
 
-  void _updateCardSystemData(CardSystemData? cardSystemData) {
+  void _updateCardSystemData(
+    CardSystemData? cardSystemData,
+  ) {
     _cardSystemData = cardSystemData;
     if (onCardSystemSelected != null) {
       onCardSystemSelected!(_cardSystemData);
@@ -88,8 +95,9 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     if (numericString.isEmpty) {
       _updateCardSystemData(null);
     } else {
-      var countryData =
-          _CardSystemDatas.getCardSystemDataByNumber(numericString);
+      var countryData = _CardSystemDatas.getCardSystemDataByNumber(
+        numericString,
+      );
       if (countryData != null) {
         _updateCardSystemData(countryData);
       }
@@ -104,7 +112,10 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
 /// checks not only for length and characters but also
 /// for card system code code. If it's not found the succession of numbers
 /// will not be marked as a valid card number
-bool isCardValidNumber(String cardNumber, {bool checkLength = false}) {
+bool isCardValidNumber(
+  String cardNumber, {
+  bool checkLength = false,
+}) {
   cardNumber = toNumericString(cardNumber);
   if (cardNumber.isEmpty) {
     return false;
@@ -126,16 +137,23 @@ String formatAsCardNumber(
   if (!isCardValidNumber(cardNumber)) {
     return cardNumber;
   }
-  cardNumber = toNumericString(cardNumber);
+  cardNumber = toNumericString(
+    cardNumber,
+  );
   var cardSystemData = _CardSystemDatas.getCardSystemDataByNumber(cardNumber)!;
   return _formatByMask(cardNumber, cardSystemData.numberMask!);
 }
 
-CardSystemData? getCardSystemData(String cardNumber) {
+CardSystemData? getCardSystemData(
+  String cardNumber,
+) {
   return _CardSystemDatas.getCardSystemDataByNumber(cardNumber);
 }
 
-String _formatByMask(String text, String mask) {
+String _formatByMask(
+  String text,
+  String mask,
+) {
   var chars = text.split('');
   var result = <String>[];
   var index = 0;
@@ -164,8 +182,12 @@ class CardSystemData {
   final String? numberMask;
   final int? numDigits;
 
-  CardSystemData._init(
-      {this.numberMask, this.system, this.systemCode, this.numDigits});
+  CardSystemData._init({
+    this.numberMask,
+    this.system,
+    this.systemCode,
+    this.numDigits,
+  });
 
   factory CardSystemData.fromMap(Map value) {
     return CardSystemData._init(
