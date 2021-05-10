@@ -1265,7 +1265,11 @@ class _PhoneCodes {
       'country': 'New Zealand',
       'phoneCode': '64',
       'countryCode': 'NZ',
-      'phoneMask': '+00 0 000 0000',
+      'phoneMask': '+00 (0) 000 0000',
+      'altMasks': [
+        '+00 (00) 000 0000',
+        '+00 (000) 000 0000',
+      ],
     },
     {
       'country': 'Nicaragua',
