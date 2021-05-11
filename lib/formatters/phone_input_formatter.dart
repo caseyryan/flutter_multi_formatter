@@ -279,6 +279,7 @@ String? formatAsPhoneNumber(
   String phone, {
   InvalidPhoneAction invalidPhoneAction = InvalidPhoneAction.ShowUnformatted,
   bool allowEndlessPhone = false,
+  String? defaultMask,
 }) {
   if (!isPhoneValid(
     phone,
@@ -286,7 +287,8 @@ String? formatAsPhoneNumber(
   )) {
     switch (invalidPhoneAction) {
       case InvalidPhoneAction.ShowUnformatted:
-        return phone;
+        if (defaultMask == null) return phone;
+        break;
       case InvalidPhoneAction.ReturnNull:
         return null;
       case InvalidPhoneAction.ShowPhoneInvalidString:
@@ -294,14 +296,25 @@ String? formatAsPhoneNumber(
     }
   }
   phone = toNumericString(phone);
-  var countryData = PhoneCodes.getCountryDataByPhone(phone)!;
-  return _formatByMask(
-    phone,
-    countryData.phoneMask!,
-    countryData.altMasks,
-    0,
-    allowEndlessPhone,
-  );
+
+  if (defaultMask == null) {
+    var countryData = PhoneCodes.getCountryDataByPhone(phone)!;
+    return _formatByMask(
+      phone,
+      countryData.phoneMask!,
+      countryData.altMasks,
+      0,
+      allowEndlessPhone,
+    );
+  } else {
+    return _formatByMask(
+      phone,
+      defaultMask,
+      null,
+      0,
+      allowEndlessPhone,
+    );
+  }
 }
 
 String _formatByMask(

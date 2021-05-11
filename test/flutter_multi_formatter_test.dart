@@ -49,4 +49,23 @@ void main() {
         .text;
     expect(formattedNumber, '+1 (444) 4');
   });
+
+  test('unknown number without default mask', () {
+    final inputNumber = '+999444';
+    final withoutDefault = formatAsPhoneNumber(
+      inputNumber,
+      allowEndlessPhone: true,
+    );
+    expect(withoutDefault, inputNumber);
+  });
+
+  test('unknown number with default mask', () {
+    final inputNumber = '+999444';
+    final withDefault = formatAsPhoneNumber(
+      inputNumber,
+      allowEndlessPhone: true,
+      defaultMask: '+00 0000 000 000',
+    );
+    expect(withDefault, '+99 9444');
+  });
 }
