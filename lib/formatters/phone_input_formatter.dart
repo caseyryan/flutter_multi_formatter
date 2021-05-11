@@ -136,7 +136,7 @@ class PhoneInputFormatter extends TextInputFormatter {
     if (numericString.isEmpty) {
       _updateCountryData(null);
     } else {
-      var countryData = _PhoneCodes.getCountryDataByPhone(numericString);
+      var countryData = PhoneCodes.getCountryDataByPhone(numericString);
       if (countryData != null) {
         _updateCountryData(countryData);
       }
@@ -221,7 +221,7 @@ class PhoneInputFormatter extends TextInputFormatter {
   ) {
     assert(countryCode.length == 2);
     countryCode = countryCode.toUpperCase();
-    var countryData = _PhoneCodes._data.firstWhere(
+    var countryData = PhoneCodes._data.firstWhere(
       ((m) => m!['countryCode'] == countryCode),
       orElse: () => null,
     );
@@ -243,7 +243,7 @@ bool isPhoneValid(
   if (phone.isEmpty) {
     return false;
   }
-  var countryData = _PhoneCodes.getCountryDataByPhone(
+  var countryData = PhoneCodes.getCountryDataByPhone(
     phone,
   );
   if (countryData == null) {
@@ -294,7 +294,7 @@ String? formatAsPhoneNumber(
     }
   }
   phone = toNumericString(phone);
-  var countryData = _PhoneCodes.getCountryDataByPhone(phone)!;
+  var countryData = PhoneCodes.getCountryDataByPhone(phone)!;
   return _formatByMask(
     phone,
     countryData.phoneMask!,
@@ -376,7 +376,7 @@ List<PhoneCountryData> getCountryDatasByPhone(String phone) {
     return <PhoneCountryData>[];
   }
   var phoneCode = phone.substring(0, phone.length - 10);
-  return _PhoneCodes.getAllCountryDatasByPhoneCode(phoneCode);
+  return PhoneCodes.getAllCountryDatasByPhoneCode(phoneCode);
 }
 
 class PhoneCountryData {
@@ -424,7 +424,7 @@ class PhoneCountryData {
   }
 }
 
-class _PhoneCodes {
+class PhoneCodes {
   /// рекурсивно ищет в номере телефона код страны, начиная с конца
   /// нужно для того, чтобы даже после setState и обнуления данных страны
   /// снова правильно отформатировать телефон
