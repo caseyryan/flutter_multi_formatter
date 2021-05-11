@@ -68,4 +68,21 @@ void main() {
     );
     expect(withDefault, '+99 9444');
   });
+
+  test('known number and default mask', () {
+    final inputNumber = '+112345';
+    final formatted = '+1 (123) 45';
+    final withDefault = formatAsPhoneNumber(
+      inputNumber,
+      allowEndlessPhone: true,
+      defaultMask: '+00 0000 000 000',
+    );
+    expect(withDefault, formatted);
+
+    final withoutDefault = formatAsPhoneNumber(
+      inputNumber,
+      allowEndlessPhone: true,
+    );
+    expect(withoutDefault, formatted);
+  });
 }

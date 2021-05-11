@@ -296,9 +296,9 @@ String? formatAsPhoneNumber(
     }
   }
   phone = toNumericString(phone);
+  var countryData = PhoneCodes.getCountryDataByPhone(phone);
 
-  if (defaultMask == null) {
-    var countryData = PhoneCodes.getCountryDataByPhone(phone)!;
+  if (countryData != null) {
     return _formatByMask(
       phone,
       countryData.phoneMask!,
@@ -309,7 +309,7 @@ String? formatAsPhoneNumber(
   } else {
     return _formatByMask(
       phone,
-      defaultMask,
+      defaultMask!,
       null,
       0,
       allowEndlessPhone,
