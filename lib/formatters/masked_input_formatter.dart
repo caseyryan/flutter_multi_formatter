@@ -46,18 +46,23 @@ class MaskedInputFormatter extends TextInputFormatter {
   /// a mask like ###-### will also match 123-034 but a mask like
   /// 000-000 will only match digits and won't allow a string like Gtt-RBB
   ///
-  /// # will match literally any character unless
+  /// will match literally any character unless
   /// you supply an [anyCharMatcher] parameter with a RegExp
   /// to constrain its values. e.g. RegExp(r'[a-z]+') will make #
   /// match only lowercase latin characters and everything else will be
   /// ignored
-  MaskedInputFormatter(this.mask, {this.anyCharMatcher}) : assert(mask != null);
+  MaskedInputFormatter(
+    this.mask, {
+    this.anyCharMatcher,
+  }) : assert(mask != null);
 
   bool get isFilled => mask!.length == _lastValue.length;
 
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     final bool isErasing = newValue.text.length < oldValue.text.length;
 
     if (isErasing || _lastValue == newValue.text) {
@@ -65,13 +70,17 @@ class MaskedInputFormatter extends TextInputFormatter {
       return newValue;
     }
 
-    final String masked = applyMask(newValue.text);
+    final String masked = applyMask(
+      newValue.text,
+    );
     final end = newValue.text.length - newValue.selection.end;
 
     _lastValue = masked;
     return TextEditingValue(
       text: masked,
-      selection: TextSelection.collapsed(offset: masked.length - end),
+      selection: TextSelection.collapsed(
+        offset: masked.length - end,
+      ),
     );
   }
 
@@ -86,26 +95,30 @@ class MaskedInputFormatter extends TextInputFormatter {
     final List<String> chars = text.split('');
     final List<String> result = <String>[];
 
-    final int maxIndex = min(mask!.length, chars.length);
+    final int maxIndex = min(
+      mask!.length,
+      chars.length,
+    );
 
     int index = 0;
     for (int i = 0; i < maxIndex; i++) {
       final String currentChar = chars[index];
-
-      if (currentChar == mask![i]) {
+      final maskChar = mask![i];
+      if (currentChar == maskChar) {
         result.add(currentChar);
         index++;
         continue;
       }
 
-      if (mask![i] == _anyCharMask) {
+
+      if (maskChar == _anyCharMask) {
         if (_isMatchingRestrictor(currentChar)) {
           result.add(currentChar);
           index++;
         } else {
           break;
         }
-      } else if (mask![i] == _onlyDigitMask) {
+      } else if (maskChar == _onlyDigitMask) {
         if (isDigit(currentChar)) {
           result.add(currentChar);
           index++;
@@ -113,8 +126,10 @@ class MaskedInputFormatter extends TextInputFormatter {
           break;
         }
       } else {
-        result.add(mask![i]);
-        result.add(currentChar);
+        result.add(maskChar);
+        if (_isMatchingRestrictor(currentChar)) {
+          result.add(currentChar);
+        }
         index++;
         continue;
       }

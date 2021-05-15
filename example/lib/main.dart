@@ -3,6 +3,7 @@ import 'package:example/pages/money_format_page.dart';
 import 'package:example/pages/phone_format_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,6 +35,21 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
     );
+  }
+
+  @override
+  void initState() {
+    
+    super.initState();
+    PhoneInputFormatter.addAlternativePhoneMasks(
+      countryCode: 'NZ',
+      alternativeMasks: [
+        '+00 (0) 000 0000',
+        '+00 (00) 000 0000',
+        '+00 (000) 000 0000',
+      ],
+    );
+    print('ADDING');
   }
 
   @override

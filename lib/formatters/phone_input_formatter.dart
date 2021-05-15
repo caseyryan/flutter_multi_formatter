@@ -80,9 +80,8 @@ class PhoneInputFormatter extends TextInputFormatter {
     if (onlyNumbers.length == 2) {
       /// хак специально для России, со вводом номера с восьмерки
       /// меняем ее на 7
-      var isRussianWrongNumber =
-          onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
-              onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
+      var isRussianWrongNumber = onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
+          onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
       if (isRussianWrongNumber) {
         onlyNumbers = '7${onlyNumbers[1]}';
         _countryData = null;
@@ -172,21 +171,19 @@ class PhoneInputFormatter extends TextInputFormatter {
     final countryData = _findCountryDataByCountryCode(countryCode);
     String currentMask = countryData['phoneMask'];
     alternativeMasks.sort((a, b) => a.length.compareTo(b.length));
-    if (alternativeMasks.first.length < currentMask.length) {
-      countryData['phoneMask'] = alternativeMasks.first;
-      alternativeMasks.removeAt(0);
-      if (!alternativeMasks.contains(currentMask)) {
-        alternativeMasks.add(currentMask);
-      }
-      alternativeMasks.sort((a, b) => a.length.compareTo(b.length));
-      if (!mergeWithExisting || countryData['altMasks'] == null) {
-        countryData['altMasks'] = alternativeMasks;
-      } else {
-        final existingList = countryData['altMasks'];
-        alternativeMasks.forEach((m) {
-          existingList.add(m);
-        });
-      }
+    countryData['phoneMask'] = alternativeMasks.first;
+    alternativeMasks.removeAt(0);
+    if (!alternativeMasks.contains(currentMask)) {
+      alternativeMasks.add(currentMask);
+    }
+    alternativeMasks.sort((a, b) => a.length.compareTo(b.length));
+    if (!mergeWithExisting || countryData['altMasks'] == null) {
+      countryData['altMasks'] = alternativeMasks;
+    } else {
+      final existingList = countryData['altMasks'];
+      alternativeMasks.forEach((m) {
+        existingList.add(m);
+      });
     }
     print('Alternative masks for country "${countryData['country']}"' +
         ' is now ${countryData['altMasks']}');

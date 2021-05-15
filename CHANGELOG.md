@@ -1,11 +1,15 @@
+## [2.1.0]
+Fixed a bug with adding custom phone masks mentioned in this issue https://github.com/caseyryan/flutter_multi_formatter/issues/40
+PhoneCodes class is now public and can be accessed to get different data
+Removed deprecated RestrictingInputFormatters in favor of a Lutter's build in FilteringTextInputFormatter
 ## [2.0.3]
 Added a support for Russian national payment system "МИР" (it's read as MEER, and literally means "The World" but it also means "Peace", this is just for those who are curious :) )
 the number of the card is formatted just like Visa or Mastercard but 
-it has a differen system code
+it has a different system code
 ## [2.0.2]
 Updated phone masks for France and oversees territories
 ## [2.0.1]
-Fixed a bug when null sefaty version threw an error trying to cast
+Fixed a bug when null sefety version threw an error trying to cast
 bool Function(Map<String, dynamic>)->bool Function(Map<String, dynamic>?)
 ## [2.0.0]
 - Starting from this version the package is Null-safe. This means it requires 

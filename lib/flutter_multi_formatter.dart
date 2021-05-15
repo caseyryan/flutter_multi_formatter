@@ -36,5 +36,4 @@ export 'formatters/money_input_enums.dart';
 export 'formatters/money_input_formatter.dart';
 export 'formatters/phone_input_enums.dart';
 export 'formatters/phone_input_formatter.dart';
-export 'formatters/restricting_formatter.dart';
 export 'utils/unfocuser.dart';

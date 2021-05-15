@@ -34,39 +34,77 @@ class _CreditCardFormatPageState extends State<CreditCardFormatPage> {
                   _getText(
                       'This form allows you to easily type a credit / debit card data'),
                   SizedBox(height: 20.0),
+                  _getText('Any char'),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: '#### #### #### ####',
+                      hintStyle: TextStyle(
+                        color: Colors.black.withOpacity(.3),
+                      ),
+                      errorStyle: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                    keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      MaskedInputFormatter(
+                        "#### #### #### ####",
+                        anyCharMatcher: RegExp(r'[a-z]+'),
+                      ),
+                    ],
+                  ),
                   _getText('Card number'),
                   TextFormField(
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'CARD NUMBER',
-                        hintStyle:
-                            TextStyle(color: Colors.black.withOpacity(.3)),
-                        errorStyle: TextStyle(color: Colors.red)),
+                      border: OutlineInputBorder(),
+                      hintText: 'CARD NUMBER',
+                      hintStyle: TextStyle(
+                        color: Colors.black.withOpacity(.3),
+                      ),
+                      errorStyle: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
                     keyboardType: TextInputType.number,
-                    inputFormatters: [CreditCardNumberInputFormatter()],
+                    inputFormatters: [
+                      CreditCardNumberInputFormatter(),
+                    ],
                   ),
                   _getText(
                       'Valid through\n (this formatter won\'t let you type the "month" part value larger than 12)'),
                   TextFormField(
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: '00/00',
-                        hintStyle:
-                            TextStyle(color: Colors.black.withOpacity(.3)),
-                        errorStyle: TextStyle(color: Colors.red)),
+                      border: OutlineInputBorder(),
+                      hintText: '00/00',
+                      hintStyle: TextStyle(
+                        color: Colors.black.withOpacity(.3),
+                      ),
+                      errorStyle: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
                     keyboardType: TextInputType.number,
-                    inputFormatters: [CreditCardExpirationDateFormatter()],
+                    inputFormatters: [
+                      CreditCardExpirationDateFormatter(),
+                    ],
                   ),
                   _getText('CVV code'),
                   TextFormField(
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: '000',
-                        hintStyle:
-                            TextStyle(color: Colors.black.withOpacity(.3)),
-                        errorStyle: TextStyle(color: Colors.red)),
+                      border: OutlineInputBorder(),
+                      hintText: '000',
+                      hintStyle: TextStyle(
+                        color: Colors.black.withOpacity(.3),
+                      ),
+                      errorStyle: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
                     keyboardType: TextInputType.number,
-                    inputFormatters: [CreditCardCvcInputFormatter()],
+                    inputFormatters: [
+                      CreditCardCvcInputFormatter(),
+                    ],
                   ),
                 ],
               ),
