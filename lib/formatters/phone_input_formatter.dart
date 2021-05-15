@@ -80,8 +80,9 @@ class PhoneInputFormatter extends TextInputFormatter {
     if (onlyNumbers.length == 2) {
       /// хак специально для России, со вводом номера с восьмерки
       /// меняем ее на 7
-      var isRussianWrongNumber = onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
-          onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
+      var isRussianWrongNumber =
+          onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
+              onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
       if (isRussianWrongNumber) {
         onlyNumbers = '7${onlyNumbers[1]}';
         _countryData = null;

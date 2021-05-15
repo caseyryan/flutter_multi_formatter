@@ -110,7 +110,6 @@ class MaskedInputFormatter extends TextInputFormatter {
         continue;
       }
 
-
       if (maskChar == _anyCharMask) {
         if (_isMatchingRestrictor(currentChar)) {
           result.add(currentChar);

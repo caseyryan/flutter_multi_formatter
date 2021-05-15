@@ -2,6 +2,7 @@
 Fixed a bug with adding custom phone masks mentioned in this issue https://github.com/caseyryan/flutter_multi_formatter/issues/40
 PhoneCodes class is now public and can be accessed to get different data
 Removed deprecated RestrictingInputFormatters in favor of a Lutter's build in FilteringTextInputFormatter
+Fix a bug with any character input entioned here https://github.com/caseyryan/flutter_multi_formatter/issues/38
 ## [2.0.3]
 Added a support for Russian national payment system "МИР" (it's read as MEER, and literally means "The World" but it also means "Peace", this is just for those who are curious :) )
 the number of the card is formatted just like Visa or Mastercard but 
