@@ -24,8 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import 'dart:math';
-
 import 'package:flutter/services.dart';
 
 import 'formatter_utils.dart';
@@ -95,32 +93,23 @@ class MaskedInputFormatter extends TextInputFormatter {
     final List<String> chars = text.split('');
     final List<String> result = <String>[];
 
-    final int maxIndex = min(
-      mask!.length,
-      chars.length,
-    );
-
-    int index = 0;
-    for (int i = 0; i < maxIndex; i++) {
-      final String currentChar = chars[index];
-      final maskChar = mask![i];
+    int maskShift = 0;
+    for (int i = 0; i < mask!.length; i++) {
+      final int maskIndex = i + maskShift;
+      if (chars.length <= i || mask!.length <= maskIndex) break;
+      final String currentChar = chars[i];
+      final maskChar = mask![maskIndex];
       if (currentChar == maskChar) {
         result.add(currentChar);
-        index++;
-        continue;
-      }
-
-      if (maskChar == _anyCharMask) {
+      } else if (maskChar == _anyCharMask) {
         if (_isMatchingRestrictor(currentChar)) {
           result.add(currentChar);
-          index++;
         } else {
           break;
         }
       } else if (maskChar == _onlyDigitMask) {
         if (isDigit(currentChar)) {
           result.add(currentChar);
-          index++;
         } else {
           break;
         }
@@ -128,9 +117,8 @@ class MaskedInputFormatter extends TextInputFormatter {
         result.add(maskChar);
         if (_isMatchingRestrictor(currentChar)) {
           result.add(currentChar);
+          maskShift++;
         }
-        index++;
-        continue;
       }
     }
 
