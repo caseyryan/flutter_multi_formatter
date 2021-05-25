@@ -1047,7 +1047,7 @@ class _PhoneCodes {
     },
     {
       'country': 'Kazakhstan',
-      'phoneCode': '77',
+      'phoneCode': '7',
       'countryCode': 'KZ',
       'phoneMask': '+0 (000) 000 0000',
     },
