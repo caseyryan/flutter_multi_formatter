@@ -99,7 +99,8 @@ class _MaskedFormatterPageState extends State<MaskedFormatterPage> {
                   TextButton(
                     onPressed: () {
                       setState(() {
-                        _result = MaskedInputFormatter('000-000-000 00').applyMask(
+                        _result =
+                            MaskedInputFormatter('000-000-000 00').applyMask(
                           '12345678900',
                         );
                       });

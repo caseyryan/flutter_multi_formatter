@@ -81,8 +81,9 @@ class PhoneInputFormatter extends TextInputFormatter {
     if (onlyNumbers.length == 2) {
       /// хак специально для России, со вводом номера с восьмерки
       /// меняем ее на 7
-      var isRussianWrongNumber = onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
-          onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
+      var isRussianWrongNumber =
+          onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
+              onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
       if (isRussianWrongNumber) {
         onlyNumbers = '7${onlyNumbers[1]}';
         _countryData = null;
@@ -391,9 +392,10 @@ List<PhoneCountryData> getCountryDatasByPhone(String phone) {
 
 class PhoneCountryData {
   final String? country;
+
   /// this field is used to store real phone code
   /// for most countries it will be the same as internalPhoneCode
-  /// but there are cases when system need another internal code 
+  /// but there are cases when system need another internal code
   /// to tell apart similar phone code e.g. Russia and Kazakhstan
   /// Kazakhstan has the same code as Russia +7 but internal code is 77
   /// because most phones there start with 77 while in Russia it's 79
@@ -426,9 +428,10 @@ class PhoneCountryData {
   factory PhoneCountryData.fromMap(Map value) {
     final countryData = PhoneCountryData._init(
       country: value['country'],
-      /// not all countryDatas need to separate phoneCode and 
+
+      /// not all countryDatas need to separate phoneCode and
       /// internalPhoneCode. In most cases they are the same
-      /// so we only need to check if the field is present and set 
+      /// so we only need to check if the field is present and set
       /// the dafult one if not
       phoneCode: value['phoneCode'] ?? value['internalPhoneCode'],
       countryCode: value['countryCode'],
