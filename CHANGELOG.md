@@ -1,3 +1,6 @@
+## [2.1.2]
+Changed Kazakhstan phone code to 7 (which is correct)
+Fixed MaskedInputFormatter applyMask (merged this pull request https://github.com/caseyryan/flutter_multi_formatter/pull/46)
 ## [2.1.0]
 Fixed a bug with adding custom phone masks mentioned in this issue https://github.com/caseyryan/flutter_multi_formatter/issues/40
 PhoneCodes class is now public and can be accessed to get different data
