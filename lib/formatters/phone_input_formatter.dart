@@ -732,7 +732,7 @@ class PhoneCodes {
       'country': 'China',
       'internalPhoneCode': '86',
       'countryCode': 'CN',
-      'phoneMask': '+00 000 000 0000',
+      'phoneMask': '+00 000 0000 0000',
     },
     {
       'country': 'Christmas Island',

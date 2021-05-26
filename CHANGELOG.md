@@ -1,3 +1,5 @@
+## [2.1.3]
+Fixed Chinese phone mask
 ## [2.1.2]
 Changed Kazakhstan phone code to 7 (which is correct)
 Fixed MaskedInputFormatter applyMask (merged this pull request https://github.com/caseyryan/flutter_multi_formatter/pull/46)
