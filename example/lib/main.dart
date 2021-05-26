@@ -1,4 +1,5 @@
 import 'package:example/pages/credit_card_format_page.dart';
+import 'package:example/pages/masked_formatter_page.dart';
 import 'package:example/pages/money_format_page.dart';
 import 'package:example/pages/phone_format_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -112,6 +113,34 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Center(
                           child: Text(
                             'Credit Card Formatter Demo',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 50.0,
+              ),
+              Container(
+                height: 50,
+                // ignore: deprecated_member_use
+                child: RaisedButton(
+                  textColor: Colors.white,
+                  color: Colors.pink,
+                  onPressed: () {
+                    openPage(
+                      MaskedFormatterPage(),
+                    );
+                  },
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.masks_outlined),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'Masked input formatter Demo',
                           ),
                         ),
                       ),
