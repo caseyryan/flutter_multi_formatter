@@ -2,10 +2,10 @@
 
 The package contains these formatters
 
-phone formatter
-credit / debit card formatter
-money formatter
-masked formatter
+phone formatter,
+credit / debit card formatter,
+money formatter,
+masked formatter,
 
 https://pub.dev/packages/flutter_multi_formatter
 
