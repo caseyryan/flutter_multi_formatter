@@ -1,14 +1,12 @@
 # flutter_multi_formatter
 
+The package contains these formatters
 
-# VERY IMPORTANT NOTE! 
-As of version 2.0.0 the package has been migrated to null-safety
-In case your project does not support nullsafety (i.e. not moved to Flutter ^2.0.0 and Dart ^2.12.0) consider fixing plugin version to 1.3.6 in your pubspec.yaml
-Version 1.3.6 was the last version without null-safety and has now been discontinued
+phone formatter
+credit / debit card formatter
+money formatter
+masked formatter
 
-
-This package contains formatters for international phone numbers, credit / debit cards, currencies and 
-a masked formatter
 https://pub.dev/packages/flutter_multi_formatter
 
 Formatting a phone
