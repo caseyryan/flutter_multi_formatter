@@ -1,3 +1,5 @@
+## [2.1.4]
+More search friendly description
 ## [2.1.3]
 Fixed Chinese phone mask
 ## [2.1.2]
