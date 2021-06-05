@@ -1,3 +1,11 @@
+## [2.2.0]
+BUG FIXES in MoneyInputFormatter
+Fixed a bug with ThousandSeparator.None described here 
+https://github.com/caseyryan/flutter_multi_formatter/issues/50
+Fixed a bug with wrong selection after several spaces have been 
+added as thousand separators. The caret might have gone after the mantissa 
+Fixed a bug that allowed to enter somthing like $02,500.00 where leading zero 
+must not have beed allowed
 ## [2.1.4]
 More search friendly description
 ## [2.1.3]

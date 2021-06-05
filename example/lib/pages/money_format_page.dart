@@ -56,6 +56,30 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                     )
                   ],
                 ),
+                _getText('Money without a thousand separator'),
+                TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter a numeric value',
+                    hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(
+                        .3,
+                      ),
+                    ),
+                    errorStyle: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    MoneyInputFormatter(
+                      leadingSymbol: MoneySymbols.DOLLAR_SIGN,
+                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
+                      // thousandSeparator: ThousandSeparator.None,
+                      useSymbolPadding: true,
+                    )
+                  ],
+                ),
                 _getText('This input adds a EUR sign at the end'),
                 TextFormField(
                   decoration: InputDecoration(
@@ -119,8 +143,9 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     MoneyInputFormatter(
-                        trailingSymbol: MoneySymbols.EURO_SIGN,
-                        useSymbolPadding: true)
+                      trailingSymbol: MoneySymbols.EURO_SIGN,
+                      useSymbolPadding: true,
+                    )
                   ],
                 ),
                 _getText(
@@ -146,8 +171,7 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                     MoneyInputFormatter(
                       leadingSymbol: MoneySymbols.DOLLAR_SIGN,
                       useSymbolPadding: true,
-                      thousandSeparator:
-                          ThousandSeparator.SpaceAndPeriodMantissa,
+                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
                       // ThousandSeparator.Comma,
                     )
                   ],

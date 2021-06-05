@@ -48,14 +48,7 @@ class MoneySymbols {
 }
 
 class MoneyInputFormatter extends TextInputFormatter {
-  @Deprecated('use MoneySymbols.DOLLAR_SIGN instead')
-  static const String DOLLAR_SIGN = '\$';
-  @Deprecated('use MoneySymbols.EURO_SIGN instead')
-  static const String EURO_SIGN = '€';
-  @Deprecated('use MoneySymbols.POUND_SIGN instead')
-  static const String POUND_SIGN = '£';
-  @Deprecated('use MoneySymbols.YEN_SIGN instead')
-  static const String YEN_SIGN = '￥';
+  static final RegExp _wrongLeadingZeroMatcher = RegExp(r'^0\d{1}');
 
   final ThousandSeparator thousandSeparator;
   final int mantissaLength;
@@ -91,14 +84,34 @@ class MoneyInputFormatter extends TextInputFormatter {
     this.maxTextLength,
   });
 
+  /// [textEditingValue] is used to change
+  /// selection in case there is a wrong leading zero
+  String? _removeWrongLeadingZero(
+    String value,
+    TextEditingValue textEditingValue,
+  ) {
+    var tempValue = value;
+    final leadingTotalLength = _leadingLength + _paddingLength;
+    if (leadingTotalLength != 0 && tempValue.length >= leadingTotalLength) {
+      final curLeading = tempValue.substring(0, leadingTotalLength);
+      tempValue = tempValue.substring(leadingTotalLength);
+      final match = _wrongLeadingZeroMatcher.matchAsPrefix(tempValue);
+      if (match != null) {
+        /// The very process of removing the leading zero
+        tempValue = tempValue.substring(1, tempValue.length);
+        return '$curLeading$tempValue';
+      }
+    }
+
+    return null;
+  }
+
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    int leadingLength = leadingSymbol.length;
-    int trailingLength = trailingSymbol.length;
-    if (leadingLength > 0 && trailingLength > 0) {
+    if (_leadingLength > 0 && _trailingLength > 0) {
       throw 'You cannot use trailing an leading symbols at the same time';
     }
     var newText = newValue.text;
@@ -116,6 +129,19 @@ class MoneyInputFormatter extends TextInputFormatter {
 
     newText = _stripRepeatingSeparators(newText);
     oldText = _stripRepeatingSeparators(oldText);
+
+    /// If a value starts with something like 02,000.50$
+    /// the zero, obviously, must be removed
+    int numZeroesRemovedAtStringStart = 0;
+    var newRemoveZeroResult = _removeWrongLeadingZero(
+      newText,
+      newValue,
+    );
+    if (newRemoveZeroResult != null) {
+      newText = newRemoveZeroResult;
+      numZeroesRemovedAtStringStart = 1;
+    }
+
     var usesCommaForMantissa = _usesCommasForMantissa();
     if (usesCommaForMantissa) {
       newText = _swapCommasAndPeriods(newText);
@@ -128,8 +154,16 @@ class MoneyInputFormatter extends TextInputFormatter {
       /// if spaces are used as thousand separators
       /// they must be replaced with commas here
       /// this is used to simplify value processing further
-      newText = _replaceSpacesWithCommas(newText);
-      oldText = _replaceSpacesWithCommas(oldText);
+      newText = _replaceSpacesByCommas(
+        newText,
+        leadingLength: _leadingLength,
+        trailingLength: _trailingLength,
+      );
+      oldText = _replaceSpacesByCommas(
+        oldText,
+        leadingLength: _leadingLength,
+        trailingLength: _trailingLength,
+      );
       oldValue = oldValue.copyWith(text: oldText);
       newValue = newValue.copyWith(text: newText);
     }
@@ -146,9 +180,9 @@ class MoneyInputFormatter extends TextInputFormatter {
     var leadingZeroWithoutDot = '$leadingSymbol$mantissaSymbol';
 
     if (isErasing) {
-      if (newValue.selection.end < leadingLength) {
+      if (newValue.selection.end < _leadingLength) {
         selection = TextSelection.collapsed(
-          offset: leadingLength,
+          offset: _leadingLength,
         );
         return TextEditingValue(
           selection: selection,
@@ -174,15 +208,15 @@ class MoneyInputFormatter extends TextInputFormatter {
       }
 
       if (oldValue.text.length < 1 && newValue.text.length != 1) {
-        if (leadingLength < 1) {
+        if (_leadingLength < 1) {
           return newValue;
         }
       }
     }
 
-    if (newText.startsWith(leadingZeroWithoutDot)) {
-      newText = newText.replaceFirst(leadingZeroWithoutDot, leadingZeroWithDot);
-    }
+    // if (newText.startsWith(leadingZeroWithoutDot)) {
+    //   newText = newText.replaceFirst(leadingZeroWithoutDot, leadingZeroWithDot);
+    // }
     _processCallback(newText);
 
     if (isErasing) {
@@ -231,19 +265,29 @@ class MoneyInputFormatter extends TextInputFormatter {
         newText,
         ',',
       );
+      if (thousandSeparator == ThousandSeparator.None) {
+        /// in case the separator is None it will lead to the wrong
+        /// caret placement. Maybe this is not the best
+        /// solution to insert this code here, it's more like a dirty hack
+        /// but I haven't had time enough to think on some more sophisticated
+        /// architectural approach :D
+        /// FIXME: find some better solution.. sometime in the future, in a million years, maybe :D
+        numSeparatorsAfter = 0;
+      }
+
       var selectionOffset = numSeparatorsAfter - numSeparatorsBefore;
       int offset = selection.extentOffset + selectionOffset;
-      if (leadingLength > 0) {
-        leadingLength = leadingSymbol.length;
-        if (offset < leadingLength) {
-          offset += leadingLength;
+      if (_leadingLength > 0) {
+        // _leadingLength = leadingSymbol.length;
+        if (offset < _leadingLength) {
+          offset += _leadingLength;
         }
       }
       selection = TextSelection.collapsed(
         offset: offset,
       );
 
-      if (leadingLength > 0) {
+      if (_leadingLength > 0) {
         /// this code removes odd zeroes after a leading symbol
         /// do NOT remove this code
         if (newText.contains(leadingZeroWithDot)) {
@@ -252,8 +296,8 @@ class MoneyInputFormatter extends TextInputFormatter {
             leadingZeroWithoutDot,
           );
           offset -= 1;
-          if (offset < leadingLength) {
-            offset = leadingLength;
+          if (offset < _leadingLength) {
+            offset = _leadingLength;
           }
           selection = TextSelection.collapsed(
             offset: offset,
@@ -269,6 +313,7 @@ class MoneyInputFormatter extends TextInputFormatter {
     }
 
     /// stop isErasing
+
     bool oldStartsWithLeading = leadingSymbol.isNotEmpty &&
         oldValue.text.startsWith(
           leadingSymbol,
@@ -279,9 +324,8 @@ class MoneyInputFormatter extends TextInputFormatter {
     /// the number is different add this number to the selection offset
     var oldSelectionEnd = oldValue.selection.end;
     TextEditingValue value = oldSelectionEnd > -1 ? oldValue : newValue;
-    String oldSubstrBeforeSelection = oldSelectionEnd > -1
-        ? value.text.substring(0, value.selection.end)
-        : '';
+    String oldSubstrBeforeSelection =
+        oldSelectionEnd > -1 ? value.text.substring(0, value.selection.end) : '';
     int numThousandSeparatorsInOldSub = _countSymbolsInString(
       oldSubstrBeforeSelection,
       ',',
@@ -299,7 +343,11 @@ class MoneyInputFormatter extends TextInputFormatter {
       trailingSymbol: trailingSymbol,
       useSymbolPadding: useSymbolPadding,
     );
-    print(formattedValue);
+
+    /// this is the correctly formatted value
+    /// with commas as thousand separators like $1,500.00. The separator
+    /// replacements may occure below
+    // print(formattedValue);
 
     String newSubstrBeforeSelection = oldSelectionEnd > -1
         ? formattedValue.substring(
@@ -315,6 +363,13 @@ class MoneyInputFormatter extends TextInputFormatter {
     int numAddedSeparators =
         numThousandSeparatorsInNewSub - numThousandSeparatorsInOldSub;
 
+    if (thousandSeparator == ThousandSeparator.None) {
+      /// FIXME: dirty hack. I will probably find a better solution.
+      /// I really want to believe this :-)
+      numThousandSeparatorsInNewSub = 0;
+      numAddedSeparators = 0;
+    }
+
     bool newStartsWithLeading = leadingSymbol.isNotEmpty &&
         formattedValue.startsWith(
           leadingSymbol,
@@ -329,9 +384,13 @@ class MoneyInputFormatter extends TextInputFormatter {
 
     int wholePartSubStart = 0;
     if (addedLeading) {
-      wholePartSubStart = leadingSymbol.length;
-      selectionIndex += leadingSymbol.length;
+      wholePartSubStart = _leadingLength;
+      selectionIndex += _leadingLength;
     }
+    /// The rare case when a string starts with 0 and no
+    /// mantissa separator after
+    selectionIndex -= numZeroesRemovedAtStringStart;
+
     var mantissaIndex = formattedValue.indexOf(mantissaSymbol);
     if (mantissaIndex > wholePartSubStart) {
       var wholePartSubstring = formattedValue.substring(
@@ -339,8 +398,7 @@ class MoneyInputFormatter extends TextInputFormatter {
         mantissaIndex,
       );
       if (selectionIndex < mantissaIndex) {
-        if (wholePartSubstring == '0' ||
-            wholePartSubstring == '${leadingSymbol}0') {
+        if (wholePartSubstring == '0' || wholePartSubstring == '${leadingSymbol}0') {
           /// if the whole part contains 0 only, then we need
           /// to bring the selection after the
           /// fractional part right away
@@ -353,13 +411,15 @@ class MoneyInputFormatter extends TextInputFormatter {
       /// to skip leading space right after a currency symbol
       selectionIndex += 1;
     }
-    var selectionEnd = min(
-      selectionIndex,
-      formattedValue.length,
-    );
+
     var preparedText = _prepareDotsAndCommas(
       formattedValue,
     );
+    var selectionEnd = min(
+      selectionIndex,
+      preparedText.length,
+    );
+
     return TextEditingValue(
       selection: TextSelection.collapsed(
         offset: selectionEnd,
@@ -369,10 +429,20 @@ class MoneyInputFormatter extends TextInputFormatter {
   }
 
   bool isZero(String text) {
-    var numeriString = toNumericString(text, allowPeriod: true);
+    var numeriString = toNumericString(
+      text,
+      allowPeriod: true,
+    );
     var value = double.tryParse(numeriString) ?? 0.0;
     return value == 0.0;
   }
+
+  int get _paddingLength {
+    return useSymbolPadding ? 1 : 0;
+  }
+
+  int get _leadingLength => leadingSymbol.length;
+  int get _trailingLength => trailingSymbol.length;
 
   String _stripRepeatingSeparators(String input) {
     return input
@@ -405,6 +475,8 @@ class MoneyInputFormatter extends TextInputFormatter {
       value = value.replaceAll('.', ' ');
     } else if (thousandSeparator == ThousandSeparator.SpaceAndPeriodMantissa) {
       value = value.replaceAll(',', ' ');
+    } else if (thousandSeparator == ThousandSeparator.None) {
+      value = value.replaceAll(',', '');
     }
     return value;
   }
@@ -485,8 +557,7 @@ String toCurrencyString(
     if (isNegative) {
       var containsMinus = parsed.toString().contains('-');
       if (!containsMinus) {
-        value =
-            '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
+        value = '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
       } else {
         value = '${parsed.toStringAsFixed(mantissaLength)}';
       }
@@ -551,9 +622,8 @@ String toCurrencyString(
     }
   }
 
-  mantissa = noShortening
-      ? _postProcessMantissa(mantissaList.join(''), mantissaLength)
-      : '';
+  mantissa =
+      noShortening ? _postProcessMantissa(mantissaList.join(''), mantissaLength) : '';
   var maxIndex = split.length - 1;
   if (mantissaSeparatorIndex > 0 && noShortening) {
     maxIndex = mantissaSeparatorIndex - 1;
@@ -571,9 +641,7 @@ String toCurrencyString(
       } else {
         if (value.length >= minShorteningLength) {
           if (!isDigit(split[i])) digitCounter = 1;
-          if (digitCounter % 3 == 1 &&
-              digitCounter > 1 &&
-              i > (isNegative ? 1 : 0)) {
+          if (digitCounter % 3 == 1 && digitCounter > 1 && i > (isNegative ? 1 : 0)) {
             list.add(tSeparator);
           }
         }
@@ -622,7 +690,11 @@ String _swapCommasAndPeriods(String input) {
 
 /// in case spaces are used as thousands separators
 /// they must be replaced with commas here to simplify parsing
-String _replaceSpacesWithCommas(String value) {
+String _replaceSpacesByCommas(
+  String value, {
+  required int leadingLength,
+  required int trailingLength,
+}) {
   if (value.length < 2) return value;
   var presplit = value.split('');
   var stringBuffer = StringBuffer();
@@ -631,7 +703,10 @@ String _replaceSpacesWithCommas(String value) {
     if (char == ' ') {
       /// we only need to allow spaces as padding
       /// before and after currency symbol
-      if (i != 1 && i != presplit.length - 2) {
+      /// this is used for the cases when we use spaces as thousand separators
+      final minAllowedSpacePos = leadingLength;
+      final maxAllowSpacePos = presplit.length - (1 + trailingLength);
+      if (i != minAllowedSpacePos && i != maxAllowSpacePos) {
         stringBuffer.write(',');
       } else {
         stringBuffer.write(char);
@@ -645,7 +720,10 @@ String _replaceSpacesWithCommas(String value) {
   return value;
 }
 
-String _getRoundedValue(String numericString, double roundTo) {
+String _getRoundedValue(
+  String numericString,
+  double roundTo,
+) {
   assert(roundTo != 0.0);
   var numericValue = double.tryParse(numericString) ?? 0.0;
   var result = numericValue / roundTo;
