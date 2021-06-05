@@ -32,7 +32,6 @@ import 'package:flutter/widgets.dart';
 import 'formatter_utils.dart';
 import 'phone_input_enums.dart';
 
-
 class PhoneInputFormatter extends TextInputFormatter {
   final ValueChanged<PhoneCountryData?>? onCountrySelected;
   final bool allowEndlessPhone;
