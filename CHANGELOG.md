@@ -1,3 +1,5 @@
+## [2.2.1]
+Improved documentation
 ## [2.2.0]
 BUG FIXES in MoneyInputFormatter
 Fixed a bug with ThousandSeparator.None described here 

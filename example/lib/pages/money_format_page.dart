@@ -74,10 +74,9 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   inputFormatters: [
                     MoneyInputFormatter(
                       leadingSymbol: MoneySymbols.DOLLAR_SIGN,
-                      thousandSeparator:
-                          ThousandSeparator.SpaceAndPeriodMantissa,
-                      // thousandSeparator: ThousandSeparator.None,
-                      useSymbolPadding: true,
+                      // thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
+                      thousandSeparator: ThousandSeparator.None,
+                      useSymbolPadding: false,
                     )
                   ],
                 ),
