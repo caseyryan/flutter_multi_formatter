@@ -1,15 +1,16 @@
 # flutter_multi_formatter
 
-The package contains these formatters
+<a href="https://pub.dev/packages/flutter_multi_formatter"><img src="https://img.shields.io/pub/v/flutter_multi_formatter?logo=dart" alt="pub.dev"></a>
 
-phone formatter,
-credit / debit card formatter,
-money formatter,
-masked formatter,
+## Formatters Included
 
-https://pub.dev/packages/flutter_multi_formatter
+1. `Phone Formatter`
+2. `Credit / Debit Card Formatter`
+3. `Money Formatter`
+4. `Masked Formatter`
 
-Formatting a phone
+
+### Formatting a phone
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/phone_format.gif?raw=true" width="240"/>
 
@@ -17,7 +18,7 @@ Formatting a phone
 As from version 1.3.3 you can add your own phone masks
 like this (just do it somewhere in your code before using the formatter)
 You can completely replace main mask or add a few versions of alternative 
-masks. Here is the example:
+masks. Here is an example of implementing PhoneInputFormatter:
 ```
 
 ```dart
@@ -45,11 +46,11 @@ PhoneInputFormatter(
 )
 ```
 
-Formatting a credit / debit card
+### Formatting a credit / debit card
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/card_format.gif?raw=true" width="240"/>
 
-Formatting currencies
+### Formatting currencies
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/money_format.gif?raw=true" width="240"/>
 
@@ -65,22 +66,26 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 ```dart
 /// for phone numbers with a fully automated detection
 PhoneInputFormatter
+
 /// for anything that can be masked
 MaskedInputFormater
+
 /// for credit / debit cards
 CreditCardNumberInputFormatter
 CreditCardCvcInputFormatter
 CreditCardExpirationDateFormatter
+
 /// for any inputs where you need to restrict or
 /// allow some characters
 RestrictingInputFormatter
+
 /// for currencies
 MoneyInputFormatter
 ```
 
 ## Utility methods and widgets
 
-gets all numbers out of a string and joins them into a new string
+Gets all numbers out of a string and joins them into a new string
 e.g. a string like fGgfjh456bb78 will be converted into this: 45678
 
 ```dart 
@@ -89,7 +94,7 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 String toNumericString(String text);
 ```
 
-returns 'true' if the checked characted is digit
+returns 'true' if the checked character is a digit
 
 ```dart 
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -131,9 +136,9 @@ result = toCurrencyString(
 ); // 1.25M
 
 ```
-there's also an extension version of this function which can be used on 
-double, int and String
-but before using it, make sure you use dart sdk version 2.6+ 
+There's also an extended version of this function which can be used on 
+double, int and String.
+But before using it, make sure you use dart sdk version 2.6.0+ 
 open pubspec.yaml and check this section:
 ```
 environment:
@@ -148,11 +153,10 @@ print(someNumericValue.toCurrencyString(leadingSymbol: MoneySymbols.DOLLAR_SIGN)
 
 var someNumericStringValue = '123456';
 print(someNumericStringValue.toCurrencyString(trailingSymbol: MoneySymbols.EURO_SIGN)); // 123,456.00€
-
+```  
 
 ```dart 
-/// it's a widget
-Unfocuser
+Unfocuser()
 ```
 Unfocuser allows you to unfocus any text input and hide the onscreen keyboard 
 when you tap outside of a text input. Use it like this:
@@ -191,13 +195,13 @@ return Unfocuser(
 ### More detailed description
 
 ```dart
-PhoneInputFormatter
+PhoneInputFormatter()
 ```
 
-automatically detects the country the phone number belongs to and formats the number according 
-to its mask
-you don't have to care about keeping track of the list of countries or anything else.
-The whole process is completely automated
+Automatically detects the country the phone number belongs to and formats the number according 
+to its mask.
+You don't have to care about keeping track of the list of countries or anything else.
+The whole process is completely automated.
 You simply add this formatter to the list of formatters like this:
 
 ```dart
@@ -209,8 +213,8 @@ TextFormField(
 ),
 ```
 
-You can also get a country data for the selected phone number by simply passing a calback function to your 
-formatter
+You can also get a country data for the selected phone number by simply passing a callback function to your 
+formatter.
 
 ```dart
 TextFormField(
@@ -224,7 +228,7 @@ TextFormField(
 ```
 
 ```dart
-CreditCardNumberInputFormatter
+CreditCardNumberInputFormatter()
 ```
 CreditCardNumberInputFormatter automatically detects a type of a card based on a predefined 
 list of card system and formats the number accordingly. 
@@ -241,7 +245,7 @@ class CardSystem {
   static const String AMERICAN_EXPRESS= 'Amex';
 }
 ```
-Anyway, if the number is not supported it will just be returned as is and your input will not 
+Anyway, if the number is not supported it will just be returned as it is and your input will not 
 break because of that
 
 
@@ -273,10 +277,10 @@ bool isCardValidNumber(String cardNumber);
 ## Masked formatter
 
 ```dart
-MaskedInputFormater
+MaskedInputFormater()
 ```
 This formatter allows you to easily format a text by a mask
-This formatter processes current text selection very carefully so that itput does not 
+This formatter processes current text selection very carefully so that input does not 
 feel unnatural
 Use it like any other formatters
 
@@ -306,7 +310,7 @@ TextFormField(
 ## Money Input formatter
 
 ```dart
-MoneyInputFormatter
+MoneyInputFormatter()
 ```
 
 ```dart
@@ -335,4 +339,4 @@ TextFormField(
 
 
 
-For more details see example project. And feel free to open an issue if you find any bugs of errors
+For more details see [example](https://github.com/caseyryan/flutter_multi_formatter/tree/master/example) project. And feel free to open an issue if you find any bugs of errors
