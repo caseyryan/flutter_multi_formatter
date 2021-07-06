@@ -8,12 +8,12 @@ class PhoneFormatPage extends StatefulWidget {
 
 class _PhoneFormatPageState extends State<PhoneFormatPage> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  PhoneCountryData _countryData;
+  PhoneCountryData? _countryData;
   TextEditingController _phoneController = TextEditingController();
 
   /// this callback is called in PhoneInputFormatter when
   /// a country is detected by a phone code
-  void _onCountrySelected(PhoneCountryData countryData) {
+  void _onCountrySelected(PhoneCountryData? countryData) {
     setState(() {
       _countryData = countryData;
     });
@@ -21,7 +21,7 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
 
   @override
   void dispose() {
-    _phoneController?.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -74,7 +74,7 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                   _getText(
                     _countryData == null
                         ? 'A country is not detected'
-                        : 'The country is: ${_countryData.country}',
+                        : 'The country is: ${_countryData?.country}',
                   ),
                   SizedBox(
                     height: 10.0,
@@ -97,8 +97,11 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                     ),
                     keyboardType: TextInputType.phone,
                     controller: _phoneController,
-                    validator: (String value) {
-                      if (!isPhoneValid(value, allowEndlessPhone: true)) {
+                    validator: (String? value) {
+                      if (!isPhoneValid(
+                        value ?? '',
+                        allowEndlessPhone: true,
+                      )) {
                         return 'Phone is invalid';
                       }
                       return null;
@@ -114,11 +117,11 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                       textColor: Colors.white,
                       color: Colors.blue,
                       onPressed: () {
-                        if (_formKey.currentState.validate()) {
+                        if (_formKey.currentState!.validate()) {
                           _phoneController.text = formatAsPhoneNumber(
                             _phoneController.text,
                             allowEndlessPhone: false,
-                          );
+                          ) ?? '';
                         }
                       },
                       child: Row(

@@ -1,3 +1,4 @@
+import 'package:example/pages/bitcoin_validator_page.dart';
 import 'package:example/pages/credit_card_format_page.dart';
 import 'package:example/pages/masked_formatter_page.dart';
 import 'package:example/pages/money_format_page.dart';
@@ -5,6 +6,8 @@ import 'package:example/pages/phone_format_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+
+typedef PageBuilder = Widget Function();
 
 void main() => runApp(MyApp());
 
@@ -49,7 +52,43 @@ class _MyHomePageState extends State<MyHomePage> {
         '+00 (000) 000 0000',
       ],
     );
-    print('ADDING');
+  }
+
+  Widget _buildButton({
+    required Color color,
+    required IconData iconData,
+    required String label,
+    required PageBuilder pageBuilder,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 10,
+        bottom: 10,
+      ),
+      child: Container(
+        height: 50,
+        // ignore: deprecated_member_use
+        child: RaisedButton(
+          textColor: Colors.white,
+          color: color,
+          onPressed: () {
+            openPage(
+              pageBuilder(),
+            );
+          },
+          child: Row(
+            children: <Widget>[
+              Icon(iconData),
+              Expanded(
+                child: Center(
+                  child: Text(label),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -67,115 +106,37 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Container(
-                height: 50,
-                // ignore: deprecated_member_use
-                child: RaisedButton(
-                  textColor: Colors.white,
-                  color: Colors.lightGreen,
-                  onPressed: () {
-                    openPage(
-                      PhoneFormatPage(),
-                    );
-                  },
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.phone),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Phone Formatter Demo',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              _buildButton(
+                color: Colors.lightGreen,
+                iconData: Icons.phone,
+                label: 'Phone Formatter Demo',
+                pageBuilder: () => PhoneFormatPage(),
               ),
-              SizedBox(
-                height: 50.0,
+              _buildButton(
+                color: Colors.lightBlue,
+                iconData: Icons.credit_card,
+                label: 'Credit Card Formatter Demo',
+                pageBuilder: () => CreditCardFormatPage(),
               ),
-              Container(
-                height: 50,
-                // ignore: deprecated_member_use
-                child: RaisedButton(
-                  textColor: Colors.white,
-                  color: Colors.lightBlue,
-                  onPressed: () {
-                    openPage(
-                      CreditCardFormatPage(),
-                    );
-                  },
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.credit_card),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Credit Card Formatter Demo',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              _buildButton(
+                color: Colors.orange,
+                iconData: Icons.masks_outlined,
+                label: 'Masked input formatter Demo',
+                pageBuilder: () => MaskedFormatterPage(),
               ),
-              SizedBox(
-                height: 50.0,
+              _buildButton(
+                color: Colors.pink[400]!,
+                iconData: Icons.attach_money,
+                label: 'Money formatter',
+                pageBuilder: () => MoneyFormatPage(),
               ),
-              Container(
-                height: 50,
-                // ignore: deprecated_member_use
-                child: RaisedButton(
-                  textColor: Colors.white,
-                  color: Colors.pink,
-                  onPressed: () {
-                    openPage(
-                      MaskedFormatterPage(),
-                    );
-                  },
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.masks_outlined),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Masked input formatter Demo',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              _buildButton(
+                color: Colors.green[600]!,
+                iconData: Icons.attach_money,
+                label: 'Bitcoin Validator',
+                pageBuilder: () => BitcoinValidatorPage(),
               ),
-              SizedBox(
-                height: 50.0,
-              ),
-              Container(
-                height: 50,
-                // ignore: deprecated_member_use
-                child: RaisedButton(
-                  textColor: Colors.white,
-                  color: Colors.orange,
-                  onPressed: () {
-                    openPage(
-                      MoneyFormatPage(),
-                    );
-                  },
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.attach_money),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Money formatter',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
+              
             ],
           ),
         ),

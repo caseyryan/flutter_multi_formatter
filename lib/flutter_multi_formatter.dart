@@ -36,4 +36,7 @@ export 'formatters/money_input_enums.dart';
 export 'formatters/money_input_formatter.dart';
 export 'formatters/phone_input_enums.dart';
 export 'formatters/phone_input_formatter.dart';
+export 'utils/bitcoin_validator/bitcoin_validator.dart';
+export 'utils/bitcoin_validator/bitcoin_wallet_details.dart';
+export 'utils/enum_utils.dart';
 export 'utils/unfocuser.dart';

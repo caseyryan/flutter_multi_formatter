@@ -9,17 +9,21 @@
 3. `Money Formatter`
 4. `Masked Formatter`
 
+## Special utilities 
+
+1. `Bitcoin (BTC) wallet validator;`
+2. `Digit exctractor (allows to extract all digits out of a string)`
+3. `Phone number validator (the check is based on country phone codes and masks so it's a more serious and reliable validation than a simple regular expression)`
+4. `"Is digit" checker (Simply checks if an input string value a digit or not)`
+5. `Currency string formatter (allows to convert a number to a currency string representation e.g. this 10000 to this 10,000.00$)`
+6. `Unfocuser (a widget that is used to unfocus any text fields without any boilerplate code. Extremely simple to use)`
+
+
 
 ### Formatting a phone
 
 <img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/phone_format.gif?raw=true" width="240"/>
 
-```
-As from version 1.3.3 you can add your own phone masks
-like this (just do it somewhere in your code before using the formatter)
-You can completely replace main mask or add a few versions of alternative 
-masks. Here is an example of implementing PhoneInputFormatter:
-```
 
 ```dart
 PhoneInputFormatter.replacePhoneMask(
@@ -84,6 +88,40 @@ MoneyInputFormatter
 ```
 
 ## Utility methods and widgets
+
+Validates Bitcoin wallets (also supports bech32)
+
+You can use these example wallets to test the validator
+
+**P2PKH addresses start  with the number 1**
+`Example: 1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2`
+
+**P2SH addresses start with the number 3**
+`Example: 3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy`
+
+**Bech32 addresses also known as "bc1 addresses" start with bc1**
+`Example: bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq`
+
+```dart
+/// a simple check if its a BTC wallet or not, regardless of its type
+bool isBitcoinWalletValid(String value);
+
+/// a bit more complicated check which can return the type of 
+/// BTC wallet and return SegWit (Bech32), Regular, or None if 
+/// the string is not a BTC address
+BitcoinWalletType getBitcoinWalletType(String value);
+
+/// Detailed check, for those who need to get more details 
+/// of the wallet. Returns the address type, the network, and 
+/// the wallet type along with its address. 
+/// It always returns BitcoinWalletDetails object. To check if it's
+/// valid or not use bitcoinWalletDetails.isValid getter
+/// IMPORTANT The BitcoinWalletDetails class overrides an 
+/// equality operators so two BitcoinWalletDetails objects can be 
+/// compared simply like this bwd1 == bwd2
+BitcoinWalletDetails getBitcoinWalletDetails(String? value);
+
+```
 
 Gets all numbers out of a string and joins them into a new string
 e.g. a string like fGgfjh456bb78 will be converted into this: 45678
@@ -188,8 +226,6 @@ return Unfocuser(
 );
 }
 ```
-
-
 
 
 ### More detailed description
