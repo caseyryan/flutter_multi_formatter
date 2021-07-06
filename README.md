@@ -1,6 +1,6 @@
 # flutter_multi_formatter
 
-<a href="https://pub.dev/packages/flutter_multi_formatter"><img src="https://img.shields.io/pub/v/flutter_multi_formatter?logo=dart" alt="pub.dev"></a>
+<a href="https://pub.dev/packages/flutter_multi_formatter"><img src="https://img.shields.io/pub/v/flutter_multi_formatter?logo=dart" alt="pub.dev"></a> [![likes](https://badges.bar/flutter_multi_formatter/likes)](https://pub.dev/packages/flutter_multi_formatter/score) [![popularity](https://badges.bar/flutter_multi_formatter/popularity)](https://pub.dev/packages/flutter_multi_formatter/score) [![pub points](https://badges.bar/flutter_multi_formatter/pub%20points)](https://pub.dev/packages/flutter_multi_formatter/score)
 
 ## Formatters Included
 
@@ -22,7 +22,7 @@
 
 ### Formatting a phone
 
-<img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/phone_format.gif?raw=true" width="240"/>
+<img src="https://github.com/caseyryan/images/blob/master/multi_formatter/phone_format.gif?raw=true" width="240"/>
 
 
 ```dart
@@ -52,11 +52,11 @@ PhoneInputFormatter(
 
 ### Formatting a credit / debit card
 
-<img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/card_format.gif?raw=true" width="240"/>
+<img src="https://github.com/caseyryan/images/blob/master/multi_formatter/card_format.gif?raw=true" width="240"/>
 
 ### Formatting currencies
 
-<img src="https://github.com/caseyryan/flutter_multi_formatter/blob/master/money_format.gif?raw=true" width="240"/>
+<img src="https://github.com/caseyryan/images/blob/master/multi_formatter/money_format.gif?raw=true" width="240"/>
 
 
 ## Using:
@@ -122,6 +122,8 @@ BitcoinWalletType getBitcoinWalletType(String value);
 BitcoinWalletDetails getBitcoinWalletDetails(String? value);
 
 ```
+<img src="https://github.com/caseyryan/images/blob/master/multi_formatter/bitcoin.gif?raw=true" width="240"/>
+
 
 Gets all numbers out of a string and joins them into a new string
 e.g. a string like fGgfjh456bb78 will be converted into this: 45678
