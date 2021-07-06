@@ -1,3 +1,5 @@
+## [2.3.1]
+Updated formatting
 ## [2.3.0]
 Added a bitcoin wallet validator which supports regular BTC addresses as well as 
 SegWit (Bech32)

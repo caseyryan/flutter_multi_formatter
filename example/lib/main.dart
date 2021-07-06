@@ -136,7 +136,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 label: 'Bitcoin Validator',
                 pageBuilder: () => BitcoinValidatorPage(),
               ),
-              
             ],
           ),
         ),

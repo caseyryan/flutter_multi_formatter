@@ -25,12 +25,12 @@ BitcoinWalletType getBitcoinWalletType(String? value) {
 }
 
 bool isBitcoinWalletValid(String? value) {
-  return getBitcoinWalletDetails(value).isValid; 
+  return getBitcoinWalletDetails(value).isValid;
 }
 
-/// Detailed wallet check. The returned object contains all 
-/// the necessary info like address type, network, wallet type 
-/// and address. Before using the returned object, use isValid 
+/// Detailed wallet check. The returned object contains all
+/// the necessary info like address type, network, wallet type
+/// and address. Before using the returned object, use isValid
 /// getter to check if the result is valid
 BitcoinWalletDetails getBitcoinWalletDetails(String? value) {
   if (value == null || value.length < 34) {
@@ -77,9 +77,7 @@ BitcoinWalletDetails _getSegWitDetails(
   try {
     Segwit decodedSegwit = segwit.decode(value);
     programLength = decodedSegwit.program.length;
-  } catch (e) {
-    
-  }
+  } catch (e) {}
 
   BitcoinAddressType type = BitcoinAddressType.None;
   switch (programLength) {
@@ -94,9 +92,9 @@ BitcoinWalletDetails _getSegWitDetails(
       }
   }
 
-  BitcoinAddressNetwork network = isSegwitTest 
-    ? BitcoinAddressNetwork.Testnet
-    : BitcoinAddressNetwork.Mainnet; 
+  BitcoinAddressNetwork network = isSegwitTest
+      ? BitcoinAddressNetwork.Testnet
+      : BitcoinAddressNetwork.Mainnet;
 
   return BitcoinWalletDetails(
     address: value,

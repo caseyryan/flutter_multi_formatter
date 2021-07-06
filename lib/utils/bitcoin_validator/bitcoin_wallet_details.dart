@@ -23,12 +23,12 @@ class BitcoinWalletDetails {
   final BitcoinAddressNetwork addressNetwork;
   final BitcoinWalletType walletType;
 
-  @override 
+  @override
   operator ==(covariant BitcoinWalletDetails other) {
-    return other.address == address && 
-    other.walletType == walletType && 
-    other.addressNetwork == addressNetwork && 
-    other.addressNetwork == addressNetwork;
+    return other.address == address &&
+        other.walletType == walletType &&
+        other.addressNetwork == addressNetwork &&
+        other.addressNetwork == addressNetwork;
   }
 
   @override
@@ -78,5 +78,4 @@ class BitcoinWalletDetails {
       walletType: BitcoinWalletType.None,
     );
   }
-
 }

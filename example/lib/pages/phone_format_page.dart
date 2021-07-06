@@ -119,9 +119,10 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _phoneController.text = formatAsPhoneNumber(
-                            _phoneController.text,
-                            allowEndlessPhone: false,
-                          ) ?? '';
+                                _phoneController.text,
+                                allowEndlessPhone: false,
+                              ) ??
+                              '';
                         }
                       },
                       child: Row(
