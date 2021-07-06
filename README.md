@@ -178,14 +178,8 @@ result = toCurrencyString(
 ); // 1.25M
 
 ```
-There's also an extended version of this function which can be used on 
+There's also an "extension" version of this function which can be used on 
 double, int and String.
-But before using it, make sure you use dart sdk version 2.6.0+ 
-open pubspec.yaml and check this section:
-```
-environment:
-  sdk: ">=2.10.2 <3.0.0"
-```
 
 ```dart
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
