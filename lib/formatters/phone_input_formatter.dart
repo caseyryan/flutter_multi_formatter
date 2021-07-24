@@ -97,7 +97,7 @@ class PhoneInputFormatter extends TextInputFormatter {
     maskedValue = _applyMask(onlyNumbers, allowEndlessPhone);
     // if (maskedValue.length == oldValue.text.length && onlyNumbers != '7') {
     if (maskedValue == oldValue.text && onlyNumbers != '7') {
-      _lastValue = oldValue.text;
+      _lastValue = maskedValue;
       if (isErasing) {
         var newSelection = oldValue.selection;
         newSelection = newSelection.copyWith(

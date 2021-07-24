@@ -1,3 +1,5 @@
+## [2.3.2]
+Fixed a bug with masked value in a Russian phone format
 ## [2.3.1]
 Updated formatting
 ## [2.3.0]
