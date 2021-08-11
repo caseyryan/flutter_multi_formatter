@@ -61,8 +61,9 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
       if (newValue.text.isEmpty) {
         _removeFirstLetter();
       }
-      /// FIXME: не помню зачем это добавлял но из-за этого не 
-      /// работало форматирование при стирании. Если что-то сломается, разобраться 
+
+      /// FIXME: не помню зачем это добавлял но из-за этого не
+      /// работало форматирование при стирании. Если что-то сломается, разобраться
       /// подробнее
       // return newValue;
     }
