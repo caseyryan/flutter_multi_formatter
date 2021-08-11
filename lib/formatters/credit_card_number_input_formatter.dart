@@ -59,9 +59,12 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     var isErasing = newValue.text.length < oldValue.text.length;
     if (isErasing) {
       if (newValue.text.isEmpty) {
-        _clearCountry();
+        _removeFirstLetter();
       }
-      return newValue;
+      /// FIXME: не помню зачем это добавлял но из-за этого не 
+      /// работало форматирование при стирании. Если что-то сломается, разобраться 
+      /// подробнее
+      // return newValue;
     }
     var onlyNumbers = toNumericString(newValue.text);
     String maskedValue = _applyMask(onlyNumbers);
@@ -77,7 +80,7 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
   }
 
   /// this is a small dirty hask to be able to remove the first character
-  Future _clearCountry() async {
+  Future _removeFirstLetter() async {
     await Future.delayed(Duration(milliseconds: 5));
     _updateCardSystemData(null);
   }

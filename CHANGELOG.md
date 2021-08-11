@@ -1,3 +1,5 @@
+## [2.3.3]
+CreditCardNumberInputFormatter now works in two directions. When you enter the number and when you erase it
 ## [2.3.2]
 Fixed a bug with masked value in a Russian phone format
 ## [2.3.1]

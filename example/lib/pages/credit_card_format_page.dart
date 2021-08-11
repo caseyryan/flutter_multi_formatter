@@ -34,7 +34,7 @@ class _CreditCardFormatPageState extends State<CreditCardFormatPage> {
                   _getText(
                       'This form allows you to easily type a credit / debit card data'),
                   SizedBox(height: 20.0),
-                  _getText('Any char'),
+                  _getText('Any small latin letter'),
                   TextFormField(
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
