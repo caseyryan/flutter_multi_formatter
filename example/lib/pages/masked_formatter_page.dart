@@ -23,7 +23,7 @@ class _MaskedFormatterPageState extends State<MaskedFormatterPage> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text('Card Formatter Demo'),
+          title: Text('Masled Formatter Demo'),
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -52,7 +52,6 @@ class _MaskedFormatterPageState extends State<MaskedFormatterPage> {
                     inputFormatters: [
                       MaskedInputFormatter(
                         "#### #### #### ####",
-                        // anyCharMatcher: RegExp(r'[a-z]+'),
                       ),
                     ],
                   ),
@@ -98,12 +97,15 @@ class _MaskedFormatterPageState extends State<MaskedFormatterPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      setState(() {
-                        _result =
-                            MaskedInputFormatter('000-000-000 00').applyMask(
-                          '12345678900',
-                        );
-                      });
+                      setState(
+                        () {
+                          _result = MaskedInputFormatter('000-000-000 00')
+                              .applyMask(
+                                '12345678900',
+                              )
+                              .toString();
+                        },
+                      );
                     },
                     child: Text('Apply mask 000-000-000 00'),
                   ),

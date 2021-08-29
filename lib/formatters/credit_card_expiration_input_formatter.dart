@@ -31,8 +31,9 @@ class CreditCardExpirationDateFormatter extends MaskedInputFormatter {
   CreditCardExpirationDateFormatter() : super('00/00');
 
   @override
-  String applyMask(String text) {
-    var result = super.applyMask(text);
+  FormattedValue applyMask(String text) {
+    var fv = super.applyMask(text);
+    var result = fv.toString();
     var numericString = toNumericString(result);
     String? ammendedMonth;
     if (numericString.length > 0) {
@@ -64,6 +65,6 @@ class CreditCardExpirationDateFormatter extends MaskedInputFormatter {
         result = '$ammendedMonth$sub';
       }
     }
-    return result;
+    return fv;
   }
 }

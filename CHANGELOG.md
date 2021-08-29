@@ -1,3 +1,9 @@
+## [2.3.5]
+- Added correct Hungarian phone masks: +00 0 000 0000 for Budapest and +00 00 000 0000 for all other numbers. Hungarian phones now also support alternative country code +06 as well as +36
+- Changed the logic of MaskedInputFormatter. Now it can format the value correctly 
+on erasing as well as on entering. 
+BREAKING CHANGES: MaskedInputFormatter#applyMask() now returns FormattedValue object
+instead of String. To get a string value out of it simply call its .toString() method
 ## [2.3.3]
 CreditCardNumberInputFormatter now works in two directions. When you enter the number and when you erase it
 ## [2.3.2]

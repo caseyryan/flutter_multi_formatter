@@ -50,7 +50,7 @@ class _CreditCardFormatPageState extends State<CreditCardFormatPage> {
                     inputFormatters: [
                       MaskedInputFormatter(
                         "#### #### #### ####",
-                        anyCharMatcher: RegExp(r'[a-z]+'),
+                        allowedCharMatcher: RegExp(r'[a-z]+'),
                       ),
                     ],
                   ),

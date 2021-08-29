@@ -1008,7 +1008,19 @@ class PhoneCodes {
       'country': 'Hungary',
       'internalPhoneCode': '36',
       'countryCode': 'HU',
-      'phoneMask': '+00 00 000 000',
+      'phoneMask': '+00 0 000 0000',
+      'altMasks': [
+        '+00 00 000 0000',
+      ],
+    },
+    {
+      'country': 'Hungary (Alternative)',
+      'internalPhoneCode': '06',
+      'countryCode': 'HU',
+      'phoneMask': '+00 0 000 0000',
+      'altMasks': [
+        '+00 00 000 0000',
+      ],
     },
     {
       'country': 'Iceland',
