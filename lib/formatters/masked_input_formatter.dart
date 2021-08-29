@@ -78,7 +78,8 @@ class MaskedInputFormatter extends TextInputFormatter {
     final FormattedValue formattedValue = applyMask(
       newValue.text,
     );
-    var selectionOffset = newValue.selection.end + formattedValue.selectionOffset;
+    var selectionOffset =
+        newValue.selection.end + formattedValue.selectionOffset;
     _maskedValue = formattedValue.toString();
     if (selectionOffset > _maskedValue.length) {
       selectionOffset = _maskedValue.length;
