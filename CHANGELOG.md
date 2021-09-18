@@ -1,3 +1,5 @@
+## [2.3.8]
+One more small fix
 ## [2.3.7]
 Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/59
 Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/60

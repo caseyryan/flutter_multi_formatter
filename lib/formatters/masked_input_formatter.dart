@@ -76,8 +76,6 @@ class MaskedInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    print('INPUT');
-    // try {
     final FormattedValue oldFormattedValue = applyMask(
       oldValue.text,
     );
@@ -88,15 +86,17 @@ class MaskedInputFormatter extends TextInputFormatter {
     var numSeparatorsInOld = 0;
 
     /// without this condition there might be a range exception
-    if (newValue.selection.end < newFormattedValue.text.length) {
-      numSeparatorsInNew = _countSeparators(
-        newFormattedValue.text.substring(0, newValue.selection.end),
-      );
-    }
-    if (oldValue.selection.end < oldFormattedValue.text.length) {
+    if (oldValue.selection.end <= oldFormattedValue.text.length) {
       numSeparatorsInOld = _countSeparators(
         oldFormattedValue.text.substring(0, oldValue.selection.end),
       );
+    }
+    if (newValue.selection.end <= newFormattedValue.text.length) {
+      numSeparatorsInNew = _countSeparators(
+        newFormattedValue.text.substring(0, newValue.selection.end),
+      );
+    } else {
+      numSeparatorsInNew = numSeparatorsInOld;
     }
 
     var separatorsDiff = (numSeparatorsInNew - numSeparatorsInOld);
@@ -117,11 +117,6 @@ class MaskedInputFormatter extends TextInputFormatter {
         affinity: TextAffinity.upstream,
       ),
     );
-    // } catch (e) {
-    //   print(e);
-    // }
-
-    return newValue;
   }
 
   bool _isMatchingRestrictor(String character) {
