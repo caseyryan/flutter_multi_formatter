@@ -40,7 +40,7 @@ class _MaskedFormatterPageState extends State<MaskedFormatterPage> {
                   TextFormField(
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      hintText: '#### #### #### ####',
+                      hintText: '#0# 0#0',
                       hintStyle: TextStyle(
                         color: Colors.black.withOpacity(.3),
                       ),
@@ -51,7 +51,8 @@ class _MaskedFormatterPageState extends State<MaskedFormatterPage> {
                     keyboardType: TextInputType.text,
                     inputFormatters: [
                       MaskedInputFormatter(
-                        "#### #### #### ####",
+                        "#0# 0#0",
+                        allowedCharMatcher: RegExp('[a-z]'),
                       ),
                     ],
                   ),

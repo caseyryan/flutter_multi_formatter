@@ -27,6 +27,7 @@ THE SOFTWARE.
 import 'dart:math';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 class MaskedInputFormatter extends TextInputFormatter {
   final String mask;
@@ -75,12 +76,36 @@ class MaskedInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    final FormattedValue formattedValue = applyMask(
+    print('INPUT');
+    // try {
+    final FormattedValue oldFormattedValue = applyMask(
+      oldValue.text,
+    );
+    final FormattedValue newFormattedValue = applyMask(
       newValue.text,
     );
-    var selectionOffset =
-        newValue.selection.end + formattedValue.selectionOffset;
-    _maskedValue = formattedValue.toString();
+    var numSeparatorsInNew = 0;
+    var numSeparatorsInOld = 0;
+
+    /// without this condition there might be a range exception
+    if (newValue.selection.end < newFormattedValue.text.length) {
+      numSeparatorsInNew = _countSeparators(
+        newFormattedValue.text.substring(0, newValue.selection.end),
+      );
+    }
+    if (oldValue.selection.end < oldFormattedValue.text.length) {
+      numSeparatorsInOld = _countSeparators(
+        oldFormattedValue.text.substring(0, oldValue.selection.end),
+      );
+    }
+
+    var separatorsDiff = (numSeparatorsInNew - numSeparatorsInOld);
+    if (newFormattedValue._isErasing) {
+      separatorsDiff = 0;
+    }
+    var selectionOffset = newValue.selection.end + separatorsDiff;
+    _maskedValue = newFormattedValue.text;
+
     if (selectionOffset > _maskedValue.length) {
       selectionOffset = _maskedValue.length;
     }
@@ -89,8 +114,14 @@ class MaskedInputFormatter extends TextInputFormatter {
       text: _maskedValue,
       selection: TextSelection.collapsed(
         offset: selectionOffset,
+        affinity: TextAffinity.upstream,
       ),
     );
+    // } catch (e) {
+    //   print(e);
+    // }
+
+    return newValue;
   }
 
   bool _isMatchingRestrictor(String character) {
@@ -135,21 +166,28 @@ class MaskedInputFormatter extends TextInputFormatter {
 
   FormattedValue applyMask(String text) {
     _prepareMask();
-    int numSeparatorsBefore = _countSeparators(text);
     String clearedValueAfter = _removeSeparators(text);
     final isErasing = _maskedValue.length > text.length;
     FormattedValue formattedValue = FormattedValue();
     StringBuffer stringBuffer = StringBuffer();
     var index = 0;
-    var maxLength = min(
+    final maxLength = min(
       clearedValueAfter.length,
       mask.length - _separatorChars.length,
     );
 
     for (var i = 0; i < maxLength; i++) {
-      var curChar = clearedValueAfter[i];
-      if (!_isMatchingRestrictor(curChar)) {
-        continue;
+      final curChar = clearedValueAfter[i];
+      final charInMask = mask[i];
+      final maskOnDigitMatcher = charInMask == _onlyDigitMask;
+      if (maskOnDigitMatcher) {
+        if (!isDigit(curChar)) {
+          continue;
+        }
+      } else {
+        if (!_isMatchingRestrictor(curChar)) {
+          continue;
+        }
       }
       if (_separatorIndices.contains(index)) {
         stringBuffer.write(mask[index]);
@@ -160,23 +198,17 @@ class MaskedInputFormatter extends TextInputFormatter {
     }
     formattedValue._isErasing = isErasing;
     formattedValue._formattedValue = stringBuffer.toString();
-    formattedValue._numSeparatorsAfter = _countSeparators(
-      formattedValue._formattedValue,
-    );
-    formattedValue._numSeparatorsBefore = numSeparatorsBefore;
+
     return formattedValue;
   }
 }
 
 class FormattedValue {
   String _formattedValue = '';
-  int _numSeparatorsBefore = 0;
-  int _numSeparatorsAfter = 0;
   bool _isErasing = false;
 
-  int get selectionOffset {
-    final offset = (_numSeparatorsAfter - _numSeparatorsBefore).abs();
-    return _isErasing ? 0 : offset;
+  String get text {
+    return _formattedValue;
   }
 
   @override

@@ -1,3 +1,6 @@
+## [2.3.7]
+Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/59
+Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/60
 ## [2.3.5]
 - Added correct Hungarian phone masks: +00 0 000 0000 for Budapest and +00 00 000 0000 for all other numbers. Hungarian phones now also support alternative country code +06 as well as +36
 - Changed the logic of MaskedInputFormatter. Now it can format the value correctly 
