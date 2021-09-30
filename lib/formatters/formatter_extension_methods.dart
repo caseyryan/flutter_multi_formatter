@@ -25,7 +25,7 @@ THE SOFTWARE.
 */
 
 import 'money_input_enums.dart';
-import 'money_input_formatter.dart' as money;
+import 'money_input_formatter.dart' as moneyFormatter;
 
 /// WARNING! This stuff requires Dart SDK version 2.6+
 /// so if your code is supposed to be running on
@@ -52,20 +52,23 @@ extension NumericInputFormatting on num {
   /// end of your resulting string like 1,250€ instead of €1,250
   /// [useSymbolPadding] adds a space between the number and trailing / leading symbols
   /// like 1,250€ -> 1,250 € or €1,250€ -> € 1,250
-  String toCurrencyString(
-      {int mantissaLength = 2,
-      ThousandSeparator thousandSeparator = ThousandSeparator.Comma,
-      ShorteningPolicy shorteningPolicy = ShorteningPolicy.NoShortening,
-      String leadingSymbol = '',
-      String trailingSymbol = '',
-      bool useSymbolPadding = false}) {
-    return money.toCurrencyString(this.toString(),
-        mantissaLength: mantissaLength,
-        leadingSymbol: leadingSymbol,
-        shorteningPolicy: shorteningPolicy,
-        thousandSeparator: thousandSeparator,
-        trailingSymbol: trailingSymbol,
-        useSymbolPadding: useSymbolPadding);
+  String toCurrencyString({
+    int mantissaLength = 2,
+    ThousandSeparator thousandSeparator = ThousandSeparator.Comma,
+    ShorteningPolicy shorteningPolicy = ShorteningPolicy.NoShortening,
+    String leadingSymbol = '',
+    String trailingSymbol = '',
+    bool useSymbolPadding = false,
+  }) {
+    return moneyFormatter.toCurrencyString(
+      this.toString(),
+      mantissaLength: mantissaLength,
+      leadingSymbol: leadingSymbol,
+      shorteningPolicy: shorteningPolicy,
+      thousandSeparator: thousandSeparator,
+      trailingSymbol: trailingSymbol,
+      useSymbolPadding: useSymbolPadding,
+    );
   }
 }
 
@@ -94,7 +97,7 @@ extension StringInputFormatting on String {
       String leadingSymbol = '',
       String trailingSymbol = '',
       bool useSymbolPadding = false}) {
-    return money.toCurrencyString(this.toString(),
+    return moneyFormatter.toCurrencyString(this.toString(),
         mantissaLength: mantissaLength,
         leadingSymbol: leadingSymbol,
         shorteningPolicy: shorteningPolicy,

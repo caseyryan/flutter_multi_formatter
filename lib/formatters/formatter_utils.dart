@@ -37,10 +37,10 @@ String toNumericString(
   bool allowHyphen = true,
 }) {
   if (inputString == null) return '';
-
   var startsWithPeriod = numericStringStartsWithOrphanPeriod(
     inputString,
   );
+
   var regexWithoutPeriod = allowHyphen ? _digitRegExp : _positiveDigitRegExp;
   var regExp = allowPeriod ? _digitWithPeriodRegExp : regexWithoutPeriod;
   var result = inputString.splitMapJoin(

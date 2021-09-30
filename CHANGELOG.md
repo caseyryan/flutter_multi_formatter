@@ -1,3 +1,7 @@
+## [2.4.0]
+Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/61
+Fixed orphan leading period formatting in strings like 
+$.5. Now they are formatted correctly to $0.5, not $500.00
 ## [2.3.8]
 One more small fix
 ## [2.3.7]

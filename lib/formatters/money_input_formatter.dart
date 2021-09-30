@@ -310,7 +310,9 @@ class MoneyInputFormatter extends TextInputFormatter {
         selection: selection,
         text: preparedText,
       );
-    } /// stop isErasing
+    }
+
+    /// stop isErasing
 
     bool oldStartsWithLeading = leadingSymbol.isNotEmpty &&
         oldValue.text.startsWith(
@@ -331,7 +333,7 @@ class MoneyInputFormatter extends TextInputFormatter {
     );
 
     /// This check is necessary because if an input looks like this
-    /// $.5, toCurrencyString() method will convert it to 
+    /// $.5, toCurrencyString() method will convert it to
     /// $0.5 and the selection must also be shifted by 1 symbol to the right
     var startsWithOrphanPeriod = numericStringStartsWithOrphanPeriod(newText);
     var formattedValue = toCurrencyString(
@@ -533,6 +535,10 @@ String toCurrencyString(
   bool useSymbolPadding = false,
 }) {
   var swapCommasAndPreriods = false;
+  if (mantissaLength <= 0) {
+    mantissaLength = 0;
+  }
+
   String? tSeparator;
   switch (thousandSeparator) {
     case ThousandSeparator.Comma:
@@ -555,6 +561,10 @@ String toCurrencyString(
   }
   // print(thousandSeparator);
   value = value.replaceAll(_repeatingDots, '.');
+  if (mantissaLength == 0) {
+    var substringEnd = value.lastIndexOf('.');
+    value = value.substring(0, substringEnd);
+  }
   value = toNumericString(value, allowPeriod: mantissaLength > 0);
   var isNegative = value.contains('-');
 
