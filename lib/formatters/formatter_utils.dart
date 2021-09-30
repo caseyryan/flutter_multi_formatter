@@ -37,10 +37,36 @@ String toNumericString(
   bool allowHyphen = true,
 }) {
   if (inputString == null) return '';
+
+  var startsWithPeriod = numericStringStartsWithOrphanPeriod(
+    inputString,
+  );
   var regexWithoutPeriod = allowHyphen ? _digitRegExp : _positiveDigitRegExp;
   var regExp = allowPeriod ? _digitWithPeriodRegExp : regexWithoutPeriod;
-  return inputString.splitMapJoin(regExp,
-      onMatch: (m) => m.group(0)!, onNonMatch: (nm) => '');
+  var result = inputString.splitMapJoin(
+    regExp,
+    onMatch: (m) => m.group(0)!,
+    onNonMatch: (nm) => '',
+  );
+  if (startsWithPeriod && allowPeriod) {
+    result = '0.$result';
+  }
+  return result;
+}
+
+bool numericStringStartsWithOrphanPeriod(String string) {
+  var result = false;
+  for (var i = 0; i < string.length; i++) {
+    var char = string[i];
+    if (isDigit(char)) {
+      break;
+    }
+    if (char == '.' || char == ',') {
+      result = true;
+      break;
+    }
+  }
+  return result;
 }
 
 void checkMask(String mask) {

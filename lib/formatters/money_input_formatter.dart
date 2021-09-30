@@ -310,9 +310,7 @@ class MoneyInputFormatter extends TextInputFormatter {
         selection: selection,
         text: preparedText,
       );
-    }
-
-    /// stop isErasing
+    } /// stop isErasing
 
     bool oldStartsWithLeading = leadingSymbol.isNotEmpty &&
         oldValue.text.startsWith(
@@ -332,6 +330,10 @@ class MoneyInputFormatter extends TextInputFormatter {
       ',',
     );
 
+    /// This check is necessary because if an input looks like this
+    /// $.5, toCurrencyString() method will convert it to 
+    /// $0.5 and the selection must also be shifted by 1 symbol to the right
+    var startsWithOrphanPeriod = numericStringStartsWithOrphanPeriod(newText);
     var formattedValue = toCurrencyString(
       newText,
       leadingSymbol: leadingSymbol,
@@ -387,6 +389,9 @@ class MoneyInputFormatter extends TextInputFormatter {
     if (addedLeading) {
       wholePartSubStart = _leadingLength;
       selectionIndex += _leadingLength;
+    }
+    if (startsWithOrphanPeriod) {
+      selectionIndex += 1;
     }
 
     /// The rare case when a string starts with 0 and no
