@@ -563,7 +563,9 @@ String toCurrencyString(
   value = value.replaceAll(_repeatingDots, '.');
   if (mantissaLength == 0) {
     var substringEnd = value.lastIndexOf('.');
-    value = value.substring(0, substringEnd);
+    if (substringEnd > 0) {
+      value = value.substring(0, substringEnd);
+    }
   }
   value = toNumericString(value, allowPeriod: mantissaLength > 0);
   var isNegative = value.contains('-');

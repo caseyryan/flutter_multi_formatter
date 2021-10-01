@@ -1,3 +1,5 @@
+## [2.4.1]
+Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/62
 ## [2.4.0]
 Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/61
 Fixed orphan leading period formatting in strings like 
