@@ -556,7 +556,7 @@ class PhoneCodes {
       'country': 'Australia',
       'internalPhoneCode': '61',
       'countryCode': 'AU',
-      'phoneMask': '+00 000 000 0000',
+      'phoneMask': '+00 000 000 000',
     },
     {
       'country': 'Austria',
