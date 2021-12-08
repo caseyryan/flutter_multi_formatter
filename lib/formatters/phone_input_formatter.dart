@@ -1640,7 +1640,7 @@ class PhoneCodes {
       'country': 'United Arab Emirates',
       'internalPhoneCode': '971',
       'countryCode': 'AE',
-      'phoneMask': '+000 0 0000000',
+      'phoneMask': '+000 00 000000',
       'altMasks': [
         '+000 00 0000000',
       ],
