@@ -140,7 +140,7 @@ in some circumstances
 - Initial pub release. Includes a list of formatters:
 
 PhoneInputFormatter
-MaskedInputFormater
+MaskedInputFormatter
 CreditCardNumberFormatter
 CvvCodeFormatter
 CreditCardExpirationDateFormatter

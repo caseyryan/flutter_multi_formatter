@@ -74,7 +74,7 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 PhoneInputFormatter
 
 /// for anything that can be masked
-MaskedInputFormater
+MaskedInputFormatter
 
 /// for credit / debit cards
 CreditCardNumberInputFormatter
@@ -311,7 +311,7 @@ bool isCardValidNumber(String cardNumber);
 ## Masked formatter
 
 ```dart
-MaskedInputFormater()
+MaskedInputFormatter()
 ```
 This formatter allows you to easily format a text by a mask
 This formatter processes current text selection very carefully so that input does not 
@@ -325,7 +325,7 @@ Use it like any other formatters
 TextFormField(
     keyboardType: TextInputType.phone,
     inputFormatters: [
-        MaskedInputFormater('###-00-#####')
+        MaskedInputFormatter('###-00-#####')
     ],
 ),
 ```
@@ -337,7 +337,7 @@ a regular expression to [anyCharMatcher] parameter
 TextFormField(
     keyboardType: TextInputType.phone,
     inputFormatters: [
-        MaskedInputFormater('###-00-#####', anyCharMatcher: RegExp(r'[A-Z]'))
+        MaskedInputFormatter('###-00-#####', anyCharMatcher: RegExp(r'[A-Z]'))
     ],
 ),
 ```
