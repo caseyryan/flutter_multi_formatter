@@ -87,6 +87,7 @@ RestrictingInputFormatter
 
 /// for currencies
 MoneyInputFormatter
+PosInputFormatter
 ```
 
 ## Utility methods and widgets
@@ -341,6 +342,8 @@ TextFormField(
     ],
 ),
 ```
+
+
 ## Money Input formatter
 
 ```dart
@@ -371,6 +374,20 @@ TextFormField(
 
 ```
 
+## Point of Sale input formatter
+```dart
+PosInputFormatter
+```
+Allows you to enter numbers like you would normally do 
+on a sales terminal 
+```dart
+TextFormField(
+    keyboardType: TextInputType.number,
+    inputFormatters: [
+        PosInputFormatter(),
+    ],
+),
+...
 
 
 For more details see [example](https://github.com/caseyryan/flutter_multi_formatter/tree/master/example) project. And feel free to open an issue if you find any bugs of errors

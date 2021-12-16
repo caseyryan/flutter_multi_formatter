@@ -61,28 +61,36 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
       if (newValue.text.isEmpty) {
         _removeFirstLetter();
       }
-
-      /// FIXME: не помню зачем это добавлял но из-за этого не
-      /// работало форматирование при стирании. Если что-то сломается, разобраться
-      /// подробнее
-      // return newValue;
     }
-    var onlyNumbers = toNumericString(newValue.text);
-    String maskedValue = _applyMask(onlyNumbers);
+    var onlyNumbers = toNumericString(
+      newValue.text,
+    );
+    String maskedValue = _applyMask(
+      onlyNumbers,
+    );
     if (maskedValue.length == oldValue.text.length) {
       return oldValue;
     }
-    var endOffset = max(oldValue.text.length - oldValue.selection.end, 0);
+    var endOffset = max(
+      oldValue.text.length - oldValue.selection.end,
+      0,
+    );
     var selectionEnd = maskedValue.length - endOffset;
     return TextEditingValue(
-      selection: TextSelection.collapsed(offset: selectionEnd),
+      selection: TextSelection.collapsed(
+        offset: selectionEnd,
+      ),
       text: maskedValue,
     );
   }
 
   /// this is a small dirty hask to be able to remove the first character
   Future _removeFirstLetter() async {
-    await Future.delayed(Duration(milliseconds: 5));
+    await Future.delayed(
+      Duration(
+        milliseconds: 5,
+      ),
+    );
     _updateCardSystemData(null);
   }
 
@@ -95,7 +103,9 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     }
   }
 
-  String _applyMask(String numericString) {
+  String _applyMask(
+    String numericString,
+  ) {
     if (numericString.isEmpty) {
       _updateCardSystemData(null);
     } else {
@@ -103,7 +113,9 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
         numericString,
       );
       if (countryData != null) {
-        _updateCardSystemData(countryData);
+        _updateCardSystemData(
+          countryData,
+        );
       }
     }
     if (_cardSystemData != null) {
@@ -232,8 +244,7 @@ class _CardSystemDatas {
     if (rawData != null) {
       return CardSystemData.fromMap(rawData);
     }
-    return getCardSystemDataByNumber(cardNumber,
-        subscringLength: subscringLength - 1);
+    return getCardSystemDataByNumber(cardNumber, subscringLength: subscringLength - 1);
   }
 
   static int get _maxDigitsInCard {

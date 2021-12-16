@@ -18,7 +18,10 @@ class PosInputFormatter implements TextInputFormatter {
     this.mantissaLength = 2,
   });
 
-  String insertThousandSeparator(String text, String separator) {
+  String insertThousandSeparator(
+    String text,
+    String separator,
+  ) {
     final textLength = text.length;
     final textBuffer = <String>[];
 
@@ -40,36 +43,57 @@ class PosInputFormatter implements TextInputFormatter {
     var text = newValue.text;
 
     // Clean text
-    text = text.replaceAll(RegExp(r"[^0-9]"), '');
+    text = text.replaceAll(
+      RegExp(r"[^0-9]"),
+      '',
+    );
 
     // Remove initial zero
-    text = text.replaceFirst(RegExp(r'0*'), '');
+    text = text.replaceFirst(
+      RegExp(r'0*'),
+      '',
+    );
 
     // Add the zeros until you get to the whole part
     if (text.length <= mantissaLength)
-      text = text.padLeft(mantissaLength + 1, '0');
+      text = text.padLeft(
+        mantissaLength + 1,
+        '0',
+      );
 
     if (text.length > mantissaLength) {
       final separatorOffset = text.length - mantissaLength;
 
-      var integerPart = text.substring(0, separatorOffset);
-      final decimalPart = text.substring(separatorOffset, text.length);
+      var integerPart = text.substring(
+        0,
+        separatorOffset,
+      );
+      final decimalPart = text.substring(
+        separatorOffset,
+        text.length,
+      );
 
       if (thousandsSeparator != null) {
-        integerPart =
-            insertThousandSeparator(integerPart, thousandsSeparator!.char);
+        integerPart = insertThousandSeparator(
+          integerPart,
+          thousandsSeparator!.char,
+        );
       }
 
       text = '${integerPart}${decimalSeparator.char}${decimalPart}';
 
       return newValue.copyWith(
-        selection: TextSelection.collapsed(offset: text.length),
+        selection: TextSelection.collapsed(
+          offset: text.length,
+        ),
         text: text,
       );
     }
 
     return newValue.copyWith(
-      selection: TextSelection.collapsed(offset: text.length),
+      selection: TextSelection.collapsed(
+        offset: text.length,
+      ),
       text: text,
     );
   }
@@ -80,7 +104,9 @@ class DecimalPosSeparator {
 
   const DecimalPosSeparator._(this.char);
 
-  factory DecimalPosSeparator.parse(String char) {
+  factory DecimalPosSeparator.parse(
+    String char,
+  ) {
     switch (char) {
       case ',':
         return comma;
@@ -88,7 +114,10 @@ class DecimalPosSeparator {
         return dot;
     }
 
-    throw FormatException("Invalid char. Valid characters: ${values}", char);
+    throw FormatException(
+      "Invalid char. Valid characters: ${values}",
+      char,
+    );
   }
 
   /// [comma] means this format 1000000.00
@@ -122,7 +151,10 @@ class ThousandsPosSeparator {
         return quote;
     }
 
-    throw FormatException("Invalid char. Valid characters: ${values}", char);
+    throw FormatException(
+      "Invalid char. Valid characters: ${values}",
+      char,
+    );
   }
 
   /// [dot] means this format 1.000.000,00

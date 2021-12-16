@@ -1,3 +1,6 @@
+## [2.5.1]
+- New PosInputFormatter. Thanks to [SimoneBressan](https://github.com/SimoneBres) for this contribution 
+- Fixed the issue with CreditCardExpirationDateFormatter https://github.com/caseyryan/flutter_multi_formatter/issues/70
 ## [2.4.4]
 - https://github.com/caseyryan/flutter_multi_formatter/issues/68 fixed a typo in README section
 - Added alternative mask for Australean phone numbers

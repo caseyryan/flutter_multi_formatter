@@ -85,15 +85,26 @@ class MaskedInputFormatter extends TextInputFormatter {
     var numSeparatorsInNew = 0;
     var numSeparatorsInOld = 0;
 
+    /// For not it's only used in CreditCardExpirationDateFormatter
+    /// when it adds a leading zero to the input
+    var addOffset = newFormattedValue._numLeadingSymbols;
+
+
     /// without this condition there might be a range exception
     if (oldValue.selection.end <= oldFormattedValue.text.length) {
       numSeparatorsInOld = _countSeparators(
-        oldFormattedValue.text.substring(0, oldValue.selection.end),
+        oldFormattedValue.text.substring(
+          0,
+          oldValue.selection.end,
+        ),
       );
     }
     if (newValue.selection.end <= newFormattedValue.text.length) {
       numSeparatorsInNew = _countSeparators(
-        newFormattedValue.text.substring(0, newValue.selection.end),
+        newFormattedValue.text.substring(
+          0,
+          newValue.selection.end,
+        ),
       );
     } else {
       numSeparatorsInNew = numSeparatorsInOld;
@@ -113,7 +124,7 @@ class MaskedInputFormatter extends TextInputFormatter {
     return TextEditingValue(
       text: _maskedValue,
       selection: TextSelection.collapsed(
-        offset: selectionOffset,
+        offset: selectionOffset + addOffset,
         affinity: TextAffinity.upstream,
       ),
     );
@@ -201,9 +212,16 @@ class MaskedInputFormatter extends TextInputFormatter {
 class FormattedValue {
   String _formattedValue = '';
   bool _isErasing = false;
+  int _numLeadingSymbols = 0;
 
   String get text {
     return _formattedValue;
+  }
+
+  /// Used in CreditCardExpirationInputFormatter
+  /// to be able to add a leading zero
+  void increaseNumberOfLeadingSymbols() {
+    _numLeadingSymbols++;
   }
 
   @override
