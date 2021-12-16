@@ -89,7 +89,6 @@ class MaskedInputFormatter extends TextInputFormatter {
     /// when it adds a leading zero to the input
     var addOffset = newFormattedValue._numLeadingSymbols;
 
-
     /// without this condition there might be a range exception
     if (oldValue.selection.end <= oldFormattedValue.text.length) {
       numSeparatorsInOld = _countSeparators(

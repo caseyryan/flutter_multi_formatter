@@ -244,7 +244,10 @@ class _CardSystemDatas {
     if (rawData != null) {
       return CardSystemData.fromMap(rawData);
     }
-    return getCardSystemDataByNumber(cardNumber, subscringLength: subscringLength - 1);
+    return getCardSystemDataByNumber(
+      cardNumber,
+      subscringLength: subscringLength - 1,
+    );
   }
 
   static int get _maxDigitsInCard {

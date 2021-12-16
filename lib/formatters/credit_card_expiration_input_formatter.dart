@@ -69,7 +69,8 @@ class CreditCardExpirationDateFormatter extends MaskedInputFormatter {
       }
     }
     fv = super.applyMask(result);
-    /// a little hack to be able to move caret by one 
+
+    /// a little hack to be able to move caret by one
     /// symbol to the right if a leading zero was added automatically
     for (var i = 0; i < numAddedLeadingSymbols; i++) {
       fv.increaseNumberOfLeadingSymbols();
