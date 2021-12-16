@@ -172,18 +172,19 @@ class MaskedInputFormatter extends TextInputFormatter {
   FormattedValue applyMask(String text) {
     _prepareMask();
     String clearedValueAfter = _removeSeparators(text);
+    String clearedMask = _removeSeparators(mask);
     final isErasing = _maskedValue.length > text.length;
     FormattedValue formattedValue = FormattedValue();
     StringBuffer stringBuffer = StringBuffer();
     var index = 0;
     final maxLength = min(
       clearedValueAfter.length,
-      mask.length - _separatorChars.length,
+      clearedMask.length,
     );
 
     for (var i = 0; i < maxLength; i++) {
       final curChar = clearedValueAfter[i];
-      final charInMask = mask[i];
+      final charInMask = clearedMask[i];
       final maskOnDigitMatcher = charInMask == _onlyDigitMask;
       if (maskOnDigitMatcher) {
         if (!isDigit(curChar)) {
