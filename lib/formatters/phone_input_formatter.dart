@@ -1047,7 +1047,19 @@ class PhoneCodes {
       'country': 'Iraq',
       'internalPhoneCode': '964',
       'countryCode': 'IQ',
-      'phoneMask': '+000 00 000 00000',
+      'phoneMask': '+000 (00) 000 00000',
+    },
+    {
+      'country': 'Iraq (Alternative)',
+      'internalPhoneCode': '07',
+      'countryCode': 'IQ',
+      'phoneMask': '0000 000 0000',
+    },
+    {
+      'country': 'Iraq (Alternative 2)',
+      'internalPhoneCode': '7',
+      'countryCode': 'IQ',
+      'phoneMask': '000 000 0000',
     },
     {
       'country': 'Ireland',
