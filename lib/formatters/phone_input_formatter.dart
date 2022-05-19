@@ -1049,7 +1049,6 @@ class PhoneCodes {
       'countryCode': 'IQ',
       'phoneMask': '+000 (00) 000 00000',
     },
-    
     {
       'country': 'Ireland',
       'internalPhoneCode': '353',
