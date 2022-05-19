@@ -368,7 +368,6 @@ class _CardSystemDatas {
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
     },
-
     {
       'system': CardSystem.UNION_PAY,
       'systemCode': '62',
