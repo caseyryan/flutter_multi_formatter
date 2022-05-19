@@ -1,3 +1,5 @@
+## [2.5.5]
+- Fixed Iraq phone number https://github.com/caseyryan/flutter_multi_formatter/pull/82
 ## [2.5.4]
 - Added more card systems support
 - CreditCardCvvInputFormatter now accepts ```isAmericaExpress``` value
