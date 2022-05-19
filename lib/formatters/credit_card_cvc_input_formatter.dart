@@ -27,5 +27,8 @@ THE SOFTWARE.
 import 'package:flutter_multi_formatter/formatters/masked_input_formatter.dart';
 
 class CreditCardCvcInputFormatter extends MaskedInputFormatter {
-  CreditCardCvcInputFormatter() : super('000');
+  CreditCardCvcInputFormatter({bool isAmericanExpress = false})
+      : super(
+          isAmericanExpress ? '0000' : '000',
+        );
 }

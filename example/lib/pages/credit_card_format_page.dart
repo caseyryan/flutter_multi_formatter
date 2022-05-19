@@ -103,7 +103,9 @@ class _CreditCardFormatPageState extends State<CreditCardFormatPage> {
                     ),
                     keyboardType: TextInputType.number,
                     inputFormatters: [
-                      CreditCardCvcInputFormatter(),
+                      CreditCardCvcInputFormatter(
+                        isAmericanExpress: false,
+                      ),
                     ],
                   ),
                 ],
