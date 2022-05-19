@@ -110,9 +110,8 @@ class _UnfocuserState extends State<Unfocuser> {
 }
 
 class IgnoreUnfocuser extends SingleChildRenderObjectWidget {
-  final Widget child;
-
-  IgnoreUnfocuser({required this.child}) : super(child: child);
+  const IgnoreUnfocuser({Key? key, required Widget child})
+      : super(key: key, child: child);
 
   @override
   IgnoreUnfocuserRenderBox createRenderObject(BuildContext context) {
@@ -121,9 +120,8 @@ class IgnoreUnfocuser extends SingleChildRenderObjectWidget {
 }
 
 class ForceUnfocuser extends SingleChildRenderObjectWidget {
-  final Widget child;
-
-  ForceUnfocuser({required this.child}) : super(child: child);
+  const ForceUnfocuser({Key? key, required Widget child})
+      : super(key: key, child: child);
 
   @override
   ForceUnfocuserRenderBox createRenderObject(BuildContext context) {

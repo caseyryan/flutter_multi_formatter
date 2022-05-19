@@ -607,7 +607,7 @@ class PhoneCodes {
       'country': 'Belgium',
       'internalPhoneCode': '32',
       'countryCode': 'BE',
-      'phoneMask': '+00 000 000 0000',
+      'phoneMask': '+00 000 00 00 00',
     },
     {
       'country': 'Belize',
