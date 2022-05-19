@@ -298,7 +298,7 @@ class _CardSystemDatas {
     },
     {
       'system': CardSystem.MASTERCARD,
-      'systemCode': '2221',
+      'systemCode': '222',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
     },

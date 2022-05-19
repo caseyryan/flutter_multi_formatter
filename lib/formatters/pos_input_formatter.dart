@@ -80,7 +80,7 @@ class PosInputFormatter implements TextInputFormatter {
         );
       }
 
-      text = '${integerPart}${decimalSeparator.char}${decimalPart}';
+      text = '$integerPart${decimalSeparator.char}$decimalPart';
 
       return newValue.copyWith(
         selection: TextSelection.collapsed(

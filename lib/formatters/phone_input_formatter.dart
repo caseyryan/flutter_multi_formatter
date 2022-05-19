@@ -1047,8 +1047,9 @@ class PhoneCodes {
       'country': 'Iraq',
       'internalPhoneCode': '964',
       'countryCode': 'IQ',
-      'phoneMask': '+000 00 000 00000',
+      'phoneMask': '+000 (00) 000 00000',
     },
+    
     {
       'country': 'Ireland',
       'internalPhoneCode': '353',
