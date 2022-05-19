@@ -76,6 +76,28 @@ class _MaskedFormatterPageState extends State<MaskedFormatterPage> {
                       ),
                     ],
                   ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: '(00) 00000-0000',
+                      hintStyle: TextStyle(
+                        color: Colors.black.withOpacity(.3),
+                      ),
+                      errorStyle: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                    // keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      MaskedInputFormatter(
+                        '(00) 00000-0000',
+                        // anyCharMatcher: RegExp(r'[a-z]+'),
+                      ),
+                    ],
+                  ),
                   _getText('Retirement card(Any chars)'),
                   TextFormField(
                     decoration: InputDecoration(

@@ -2,7 +2,8 @@
 - Added more card systems support
 - CreditCardCvvInputFormatter now accepts ```isAmericaExpress``` value
  if it's true, it will accept 4 digits, else 3 https://github.com/caseyryan/flutter_multi_formatter/issues/76
-
+- Merged flutter lint changes https://github.com/caseyryan/flutter_multi_formatter/pull/81
+- Rewritten MaskedInputFormatter. Now it's more robust and correct https://github.com/caseyryan/flutter_multi_formatter/issues/73
 ## [2.5.1]
 - New PosInputFormatter. Thanks to [SimoneBressan](https://github.com/SimoneBressan) for this contribution 
 - Fixed the issue with CreditCardExpirationDateFormatter https://github.com/caseyryan/flutter_multi_formatter/issues/70

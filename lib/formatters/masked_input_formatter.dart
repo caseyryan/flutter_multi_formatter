@@ -24,10 +24,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import 'dart:math';
-
+import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+
+import 'formatter_utils.dart';
+
+class _Separator {
+  String value;
+  int indexInMask;
+  _Separator({
+    required this.value,
+    required this.indexInMask,
+  });
+}
 
 class MaskedInputFormatter extends TextInputFormatter {
   final String mask;
@@ -35,8 +44,10 @@ class MaskedInputFormatter extends TextInputFormatter {
   final String _anyCharMask = '#';
   final String _onlyDigitMask = '0';
   final RegExp? allowedCharMatcher;
-  List<int> _separatorIndices = <int>[];
-  List<String> _separatorChars = <String>[];
+  final List<_Separator> _separators = [];
+
+  // List<int> _separatorIndices = <int>[];
+  // List<String> _separatorChars = <String>[];
   String _maskedValue = '';
 
   /// [mask] is a string that must contain # (hash) and 0 (zero)
@@ -64,7 +75,7 @@ class MaskedInputFormatter extends TextInputFormatter {
     final stringBuffer = StringBuffer();
     for (var i = 0; i < _maskedValue.length; i++) {
       var char = _maskedValue[i];
-      if (!_separatorChars.contains(char)) {
+      if (!_separators.any((s) => s.value == char)) {
         stringBuffer.write(char);
       }
     }
@@ -85,29 +96,15 @@ class MaskedInputFormatter extends TextInputFormatter {
     var numSeparatorsInNew = 0;
     var numSeparatorsInOld = 0;
 
-    /// For not it's only used in CreditCardExpirationDateFormatter
+    /// it's only used in CreditCardExpirationDateFormatter
     /// when it adds a leading zero to the input
     var addOffset = newFormattedValue._numLeadingSymbols;
-
-    /// without this condition there might be a range exception
-    if (oldValue.selection.end <= oldFormattedValue.text.length) {
-      numSeparatorsInOld = _countSeparators(
-        oldFormattedValue.text.substring(
-          0,
-          oldValue.selection.end,
-        ),
-      );
-    }
-    if (newValue.selection.end <= newFormattedValue.text.length) {
-      numSeparatorsInNew = _countSeparators(
-        newFormattedValue.text.substring(
-          0,
-          newValue.selection.end,
-        ),
-      );
-    } else {
-      numSeparatorsInNew = numSeparatorsInOld;
-    }
+    numSeparatorsInOld = _countSeparators(
+      oldFormattedValue.text,
+    );
+    numSeparatorsInNew = _countSeparators(
+      newFormattedValue.text,
+    );
 
     var separatorsDiff = (numSeparatorsInNew - numSeparatorsInOld);
     if (newFormattedValue._isErasing) {
@@ -137,11 +134,16 @@ class MaskedInputFormatter extends TextInputFormatter {
   }
 
   void _prepareMask() {
-    if (_separatorIndices.isEmpty) {
+    if (_separators.isEmpty) {
       for (var i = 0; i < mask.length; i++) {
-        if (mask[i] != _anyCharMask && mask[i] != _onlyDigitMask) {
-          _separatorIndices.add(i);
-          _separatorChars.add(mask[i]);
+        final separatorChar = mask[i];
+        if (separatorChar != _anyCharMask && separatorChar != _onlyDigitMask) {
+          _separators.add(
+            _Separator(
+              value: separatorChar,
+              indexInMask: i,
+            ),
+          );
         }
       }
     }
@@ -151,7 +153,9 @@ class MaskedInputFormatter extends TextInputFormatter {
     _prepareMask();
     var numSeparators = 0;
     for (var i = 0; i < text.length; i++) {
-      if (_separatorChars.contains(text[i])) {
+      final char = text[i];
+
+      if (_separators.any((s) => s.value == char)) {
         numSeparators++;
       }
     }
@@ -162,11 +166,17 @@ class MaskedInputFormatter extends TextInputFormatter {
     var stringBuffer = StringBuffer();
     for (var i = 0; i < text.length; i++) {
       var char = text[i];
-      if (!_separatorChars.contains(char)) {
+      if (!_separators.any((s) => s.value == char)) {
         stringBuffer.write(char);
       }
     }
     return stringBuffer.toString();
+  }
+
+  _Separator? _getSeparatorForIndex(int index) {
+    return _separators.firstWhereOrNull(
+      (s) => s.indexInMask == index,
+    );
   }
 
   FormattedValue applyMask(String text) {
@@ -176,30 +186,40 @@ class MaskedInputFormatter extends TextInputFormatter {
     FormattedValue formattedValue = FormattedValue();
     StringBuffer stringBuffer = StringBuffer();
     var index = 0;
-    final maxLength = min(
-      clearedValueAfter.length,
-      mask.length - _separatorChars.length,
+    final splitMask = mask.split('');
+    final placeholder = List.filled(
+      splitMask.length,
+      '',
+      growable: false,
     );
-
-    for (var i = 0; i < maxLength; i++) {
-      final curChar = clearedValueAfter[i];
-      final charInMask = mask[i];
-      final maskOnDigitMatcher = charInMask == _onlyDigitMask;
-      if (maskOnDigitMatcher) {
-        if (!isDigit(curChar)) {
-          continue;
+    var lastRealCharIndex = 0;
+    for (var i = 0; i < splitMask.length; i++) {
+      final separator = _getSeparatorForIndex(i);
+      if (separator == null) {
+        if (clearedValueAfter.length > index) {
+          final maskOnDigitMatcher = splitMask[i] == _onlyDigitMask;
+          var curChar = clearedValueAfter[index];
+          if (maskOnDigitMatcher) {
+            if (!isDigit(curChar)) {
+              break;
+            }
+          } else {
+            if (!_isMatchingRestrictor(curChar)) {
+              break;
+            }
+          }
+          placeholder[i] = curChar;
+          lastRealCharIndex = i + 1;
+          index++;
+        } else {
+          break;
         }
       } else {
-        if (!_isMatchingRestrictor(curChar)) {
-          continue;
-        }
+        placeholder[i] = separator.value;
       }
-      if (_separatorIndices.contains(index)) {
-        stringBuffer.write(mask[index]);
-        index++;
-      }
-      stringBuffer.write(curChar);
-      index++;
+    }
+    for (var i = 0; i < lastRealCharIndex; i++) {
+      stringBuffer.write(placeholder[i]);
     }
     formattedValue._isErasing = isErasing;
     formattedValue._formattedValue = stringBuffer.toString();
