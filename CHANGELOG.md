@@ -1,3 +1,5 @@
+## [2.5.7]
+- Added a support for Diners Club cards starting with 30
 ## [2.5.6]
 - Mastercard 222* support
 ## [2.5.5]

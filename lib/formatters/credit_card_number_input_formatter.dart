@@ -275,12 +275,18 @@ class _CardSystemDatas {
     {
       'system': CardSystem.DINERS_CLUB,
       'systemCode': '36',
-      'numberMask': '0000000 0000000',
+      'numberMask': '0000 000000 0000',
       'numDigits': 14,
     },
     {
       'system': CardSystem.DINERS_CLUB,
       'systemCode': '54',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.DINERS_CLUB,
+      'systemCode': '30',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
     },
