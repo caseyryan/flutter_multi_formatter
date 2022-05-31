@@ -80,6 +80,30 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                     height: 10.0,
                   ),
                   _getText(
+                    'You can also format phone numbers against a specific country code',
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Type a phone number',
+                      hintStyle: TextStyle(color: Colors.black.withOpacity(.3)),
+                      errorStyle: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      PhoneInputFormatter(
+                        allowEndlessPhone: false,
+                        selectedCountryCode: 'AE',
+                      )
+                    ],
+                  ),
+                  _getText('The country is always United Arab Emirates'),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  _getText(
                     'You can also use formatAsPhoneNumber(string) ' +
                         'function to format a string containing a phone number. E.g ' +
                         '79998885544 will be formatted to +7 (999) 888-55-44',
@@ -113,9 +137,9 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                   Container(
                     height: 50,
                     // ignore: deprecated_member_use
-                    child: RaisedButton(
-                      textColor: Colors.white,
-                      color: Colors.blue,
+                    child: ElevatedButton(
+                      // textColor: Colors.white,
+                      // color: Colors.blue,
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _phoneController.text = formatAsPhoneNumber(

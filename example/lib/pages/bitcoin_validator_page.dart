@@ -58,7 +58,7 @@ class _BitcoinValidatorPageState extends State<BitcoinValidatorPage> {
   }
 
   void _onValidatePressed() {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
         _formKey.currentState!.save();
         _formKey.currentState!.validate();
