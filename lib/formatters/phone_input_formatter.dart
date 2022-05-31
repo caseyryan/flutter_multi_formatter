@@ -55,7 +55,8 @@ class PhoneInputFormatter extends TextInputFormatter {
 
   String get masked => _lastValue;
 
-  String get unmasked => '+${toNumericString(_lastValue, allowHyphen: false)}';
+  String get unmasked =>
+      '${selectedCountryCode == null ? "+" : ""}${toNumericString(_lastValue, allowHyphen: false)}';
 
   bool get isFilled => isPhoneValid(masked);
 
@@ -76,8 +77,8 @@ class PhoneInputFormatter extends TextInputFormatter {
 
     var onlyNumbers = toNumericString(newValue.text);
     String maskedValue;
-    
-    if(selectedCountryCode == null) {
+
+    if (selectedCountryCode == null) {
       if (isErasing) {
         if (newValue.text.isEmpty) {
           _clearCountry();
