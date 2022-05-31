@@ -50,6 +50,10 @@ PhoneInputFormatter(
     onCountrySelected: _onCountrySelected,
     allowEndlessPhone: true,
 )
+/// Setting `selectedCountryCode` would allow you to format numbers without the phone code in it. It is particularly useful for UIs where the country segment is selected manually, in a dropdown, for instance.
+PhoneInputFormatter(
+    selectedCountryCode: 'AE',
+)
 ```
 
 ### Formatting a credit / debit card
@@ -244,6 +248,21 @@ TextFormField(
     keyboardType: TextInputType.phone,
     inputFormatters: [
         PhoneInputFormatter()
+    ],
+),
+```
+
+You can format the number according to the mask for a `selectedCountryCode`.
+`selectedCountryCode` should be the ISO-3166 code for the selected country.
+Here's what it looks like for United Arab Emirated (AE):
+
+```dart
+TextFormField(
+    keyboardType: TextInputType.phone,
+    inputFormatters: [
+        PhoneInputFormatter(
+            selectedCountryCode: 'AE',
+        )
     ],
 ),
 ```
