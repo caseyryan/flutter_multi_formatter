@@ -1,3 +1,5 @@
+## [2.5.8]
+- Added a MasterCard 52* credit card support
 ## [2.5.7]
 - Added a support for Diners Club cards starting with 30
 ## [2.5.6]

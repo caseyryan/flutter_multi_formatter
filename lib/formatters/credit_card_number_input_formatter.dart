@@ -292,13 +292,7 @@ class _CardSystemDatas {
     },
     {
       'system': CardSystem.MASTERCARD,
-      'systemCode': '51',
-      'numberMask': '0000 0000 0000 0000',
-      'numDigits': 16,
-    },
-    {
-      'system': CardSystem.MASTERCARD,
-      'systemCode': '55',
+      'systemCode': '5',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
     },
