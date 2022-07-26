@@ -98,3 +98,10 @@ bool isDigit(String? character) {
   }
   return _digitRegExp.stringMatch(character) != null;
 }
+
+bool isPositiveDigit(String? character) {
+  if (character == null || character.isEmpty || character.length > 1) {
+    return false;
+  }
+  return _positiveDigitRegExp.stringMatch(character) != null;
+}

@@ -44,6 +44,7 @@ class MaskedInputFormatter extends TextInputFormatter {
   final String _anyCharMask = '#';
   final String _onlyDigitMask = '0';
   final RegExp? allowedCharMatcher;
+  final bool? allowOnlyPositiveNumbers;
   final List<_Separator> _separators = [];
 
   // List<int> _separatorIndices = <int>[];
@@ -66,6 +67,7 @@ class MaskedInputFormatter extends TextInputFormatter {
   MaskedInputFormatter(
     this.mask, {
     this.allowedCharMatcher,
+    this.allowOnlyPositiveNumbers,
   });
 
   bool get isFilled => _maskedValue.length == mask.length;
@@ -200,8 +202,14 @@ class MaskedInputFormatter extends TextInputFormatter {
           final maskOnDigitMatcher = splitMask[i] == _onlyDigitMask;
           var curChar = clearedValueAfter[index];
           if (maskOnDigitMatcher) {
-            if (!isDigit(curChar)) {
-              break;
+            if(allowOnlyPositiveNumbers != true){
+              if (!isDigit(curChar)) {
+                break;
+            }
+            }else{
+               if (!isPositiveDigit(curChar)) {
+                break;
+            }
             }
           } else {
             if (!_isMatchingRestrictor(curChar)) {
