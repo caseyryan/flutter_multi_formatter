@@ -115,7 +115,7 @@ class DecimalPosSeparator {
     }
 
     throw FormatException(
-      "Invalid char. Valid characters: ${values}",
+      "Invalid char. Valid characters: $values",
       char,
     );
   }
@@ -152,7 +152,7 @@ class ThousandsPosSeparator {
     }
 
     throw FormatException(
-      "Invalid char. Valid characters: ${values}",
+      "Invalid char. Valid characters: $values",
       char,
     );
   }

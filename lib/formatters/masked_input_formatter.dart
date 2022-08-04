@@ -200,7 +200,7 @@ class MaskedInputFormatter extends TextInputFormatter {
           final maskOnDigitMatcher = splitMask[i] == _onlyDigitMask;
           var curChar = clearedValueAfter[index];
           if (maskOnDigitMatcher) {
-            if (!isDigit(curChar)) {
+            if (!isDigit(curChar, positiveOnly: true)) {
               break;
             }
           } else {

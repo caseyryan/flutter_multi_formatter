@@ -37,6 +37,7 @@ String toNumericString(
   bool allowHyphen = true,
 }) {
   if (inputString == null) return '';
+  else if (inputString == '+') return inputString;
   var startsWithPeriod = numericStringStartsWithOrphanPeriod(
     inputString,
   );
@@ -72,7 +73,6 @@ bool numericStringStartsWithOrphanPeriod(String string) {
 void checkMask(String mask) {
   if (_oneDashRegExp.hasMatch(mask)) {
     throw ('A mask cannot contain more than one dash (-) symbols in a row');
-    // return false;
   }
   if (!_startPlusRegExp.hasMatch(mask)) {
     throw ('A mask must start with a + sign followed by a digit of a rounded brace');
@@ -87,14 +87,20 @@ bool isUnmaskableSymbol(String? symbol) {
     return false;
   }
   return _isMaskSymbolRegExp.hasMatch(symbol);
-  // var matches = RegExp(r'^[-\+ )(]+$').allMatches(symbol);
-  // print('NUM MATCHES ${matches.toList().length} FOR $symbol');
-  // return false;
 }
 
-bool isDigit(String? character) {
+/// [character] a character to check if it's a digit against
+/// [positiveOnly] if true it will not allow a minus (dash) character 
+/// to be accepted as a part of a digit
+bool isDigit(
+  String? character, {
+  bool positiveOnly = false,
+}) {
   if (character == null || character.isEmpty || character.length > 1) {
     return false;
+  }
+  if (positiveOnly) {
+    return _positiveDigitRegExp.stringMatch(character) != null;
   }
   return _digitRegExp.stringMatch(character) != null;
 }
