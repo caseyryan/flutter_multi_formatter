@@ -24,8 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import 'formatter_utils.dart' as fu;
 import 'money_input_enums.dart';
-import 'money_input_formatter.dart' as moneyFormatter;
 
 /// WARNING! This stuff requires Dart SDK version 2.6+
 /// so if your code is supposed to be running on
@@ -60,7 +60,7 @@ extension NumericInputFormatting on num {
     String trailingSymbol = '',
     bool useSymbolPadding = false,
   }) {
-    return moneyFormatter.toCurrencyString(
+    return fu.toCurrencyString(
       this.toString(),
       mantissaLength: mantissaLength,
       leadingSymbol: leadingSymbol,
@@ -97,7 +97,7 @@ extension StringInputFormatting on String {
       String leadingSymbol = '',
       String trailingSymbol = '',
       bool useSymbolPadding = false}) {
-    return moneyFormatter.toCurrencyString(this.toString(),
+    return fu.toCurrencyString(this.toString(),
         mantissaLength: mantissaLength,
         leadingSymbol: leadingSymbol,
         shorteningPolicy: shorteningPolicy,

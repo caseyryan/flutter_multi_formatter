@@ -447,6 +447,38 @@ class MoneyInputFormatter extends TextInputFormatter {
     return value == 0.0;
   }
 
+  /// in case spaces are used as thousands separators
+/// they must be replaced with commas here to simplify parsing
+String _replaceSpacesByCommas(
+  String value, {
+  required int leadingLength,
+  required int trailingLength,
+}) {
+  if (value.length < 2) return value;
+  var presplit = value.split('');
+  var stringBuffer = StringBuffer();
+  for (var i = 0; i < presplit.length; i++) {
+    var char = presplit[i];
+    if (char == ' ') {
+      /// we only need to allow spaces as padding
+      /// before and after currency symbol
+      /// this is used for the cases when we use spaces as thousand separators
+      final minAllowedSpacePos = leadingLength;
+      final maxAllowSpacePos = presplit.length - (1 + trailingLength);
+      if (i != minAllowedSpacePos && i != maxAllowSpacePos) {
+        stringBuffer.write(',');
+      } else {
+        stringBuffer.write(char);
+      }
+    } else {
+      stringBuffer.write(char);
+    }
+  }
+  value = stringBuffer.toString();
+  // print('VALL $value');
+  return value;
+}
+
   int get _paddingLength {
     return useSymbolPadding ? 1 : 0;
   }
@@ -500,208 +532,6 @@ class MoneyInputFormatter extends TextInputFormatter {
   }
 }
 
-int _countSymbolsInString(String string, String symbolToCount) {
-  var counter = 0;
-  for (var i = 0; i < string.length; i++) {
-    if (string[i] == symbolToCount) counter++;
-  }
-  return counter;
-}
-
-/// [thousandSeparator] specifies what symbol will be used to separate
-/// each block of 3 digits, e.g. [ThousandSeparator.Comma] will format
-/// a million as 1,000,000
-/// [shorteningPolicy] is used to round values using K for thousands, M for
-/// millions and B for billions
-/// [ShorteningPolicy.NoShortening] displays a value of 1234456789.34 as 1,234,456,789.34
-/// but [ShorteningPolicy.RoundToThousands] displays the same value as 1,234,456K
-/// [mantissaLength] specifies how many digits will be added after a period sign
-/// [leadingSymbol] any symbol (except for the ones that contain digits) the will be
-/// added in front of the resulting string. E.g. $ or €
-/// some of the signs are available via constants like [MoneySymbols.EURO_SIGN]
-/// but you can basically add any string instead of it. The main rule is that the string
-/// must not contain digits, preiods, commas and dashes
-/// [trailingSymbol] is the same as leading but this symbol will be added at the
-/// end of your resulting string like 1,250€ instead of €1,250
-/// [useSymbolPadding] adds a space between the number and trailing / leading symbols
-/// like 1,250€ -> 1,250 € or €1,250€ -> € 1,250
-String toCurrencyString(
-  String value, {
-  int mantissaLength = 2,
-  ThousandSeparator thousandSeparator = ThousandSeparator.Comma,
-  ShorteningPolicy shorteningPolicy = ShorteningPolicy.NoShortening,
-  String leadingSymbol = '',
-  String trailingSymbol = '',
-  bool useSymbolPadding = false,
-}) {
-  var swapCommasAndPreriods = false;
-  if (mantissaLength <= 0) {
-    mantissaLength = 0;
-  }
-
-  String? tSeparator;
-  switch (thousandSeparator) {
-    case ThousandSeparator.Comma:
-      tSeparator = ',';
-      break;
-    case ThousandSeparator.Period:
-      tSeparator = ',';
-      swapCommasAndPreriods = true;
-      break;
-    case ThousandSeparator.None:
-      tSeparator = '';
-      break;
-    case ThousandSeparator.SpaceAndPeriodMantissa:
-      tSeparator = ' ';
-      break;
-    case ThousandSeparator.SpaceAndCommaMantissa:
-      tSeparator = ' ';
-      swapCommasAndPreriods = true;
-      break;
-  }
-  // print(thousandSeparator);
-  value = value.replaceAll(_repeatingDots, '.');
-  if (mantissaLength == 0) {
-    var substringEnd = value.lastIndexOf('.');
-    if (substringEnd > 0) {
-      value = value.substring(0, substringEnd);
-    }
-  }
-  value = toNumericString(value, allowPeriod: mantissaLength > 0);
-  var isNegative = value.contains('-');
-
-  /// parsing here is done to avoid any unnecessary symbols inside
-  /// a number
-  var parsed = (double.tryParse(value) ?? 0.0);
-  if (parsed == 0.0) {
-    if (isNegative) {
-      var containsMinus = parsed.toString().contains('-');
-      if (!containsMinus) {
-        value =
-            '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
-      } else {
-        value = '${parsed.toStringAsFixed(mantissaLength)}';
-      }
-    } else {
-      value = parsed.toStringAsFixed(mantissaLength);
-    }
-  }
-  var noShortening = shorteningPolicy == ShorteningPolicy.NoShortening;
-
-  var minShorteningLength = 0;
-  switch (shorteningPolicy) {
-    case ShorteningPolicy.NoShortening:
-      break;
-    case ShorteningPolicy.RoundToThousands:
-      minShorteningLength = 4;
-      value = '${_getRoundedValue(value, 1000)}K';
-      break;
-    case ShorteningPolicy.RoundToMillions:
-      minShorteningLength = 7;
-      value = '${_getRoundedValue(value, 1000000)}M';
-      break;
-    case ShorteningPolicy.RoundToBillions:
-      minShorteningLength = 10;
-      value = '${_getRoundedValue(value, 1000000000)}B';
-      break;
-    case ShorteningPolicy.RoundToTrillions:
-      minShorteningLength = 13;
-      value = '${_getRoundedValue(value, 1000000000000)}T';
-      break;
-    case ShorteningPolicy.Automatic:
-      // find out what shortening to use base on the length of the string
-      var intValStr = (int.tryParse(value) ?? 0).toString();
-      if (intValStr.length < 7) {
-        minShorteningLength = 4;
-        value = '${_getRoundedValue(value, 1000)}K';
-      } else if (intValStr.length < 10) {
-        minShorteningLength = 7;
-        value = '${_getRoundedValue(value, 1000000)}M';
-      } else if (intValStr.length < 13) {
-        minShorteningLength = 10;
-        value = '${_getRoundedValue(value, 1000000000)}B';
-      } else {
-        minShorteningLength = 13;
-        value = '${_getRoundedValue(value, 1000000000000)}T';
-      }
-      break;
-  }
-  var list = <String?>[];
-  var mantissa = '';
-  var split = value.split('');
-  var mantissaList = <String>[];
-  var mantissaSeparatorIndex = value.indexOf('.');
-  if (mantissaSeparatorIndex > -1) {
-    var start = mantissaSeparatorIndex + 1;
-    var end = start + mantissaLength;
-    for (var i = start; i < end; i++) {
-      if (i < split.length) {
-        mantissaList.add(split[i]);
-      } else {
-        mantissaList.add('0');
-      }
-    }
-  }
-
-  mantissa = noShortening
-      ? _postProcessMantissa(mantissaList.join(''), mantissaLength)
-      : '';
-  var maxIndex = split.length - 1;
-  if (mantissaSeparatorIndex > 0 && noShortening) {
-    maxIndex = mantissaSeparatorIndex - 1;
-  }
-  var digitCounter = 0;
-  if (maxIndex > -1) {
-    for (var i = maxIndex; i >= 0; i--) {
-      digitCounter++;
-      list.add(split[i]);
-      if (noShortening) {
-        // в случае с отрицательным числом, запятая перед минусом не нужна
-        if (digitCounter % 3 == 0 && i > (isNegative ? 1 : 0)) {
-          list.add(tSeparator);
-        }
-      } else {
-        if (value.length >= minShorteningLength) {
-          if (!isDigit(split[i])) digitCounter = 1;
-          if (digitCounter % 3 == 1 &&
-              digitCounter > 1 &&
-              i > (isNegative ? 1 : 0)) {
-            list.add(tSeparator);
-          }
-        }
-      }
-    }
-  } else {
-    list.add('0');
-  }
-
-  if (leadingSymbol.isNotEmpty) {
-    if (useSymbolPadding) {
-      list.add('$leadingSymbol ');
-    } else {
-      list.add(leadingSymbol);
-    }
-  }
-  var reversed = list.reversed.join('');
-  String result;
-
-  if (trailingSymbol.isNotEmpty) {
-    if (useSymbolPadding) {
-      result = '$reversed$mantissa $trailingSymbol';
-    } else {
-      result = '$reversed$mantissa$trailingSymbol';
-    }
-  } else {
-    result = '$reversed$mantissa';
-  }
-
-  if (swapCommasAndPreriods) {
-    return _swapCommasAndPeriods(result);
-  }
-  return result;
-}
-
-/// просто меняет точки и запятые местами
 String _swapCommasAndPeriods(String input) {
   var temp = input;
   if (temp.indexOf('.,') > -1) {
@@ -712,64 +542,15 @@ String _swapCommasAndPeriods(String input) {
   return temp;
 }
 
-/// in case spaces are used as thousands separators
-/// they must be replaced with commas here to simplify parsing
-String _replaceSpacesByCommas(
-  String value, {
-  required int leadingLength,
-  required int trailingLength,
-}) {
-  if (value.length < 2) return value;
-  var presplit = value.split('');
-  var stringBuffer = StringBuffer();
-  for (var i = 0; i < presplit.length; i++) {
-    var char = presplit[i];
-    if (char == ' ') {
-      /// we only need to allow spaces as padding
-      /// before and after currency symbol
-      /// this is used for the cases when we use spaces as thousand separators
-      final minAllowedSpacePos = leadingLength;
-      final maxAllowSpacePos = presplit.length - (1 + trailingLength);
-      if (i != minAllowedSpacePos && i != maxAllowSpacePos) {
-        stringBuffer.write(',');
-      } else {
-        stringBuffer.write(char);
-      }
-    } else {
-      stringBuffer.write(char);
-    }
+int _countSymbolsInString(String string, String symbolToCount) {
+  var counter = 0;
+  for (var i = 0; i < string.length; i++) {
+    if (string[i] == symbolToCount) counter++;
   }
-  value = stringBuffer.toString();
-  // print('VALL $value');
-  return value;
+  return counter;
 }
 
-String _getRoundedValue(
-  String numericString,
-  double roundTo,
-) {
-  assert(roundTo != 0.0);
-  var numericValue = double.tryParse(numericString) ?? 0.0;
-  var result = numericValue / roundTo;
 
-  /// e.g. for a number of 1700 return 1.7, instead of 1
-  /// after rounding to 1000
-  var remainder = result.remainder(1.0);
-  String prepared;
-  if (remainder != 0.0) {
-    prepared = result.toStringAsFixed(2);
-    if (prepared[prepared.length - 1] == '0') {
-      prepared = prepared.substring(0, prepared.length - 1);
-    }
-    return prepared;
-  }
-  return result.toInt().toString();
-}
 
-/// simply adds a period to an existing fractional part
-/// or adds an empty fractional part if it was not filled
-String _postProcessMantissa(String mantissaValue, int mantissaLength) {
-  if (mantissaLength < 1) return '';
-  if (mantissaValue.isNotEmpty) return '.$mantissaValue';
-  return '.${List.filled(mantissaLength, '0').join('')}';
-}
+
+
