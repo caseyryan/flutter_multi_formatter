@@ -47,6 +47,10 @@ class MoneySymbols {
   static const String RUBLE_SIGN = '₽';
 }
 
+@Deprecated(
+  'This formatter will be removed in future versions of the' +
+      ' package. Please use CurrencyInputFormatter instead',
+)
 class MoneyInputFormatter extends TextInputFormatter {
   static final RegExp _wrongLeadingZeroMatcher = RegExp(r'^0\d{1}');
 
@@ -271,7 +275,6 @@ class MoneyInputFormatter extends TextInputFormatter {
         /// solution to insert this code here, it's more like a dirty hack
         /// but I haven't had time enough to think on some more sophisticated
         /// architectural approach :D
-        /// FIXME: find some better solution.. sometime in the future, in a million years, maybe :D
         numSeparatorsAfter = 0;
       }
 
@@ -369,7 +372,6 @@ class MoneyInputFormatter extends TextInputFormatter {
         numThousandSeparatorsInNewSub - numThousandSeparatorsInOldSub;
 
     if (thousandSeparator == ThousandSeparator.None) {
-      /// FIXME: dirty hack. I will probably find a better solution.
       /// I really want to believe this :-)
       numThousandSeparatorsInNewSub = 0;
       numAddedSeparators = 0;
@@ -448,36 +450,36 @@ class MoneyInputFormatter extends TextInputFormatter {
   }
 
   /// in case spaces are used as thousands separators
-/// they must be replaced with commas here to simplify parsing
-String _replaceSpacesByCommas(
-  String value, {
-  required int leadingLength,
-  required int trailingLength,
-}) {
-  if (value.length < 2) return value;
-  var presplit = value.split('');
-  var stringBuffer = StringBuffer();
-  for (var i = 0; i < presplit.length; i++) {
-    var char = presplit[i];
-    if (char == ' ') {
-      /// we only need to allow spaces as padding
-      /// before and after currency symbol
-      /// this is used for the cases when we use spaces as thousand separators
-      final minAllowedSpacePos = leadingLength;
-      final maxAllowSpacePos = presplit.length - (1 + trailingLength);
-      if (i != minAllowedSpacePos && i != maxAllowSpacePos) {
-        stringBuffer.write(',');
+  /// they must be replaced with commas here to simplify parsing
+  String _replaceSpacesByCommas(
+    String value, {
+    required int leadingLength,
+    required int trailingLength,
+  }) {
+    if (value.length < 2) return value;
+    var presplit = value.split('');
+    var stringBuffer = StringBuffer();
+    for (var i = 0; i < presplit.length; i++) {
+      var char = presplit[i];
+      if (char == ' ') {
+        /// we only need to allow spaces as padding
+        /// before and after currency symbol
+        /// this is used for the cases when we use spaces as thousand separators
+        final minAllowedSpacePos = leadingLength;
+        final maxAllowSpacePos = presplit.length - (1 + trailingLength);
+        if (i != minAllowedSpacePos && i != maxAllowSpacePos) {
+          stringBuffer.write(',');
+        } else {
+          stringBuffer.write(char);
+        }
       } else {
         stringBuffer.write(char);
       }
-    } else {
-      stringBuffer.write(char);
     }
+    value = stringBuffer.toString();
+    // print('VALL $value');
+    return value;
   }
-  value = stringBuffer.toString();
-  // print('VALL $value');
-  return value;
-}
 
   int get _paddingLength {
     return useSymbolPadding ? 1 : 0;
@@ -549,8 +551,3 @@ int _countSymbolsInString(String string, String symbolToCount) {
   }
   return counter;
 }
-
-
-
-
-

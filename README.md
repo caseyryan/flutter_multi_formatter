@@ -86,7 +86,7 @@ CreditCardExpirationDateFormatter
 RestrictingInputFormatter
 
 /// for currencies
-MoneyInputFormatter
+CurrencyInputFormatter
 PosInputFormatter
 ```
 
@@ -145,7 +145,7 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 bool isDigit(String character);
 ```
 
-toCurrencyString() is used by the MoneyInputFormatter internally 
+toCurrencyString() is used by the CurrencyInputFormatter internally 
 but you can also use it directly
 ```dart
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -162,19 +162,19 @@ String toCurrencyString(String value, {
     bool useSymbolPadding = false
 });
 
-print(toCurrencyString('123456', leadingSymbol: MoneySymbols.DOLLAR_SIGN)); // $123,456.00
+print(toCurrencyString('123456', leadingSymbol: CurrencySymbols.DOLLAR_SIGN)); // $123,456.00
 
 /// the values can also be shortened to thousands, millions, billions... 
 /// in this case a 1000 will be displayed as 1K, and 1250000 will turn to this 1.25M
 var result = toCurrencyString(
     '125000', 
-    leadingSymbol: MoneySymbols.DOLLAR_SIGN,
+    leadingSymbol: CurrencySymbols.DOLLAR_SIGN,
     shorteningPolicy: ShorteningPolicy.RoundToThousands
 ); // $125K
 
 result = toCurrencyString(
     '1250000', 
-    leadingSymbol: MoneySymbols.DOLLAR_SIGN,
+    leadingSymbol: CurrencySymbols.DOLLAR_SIGN,
     shorteningPolicy: ShorteningPolicy.RoundToMillions
 ); // 1.25M
 
@@ -186,10 +186,10 @@ double, int and String.
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 var someNumericValue = 123456;
-print(someNumericValue.toCurrencyString(leadingSymbol: MoneySymbols.DOLLAR_SIGN)); // $123,456.00
+print(someNumericValue.toCurrencyString(leadingSymbol: CurrencySymbols.DOLLAR_SIGN)); // $123,456.00
 
 var someNumericStringValue = '123456';
-print(someNumericStringValue.toCurrencyString(trailingSymbol: MoneySymbols.EURO_SIGN)); // 123,456.00€
+print(someNumericStringValue.toCurrencyString(trailingSymbol: CurrencySymbols.EURO_SIGN)); // 123,456.00€
 ```  
 
 ```dart 
@@ -347,15 +347,15 @@ TextFormField(
 ## Money Input formatter
 
 ```dart
-MoneyInputFormatter()
+CurrencyInputFormatter()
 ```
 
 ```dart
 TextFormField(
     keyboardType: TextInputType.number,
     inputFormatters: [
-        MoneyInputFormatter(
-            leadingSymbol: MoneySymbols.DOLLAR_SIGN
+        CurrencyInputFormatter(
+            leadingSymbol: CurrencySymbols.DOLLAR_SIGN
         )
     ],
 ),
@@ -364,8 +364,8 @@ TextFormField(
 TextFormField(
     keyboardType: TextInputType.number,
     inputFormatters: [
-        MoneyInputFormatter(
-            trailingSymbol: MoneySymbols.EURO_SIGN,
+        CurrencyInputFormatter
+            trailingSymbol: CurrencySymbols.EURO_SIGN,
             useSymbolPadding: true,
             mantissaLength: 3 // the length of the fractional side
         )

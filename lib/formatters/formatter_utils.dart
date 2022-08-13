@@ -1,5 +1,5 @@
 /*
-(c) Copyright 2020 Serov Konstantin.
+(c) Copyright 2022 Serov Konstantin.
 
 Licensed under the MIT license:
 
@@ -23,6 +23,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+import 'package:flutter/foundation.dart';
+
 import 'money_input_enums.dart';
 
 final RegExp _digitRegExp = RegExp(r'[-0-9]+');
@@ -32,15 +34,24 @@ final RegExp _oneDashRegExp = RegExp(r'[-]{2,}');
 final RegExp _startPlusRegExp = RegExp(r'^\+{1}[)(\d]+');
 final RegExp _maskContentsRegExp = RegExp(r'^[-0-9)( +]{3,}$');
 final RegExp _isMaskSymbolRegExp = RegExp(r'^[-\+ )(]+$');
-final RegExp _repeatingDots = RegExp(r'\.{2,}');
+final RegExp _repeatingDotsRegExp = RegExp(r'\.{2,}');
 
 String toNumericString(
   String? inputString, {
   bool allowPeriod = false,
   bool allowHyphen = true,
+  String mantissaSeparator = '.',
 }) {
-  if (inputString == null) return '';
-  else if (inputString == '+') return inputString;
+  if (inputString == null) {
+    return '';
+  } else if (inputString == '+') {
+    return inputString;
+  }
+  if (mantissaSeparator == '.') {
+    inputString = inputString.replaceAll(',', '');
+  } else if (mantissaSeparator == ',') {
+    inputString = inputString.replaceAll('.', '').replaceAll(',', '.');
+  }
   var startsWithPeriod = numericStringStartsWithOrphanPeriod(
     inputString,
   );
@@ -55,11 +66,85 @@ String toNumericString(
   if (startsWithPeriod && allowPeriod) {
     result = '0.$result';
   }
-  if (allowPeriod) {
-    return double.tryParse(result)?.toString() ?? result;
-  } else {
-    return int.tryParse(result)?.toString() ?? result;
+  if (result.isEmpty) {
+    return result;
   }
+  try {
+    if (allowPeriod) {
+      // return double.parse(result).toString();
+      return _toDoubleString(
+        result,
+        allowPeriod: true,
+      );
+    } else {
+      return _toDoubleString(
+        result,
+        allowPeriod: false,
+      );
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print(e);
+    }
+    return result;
+  }
+}
+
+/// This hack is necessary because double.parse
+/// fails at some point
+/// while parsing too large numbers starting to convert
+/// them into a scientific notation with e+/- power
+/// This function doesnt' really care for numbers, it works
+/// with strings from the very beginning
+String _toDoubleString(
+  String input, {
+  bool allowPeriod = true,
+}) {
+  const period = '.';
+  const zero = '0';
+  const error = 'Invalid number';
+  final allowedSymbols = ['-', period];
+  final temp = <String>[];
+  if (input.startsWith(period)) {
+    if (allowPeriod) {
+      temp.add(zero);
+    } else {
+      return zero;
+    }
+  }
+
+  for (var i = 0; i < input.length; i++) {
+    final char = input[i];
+    if (!isDigit(char, positiveOnly: true)) {
+      if (allowedSymbols.contains(char)) {
+        if (char == '-') {
+          if (i > 0) {
+            throw error;
+          }
+        } else if (char == period) {
+          if (!allowPeriod) {
+            break;
+          }
+        }
+        allowedSymbols.remove(char);
+      } else {
+        throw error;
+      }
+    }
+    temp.add(char);
+  }
+  if (temp.contains(period)) {
+    while (temp.isNotEmpty && temp[0] == zero) {
+      temp.removeAt(0);
+    }
+    if (temp.isEmpty) {
+      return zero;
+    } else if (temp[0] == period) {
+      temp.insert(0, zero);
+    }
+  }
+
+  return temp.join();
 }
 
 bool numericStringStartsWithOrphanPeriod(String string) {
@@ -121,6 +206,7 @@ String toCurrencyString(
   }
 
   String? tSeparator;
+  String mantissaSeparator = '.';
   switch (thousandSeparator) {
     case ThousandSeparator.Comma:
       tSeparator = ',';
@@ -128,6 +214,7 @@ String toCurrencyString(
     case ThousandSeparator.Period:
       tSeparator = ',';
       swapCommasAndPreriods = true;
+      mantissaSeparator = ',';
       break;
     case ThousandSeparator.None:
       tSeparator = '';
@@ -138,17 +225,23 @@ String toCurrencyString(
     case ThousandSeparator.SpaceAndCommaMantissa:
       tSeparator = ' ';
       swapCommasAndPreriods = true;
+      mantissaSeparator = ',';
       break;
   }
   // print(thousandSeparator);
-  value = value.replaceAll(_repeatingDots, '.');
+  value = value.replaceAll(_repeatingDotsRegExp, '.');
   if (mantissaLength == 0) {
     var substringEnd = value.lastIndexOf('.');
     if (substringEnd > 0) {
       value = value.substring(0, substringEnd);
     }
   }
-  value = toNumericString(value, allowPeriod: mantissaLength > 0);
+
+  value = toNumericString(
+    value,
+    allowPeriod: mantissaLength > 0,
+    mantissaSeparator: mantissaSeparator,
+  );
   var isNegative = value.contains('-');
 
   /// parsing here is done to avoid any unnecessary symbols inside
@@ -300,8 +393,6 @@ bool isUnmaskableSymbol(String? symbol) {
   return _isMaskSymbolRegExp.hasMatch(symbol);
 }
 
-
-
 String _getRoundedValue(
   String numericString,
   double roundTo,
@@ -324,8 +415,6 @@ String _getRoundedValue(
   return result.toInt().toString();
 }
 
-
-
 /// simply adds a period to an existing fractional part
 /// or adds an empty fractional part if it was not filled
 String _postProcessMantissa(String mantissaValue, int mantissaLength) {
@@ -334,9 +423,8 @@ String _postProcessMantissa(String mantissaValue, int mantissaLength) {
   return '.${List.filled(mantissaLength, '0').join('')}';
 }
 
-
 /// [character] a character to check if it's a digit against
-/// [positiveOnly] if true it will not allow a minus (dash) character 
+/// [positiveOnly] if true it will not allow a minus (dash) character
 /// to be accepted as a part of a digit
 bool isDigit(
   String? character, {

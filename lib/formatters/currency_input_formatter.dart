@@ -1,5 +1,5 @@
 /*
-(c) Copyright 2020 Serov Konstantin.
+(c) Copyright 2022 Serov Konstantin.
 
 Licensed under the MIT license:
 
@@ -26,11 +26,14 @@ THE SOFTWARE.
 
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
-final RegExp _mantissaSeparators = RegExp(r'[,.]');
+final RegExp _mantissaSeparatorRegexp = RegExp(r'[,.]');
+final RegExp _illegalCharsRegexp = RegExp(r'[^0-9-,.]+');
+final RegExp _illegalLeadingOrTrailing = RegExp(r'[-,.+]+');
 
 class CurrencySymbols {
   static const String DOLLAR_SIGN = '\$';
@@ -76,23 +79,184 @@ class CurrencyInputFormatter extends TextInputFormatter {
     this.useSymbolPadding = false,
     this.onValueChange,
     this.maxTextLength,
-  });
+  }) : assert(
+            !leadingSymbol.contains(_illegalLeadingOrTrailing) &&
+                !trailingSymbol.contains(_illegalLeadingOrTrailing),
+            '''
+    Illegal trailing or reading symbol. You cannot use 
+    the next symbols as leading or trailing because 
+    they might interfere with numbers: -,.+
+  ''');
+
+  String get _mantissaSeparator {
+    if (thousandSeparator == ThousandSeparator.Period ||
+        thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
+      return ',';
+    }
+    return '.';
+  }
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final trailingLength = _getTrailingLength();
+    final leadingLength = _getLeadingLength();
+    final oldCaretIndex = oldValue.selection.start;
+    final newCaretIndex = newValue.selection.start;
+    var newText = newValue.text;
+
+    final newAsNumeric = toNumericString(
+      newText,
+      allowPeriod: true,
+      mantissaSeparator: _mantissaSeparator,
+    );
+
+    var oldText = oldValue.text;
+    if (oldValue == newValue) {
+      // print('RETURN 1 ${newValue.text}');
+      return newValue;
+    }
+    bool isErasing = newText.length < oldText.length;
+    if (isErasing) {
+      if (_hasErasedMantissaSeparator(
+        shorterString: newText,
+        longerString: oldText,
+      )) {
+        // print('RETURN 2 ${oldValue.text}');
+        return oldValue.copyWith(
+          selection: TextSelection.collapsed(
+            offset: oldCaretIndex - 1,
+          ),
+        );
+      }
+    } else {
+      if (_containsIllegalChars(newText)) {
+        // print('RETURN 3 ${oldValue.text}');
+        return oldValue;
+      }
+    }
+
+    int afterMantissaPosition = _countAfterMantissaPosition(
+      oldText: oldText,
+      oldCaretOffset: oldCaretIndex,
+    );
+
+    final newAsCurrency = toCurrencyString(
+      newText,
+      mantissaLength: mantissaLength,
+      thousandSeparator: thousandSeparator,
+      leadingSymbol: leadingSymbol,
+      trailingSymbol: trailingSymbol,
+      useSymbolPadding: useSymbolPadding,
+    );
+
+    if (_switchToRightInWholePart(
+      newText: newText,
+      oldText: oldText,
+    )) {
+      // print('RETURN 4 ${oldValue.text}');
+      return oldValue.copyWith(
+        selection: TextSelection.collapsed(
+          offset: oldCaretIndex + 1,
+        ),
+      );
+    }
+
+    if (afterMantissaPosition > 0) {
+      if (_switchToLeftInMantissa(
+        newText: newText,
+        oldText: oldText,
+        caretPosition: newCaretIndex,
+      )) {
+        // print('RETURN 5 $newAsCurrency');
+        return TextEditingValue(
+          selection: TextSelection.collapsed(
+            offset: newCaretIndex,
+          ),
+          text: newAsCurrency,
+        );
+      } else {
+        // print('RETURN 6 $newAsCurrency');
+        int offset = min(
+          newCaretIndex,
+          newAsCurrency.length - trailingLength,
+        );
+        return TextEditingValue(
+          selection: TextSelection.collapsed(
+            offset: offset,
+          ),
+          text: newAsCurrency,
+        );
+      }
+    }
+
+    var initialCaretOffset = leadingLength;
+    if (_isZeroOrEmpty(newAsNumeric)) {
+      // print('RETURN 7 ${newValue.text}');
+      return newValue.copyWith(
+        text: newAsCurrency,
+        selection: TextSelection.collapsed(
+          offset: initialCaretOffset + 1,
+        ),
+      );
+    }
+    final oldAsCurrency = toCurrencyString(
+      oldText,
+      mantissaLength: mantissaLength,
+      thousandSeparator: thousandSeparator,
+      leadingSymbol: leadingSymbol,
+      trailingSymbol: trailingSymbol,
+      useSymbolPadding: useSymbolPadding,
+    );
+
+    var lengthDiff = newAsCurrency.length - oldAsCurrency.length;
+
+    initialCaretOffset = max(
+      (oldCaretIndex + lengthDiff),
+      leadingLength + 1,
+    );
+
+    if (initialCaretOffset < 1) {
+      if (newAsCurrency.isNotEmpty) {
+        initialCaretOffset += 1;
+      }
+    }
+    // print('RETURN 8 $newAsCurrency');
+    return TextEditingValue(
+      selection: TextSelection.collapsed(
+        offset: initialCaretOffset,
+      ),
+      text: newAsCurrency,
+    );
+  }
 
   bool _isZeroOrEmpty(String? value) {
     if (value == null || value.isEmpty) {
       return true;
     }
-    final parsed = double.tryParse(value);
-    if (parsed == null) {
-      return true;
+    value = toNumericString(
+      value,
+      allowPeriod: true,
+      mantissaSeparator: _mantissaSeparator,
+    );
+    try {
+      return double.parse(value) == 0.0;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
     }
-    return parsed == 0.0;
+    return false;
   }
 
   int _getLeadingLength() {
     if (useSymbolPadding) {
       if (leadingSymbol.length > 0) {
         return leadingSymbol.length + 1;
+      } else {
+        return 0;
       }
     }
     return leadingSymbol.length;
@@ -102,6 +266,8 @@ class CurrencyInputFormatter extends TextInputFormatter {
     if (useSymbolPadding) {
       if (trailingSymbol.length > 0) {
         return trailingSymbol.length + 1;
+      } else {
+        return 0;
       }
     }
     return trailingSymbol.length;
@@ -122,14 +288,8 @@ class CurrencyInputFormatter extends TextInputFormatter {
 
   bool _containsMantissaSeparator(List<String> chars) {
     for (var char in chars) {
-      if (thousandSeparator == ThousandSeparator.Comma) {
-        if (char == '.') {
-          return true;
-        }
-      } else {
-        if (char == ',') {
-          return true;
-        }
+      if (char == _mantissaSeparator) {
+        return true;
       }
     }
     return false;
@@ -161,7 +321,8 @@ class CurrencyInputFormatter extends TextInputFormatter {
         var nextChar = '';
         if (caretPosition < newText.length - 1) {
           nextChar = newText[caretPosition];
-          if (!isDigit(nextChar, positiveOnly: true) || int.tryParse(nextChar) == 0) {
+          if (!isDigit(nextChar, positiveOnly: true) ||
+              int.tryParse(nextChar) == 0) {
             return true;
           }
         }
@@ -175,7 +336,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
     required int oldCaretOffset,
   }) {
     final mantissaIndex = oldText.lastIndexOf(
-      _mantissaSeparators,
+      _mantissaSeparatorRegexp,
     );
     if (mantissaIndex < 0) {
       return 0;
@@ -200,125 +361,16 @@ class CurrencyInputFormatter extends TextInputFormatter {
     return false;
   }
 
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final trailingLength = _getTrailingLength();
-    final leadingLength = _getLeadingLength();
-    if (leadingLength > 0 && trailingLength > 0) {
-      // throw 'You cannot use trailing an leading symbols at the same time';
+  bool _containsIllegalChars(String input) {
+    if (input.isEmpty) return false;
+    var clearedInput = input;
+    if (leadingSymbol.isNotEmpty) {
+      clearedInput = clearedInput.replaceAll(leadingSymbol, '');
     }
-    final oldCaretIndex = oldValue.selection.start;
-    final newCaretIndex = newValue.selection.start;
-    var newText = newValue.text;
-    var oldText = oldValue.text;
-    if (oldValue == newValue) {
-      return newValue;
+    if (trailingSymbol.isNotEmpty) {
+      clearedInput = clearedInput.replaceAll(trailingSymbol, '');
     }
-    bool isErasing = newText.length < oldText.length;
-    if (isErasing) {
-      if (_hasErasedMantissaSeparator(
-        shorterString: newText,
-        longerString: oldText,
-      )) {
-        return oldValue.copyWith(
-          selection: TextSelection.collapsed(
-            offset: oldCaretIndex - 1,
-          ),
-        );
-      }
-    }
-
-    final newAsNumeric = toNumericString(
-      newText,
-      allowPeriod: true,
-    );
-
-    final afterMantissaPosition = _countAfterMantissaPosition(
-      oldText: oldText,
-      oldCaretOffset: oldCaretIndex,
-    );
-    final maxCaretIndex = newText.length - trailingLength;
-
-    final newAsCurrency = toCurrencyString(
-      newText,
-      mantissaLength: mantissaLength,
-      thousandSeparator: thousandSeparator,
-      leadingSymbol: leadingSymbol,
-      trailingSymbol: trailingSymbol,
-      useSymbolPadding: useSymbolPadding,
-    );
-    if (_switchToRightInWholePart(
-      newText: newText,
-      oldText: oldText,
-    )) {
-      return oldValue.copyWith(
-        selection: TextSelection.collapsed(
-          offset: oldCaretIndex + 1,
-        ),
-      );
-    }
-
-    if (afterMantissaPosition > 0) {
-      if (_switchToLeftInMantissa(
-        newText: newText,
-        oldText: oldText,
-        caretPosition: newCaretIndex,
-      )) {
-        return TextEditingValue(
-          selection: TextSelection.collapsed(
-            offset: newCaretIndex,
-          ),
-          text: newAsCurrency,
-        );
-      } else {
-        return TextEditingValue(
-          selection: TextSelection.collapsed(
-            offset: min(newCaretIndex, maxCaretIndex - 1),
-          ),
-          text: newAsCurrency,
-        );
-      }
-    }
-
-    var initialCaretOffset = leadingLength;
-    if (_isZeroOrEmpty(newAsNumeric)) {
-      return newValue.copyWith(
-        text: newAsCurrency,
-        selection: TextSelection.collapsed(
-          offset: initialCaretOffset + 1,
-        ),
-      );
-    }
-    final oldAsCurrency = toCurrencyString(
-      oldText,
-      mantissaLength: mantissaLength,
-      thousandSeparator: thousandSeparator,
-      leadingSymbol: leadingSymbol,
-      trailingSymbol: trailingSymbol,
-      useSymbolPadding: useSymbolPadding,
-    );
-
-    var lengthDiff = newAsCurrency.length - oldAsCurrency.length;
-
-    initialCaretOffset = max(
-      (oldCaretIndex + lengthDiff),
-      leadingLength + 1,
-    );
-
-    if (initialCaretOffset < 1) {
-      if (newAsCurrency.isNotEmpty) {
-        initialCaretOffset += 1;
-      }
-    }
-
-    return TextEditingValue(
-      selection: TextSelection.collapsed(
-        offset: initialCaretOffset,
-      ),
-      text: newAsCurrency,
-    );
+    clearedInput = clearedInput.replaceAll(' ', '');
+    return _illegalCharsRegexp.hasMatch(clearedInput);
   }
 }

@@ -48,9 +48,12 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                       color: Colors.red,
                     ),
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
                   inputFormatters: [
-                    MoneyInputFormatter(
+                    CurrencyInputFormatter(
                       trailingSymbol: CurrencySymbols.DOLLAR_SIGN,
                       thousandSeparator: ThousandSeparator.Period,
                     )
@@ -70,9 +73,12 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                       color: Colors.red,
                     ),
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
                   inputFormatters: [
-                    MoneyInputFormatter(
+                    CurrencyInputFormatter(
                       leadingSymbol: CurrencySymbols.DOLLAR_SIGN,
                       thousandSeparator: ThousandSeparator.None,
                       useSymbolPadding: false,
@@ -93,14 +99,18 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                       color: Colors.red,
                     ),
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
                   inputFormatters: [
-                    MoneyInputFormatter(
+                    CurrencyInputFormatter(
                       trailingSymbol: CurrencySymbols.EURO_SIGN,
                     )
                   ],
                 ),
-                _getText('This input adds a EUR as a trailing symbol'),
+                _getText(
+                    'This input adds a EUR as a trailing and leading symbols and uses paddings'),
                 TextFormField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -120,8 +130,9 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      // trailingSymbol: 'EUR',
-                      leadingSymbol: 'USD'
+                      trailingSymbol: 'EUR',
+                      leadingSymbol: 'USD',
+                      useSymbolPadding: true,
                     )
                   ],
                 ),
@@ -141,9 +152,12 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                       errorStyle: TextStyle(
                         color: Colors.red,
                       )),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
                   inputFormatters: [
-                    MoneyInputFormatter(
+                    CurrencyInputFormatter(
                       leadingSymbol: CurrencySymbols.EURO_SIGN,
                       thousandSeparator: ThousandSeparator.Period,
                     )
@@ -164,9 +178,12 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                       errorStyle: TextStyle(
                         color: Colors.red,
                       )),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
                   inputFormatters: [
-                    MoneyInputFormatter(
+                    CurrencyInputFormatter(
                       trailingSymbol: CurrencySymbols.EURO_SIGN,
                       useSymbolPadding: true,
                     )
@@ -190,12 +207,45 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                       color: Colors.red,
                     ),
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
                   inputFormatters: [
-                    MoneyInputFormatter(
+                    CurrencyInputFormatter(
                       leadingSymbol: CurrencySymbols.DOLLAR_SIGN,
                       useSymbolPadding: true,
-                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
+                      thousandSeparator:
+                          ThousandSeparator.SpaceAndPeriodMantissa,
+                      // ThousandSeparator.Comma,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Space separation',
+                    hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(
+                        .3,
+                      ),
+                    ),
+                    errorStyle: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
+                  inputFormatters: [
+                    CurrencyInputFormatter(
+                      thousandSeparator:
+                          ThousandSeparator.SpaceAndPeriodMantissa,
+                      trailingSymbol: ' USD',
                       // ThousandSeparator.Comma,
                     )
                   ],

@@ -57,8 +57,13 @@ class _BitcoinValidatorPageState extends State<BitcoinValidatorPage> {
     );
   }
 
+  /// A small hack to avoid warnings on flutter 2 and 3
+  dynamic get _widgetsBinding {
+    return WidgetsBinding.instance;
+  }
+
   void _onValidatePressed() {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    _widgetsBinding?.addPostFrameCallback((timeStamp) {
       setState(() {
         _formKey.currentState!.save();
         _formKey.currentState!.validate();

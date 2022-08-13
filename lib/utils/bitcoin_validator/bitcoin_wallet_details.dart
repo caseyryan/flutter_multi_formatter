@@ -5,6 +5,7 @@ enum BitcoinAddressType {
   P2SH,
   None,
 }
+
 enum BitcoinAddressNetwork {
   Mainnet,
   Testnet,

@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import 'currency_input_formatter.dart';
 import 'formatter_utils.dart' as fu;
 import 'money_input_enums.dart';
 
@@ -45,7 +46,7 @@ extension NumericInputFormatting on num {
   /// [mantissaLength] specifies how many digits will be added after a period sign
   /// [leadingSymbol] any symbol (except for the ones that contain digits) the will be
   /// added in front of the resulting string. E.g. $ or €
-  /// some of the signs are available via constants like [MoneyInputFormatter.EURO_SIGN]
+  /// some of the signs are available via constants like [CurrencySymbols.EURO_SIGN]
   /// but you can basically add any string instead of it. The main rule is that the string
   /// must not contain digits, preiods, commas and dashes
   /// [trailingSymbol] is the same as leading but this symbol will be added at the

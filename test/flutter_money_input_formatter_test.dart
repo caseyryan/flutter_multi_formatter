@@ -7,7 +7,7 @@ void main() {
   test('should correctly remove a comma from thousands', () {
     final currentNumber = "1,000.0";
     final inputNumber = "1,00.0";
-    final formattedNumber = MoneyInputFormatter()
+    final formattedNumber = CurrencyInputFormatter()
         .formatEditUpdate(
             TextEditingValue(
                 text: currentNumber,
