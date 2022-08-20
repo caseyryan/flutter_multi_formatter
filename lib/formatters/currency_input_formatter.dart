@@ -103,8 +103,8 @@ class CurrencyInputFormatter extends TextInputFormatter {
   ) {
     final trailingLength = _getTrailingLength();
     final leadingLength = _getLeadingLength();
-    final oldCaretIndex = oldValue.selection.start;
-    final newCaretIndex = newValue.selection.start;
+    final oldCaretIndex = max(oldValue.selection.start, oldValue.selection.end);
+    final newCaretIndex = max(newValue.selection.start, newValue.selection.end);
     var newText = newValue.text;
 
     final newAsNumeric = toNumericString(
@@ -124,7 +124,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
         shorterString: newText,
         longerString: oldText,
       )) {
-        // print('RETURN 2 ${oldValue.text}');
+        // print('RETURN 2 ${oldValue.text},  $oldCaretIndex');
         return oldValue.copyWith(
           selection: TextSelection.collapsed(
             offset: oldCaretIndex - 1,
@@ -335,6 +335,9 @@ class CurrencyInputFormatter extends TextInputFormatter {
     required String oldText,
     required int oldCaretOffset,
   }) {
+    if (mantissaLength < 1) {
+      return 0;
+    }
     final mantissaIndex = oldText.lastIndexOf(
       _mantissaSeparatorRegexp,
     );

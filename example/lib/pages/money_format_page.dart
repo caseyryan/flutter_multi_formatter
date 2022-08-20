@@ -106,6 +106,7 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   inputFormatters: [
                     CurrencyInputFormatter(
                       trailingSymbol: CurrencySymbols.EURO_SIGN,
+                      mantissaLength: 0,
                     )
                   ],
                 ),

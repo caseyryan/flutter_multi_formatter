@@ -71,7 +71,6 @@ String toNumericString(
   }
   try {
     if (allowPeriod) {
-      // return double.parse(result).toString();
       return _toDoubleString(
         result,
         allowPeriod: true,
@@ -142,8 +141,15 @@ String _toDoubleString(
     } else if (temp[0] == period) {
       temp.insert(0, zero);
     }
+  } else {
+    while (temp.length > 1) {
+      if (temp.first == zero) {
+        temp.removeAt(0);
+      } else {
+        break;
+      }
+    }
   }
-
   return temp.join();
 }
 
@@ -251,8 +257,7 @@ String toCurrencyString(
     if (isNegative) {
       var containsMinus = parsed.toString().contains('-');
       if (!containsMinus) {
-        value =
-            '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
+        value = '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
       } else {
         value = '${parsed.toStringAsFixed(mantissaLength)}';
       }
@@ -317,9 +322,8 @@ String toCurrencyString(
     }
   }
 
-  mantissa = noShortening
-      ? _postProcessMantissa(mantissaList.join(''), mantissaLength)
-      : '';
+  mantissa =
+      noShortening ? _postProcessMantissa(mantissaList.join(''), mantissaLength) : '';
   var maxIndex = split.length - 1;
   if (mantissaSeparatorIndex > 0 && noShortening) {
     maxIndex = mantissaSeparatorIndex - 1;
@@ -337,9 +341,7 @@ String toCurrencyString(
       } else {
         if (value.length >= minShorteningLength) {
           if (!isDigit(split[i])) digitCounter = 1;
-          if (digitCounter % 3 == 1 &&
-              digitCounter > 1 &&
-              i > (isNegative ? 1 : 0)) {
+          if (digitCounter % 3 == 1 && digitCounter > 1 && i > (isNegative ? 1 : 0)) {
             list.add(tSeparator);
           }
         }

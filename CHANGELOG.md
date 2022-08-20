@@ -1,3 +1,5 @@
+## [2.6.1]
+- Fixed currency input formatter empty value error https://github.com/caseyryan/flutter_multi_formatter/issues/87
 ## [2.6.0]
 - Made it possible to enter a leading plus https://github.com/caseyryan/flutter_multi_formatter/issues/85
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/80
