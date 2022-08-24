@@ -1,3 +1,5 @@
+## [2.6.2]
+- Merged https://github.com/caseyryan/flutter_multi_formatter/pull/88
 ## [2.6.1]
 - Fixed currency input formatter empty value error https://github.com/caseyryan/flutter_multi_formatter/issues/87
 ## [2.6.0]

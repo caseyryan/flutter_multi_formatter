@@ -131,9 +131,10 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      trailingSymbol: 'EUR',
-                      leadingSymbol: 'USD',
+                      trailingSymbol: CurrencySymbols.EURO_SIGN,
+                      // leadingSymbol: 'USD',
                       useSymbolPadding: true,
+                      mantissaLength: 0,
                     )
                   ],
                 ),
