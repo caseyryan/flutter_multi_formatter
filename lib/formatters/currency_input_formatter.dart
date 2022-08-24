@@ -80,9 +80,9 @@ class CurrencyInputFormatter extends TextInputFormatter {
     this.onValueChange,
     this.maxTextLength,
   }) : assert(
-            !leadingSymbol.contains(_illegalLeadingOrTrailing) &&
-                !trailingSymbol.contains(_illegalLeadingOrTrailing),
-            '''
+  !leadingSymbol.contains(_illegalLeadingOrTrailing) &&
+      !trailingSymbol.contains(_illegalLeadingOrTrailing),
+  '''
     Illegal trailing or reading symbol. You cannot use 
     the next symbols as leading or trailing because 
     they might interfere with numbers: -,.+
@@ -98,9 +98,9 @@ class CurrencyInputFormatter extends TextInputFormatter {
 
   @override
   TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
     final trailingLength = _getTrailingLength();
     final leadingLength = _getLeadingLength();
     final oldCaretIndex = max(oldValue.selection.start, oldValue.selection.end);
@@ -120,6 +120,11 @@ class CurrencyInputFormatter extends TextInputFormatter {
     }
     bool isErasing = newText.length < oldText.length;
     if (isErasing) {
+      if(mantissaLength == 0 && oldCaretIndex == oldValue.text.length) {
+        return oldValue.copyWith(
+            selection: TextSelection.collapsed(offset: oldCaretIndex - trailingLength)
+        );
+      }
       if (_hasErasedMantissaSeparator(
         shorterString: newText,
         longerString: oldText,
@@ -336,7 +341,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
     required int oldCaretOffset,
   }) {
     if (mantissaLength < 1) {
-      return oldCaretOffset - trailingSymbol.length;
+      return 0;
     }
     final mantissaIndex = oldText.lastIndexOf(
       _mantissaSeparatorRegexp,
