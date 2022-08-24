@@ -336,7 +336,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
     required int oldCaretOffset,
   }) {
     if (mantissaLength < 1) {
-      return 0;
+      return oldCaretOffset - trailingSymbol.length;
     }
     final mantissaIndex = oldText.lastIndexOf(
       _mantissaSeparatorRegexp,
