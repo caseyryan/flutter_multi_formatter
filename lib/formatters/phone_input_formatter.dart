@@ -92,6 +92,14 @@ class PhoneInputFormatter extends TextInputFormatter {
           allowEndlessPhone,
         );
       }
+
+      final isAustralianPhoneNumber =
+          onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
+      if (isAustralianPhoneNumber) {
+        onlyNumbers = '61${onlyNumbers[1]}';
+        _countryData = null;
+        _applyMask('61', allowEndlessPhone);
+      }
     }
 
     maskedValue = _applyMask(onlyNumbers, allowEndlessPhone);
