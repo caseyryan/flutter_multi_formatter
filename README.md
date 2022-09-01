@@ -51,6 +51,51 @@ PhoneInputFormatter(
     allowEndlessPhone: true,
 )
 ```
+## Using a pre-defined country code 
+```dart
+PhoneCountryData? _initialCountryData;
+...
+
+Row(
+  children: [
+    Expanded(
+      flex: 3,
+      child: CountryDropdown(
+        printCountryName: true,
+        initialCountryCode: 'RU',
+        onCountrySelected: (PhoneCountryData countryData) {
+          setState(() {
+            _initialCountryData = countryData;
+          });
+        },
+      ),
+    ),
+    SizedBox(width: 10.0),
+    Expanded(
+      flex: 5,
+      child: TextFormField(
+        key: ValueKey(_initialCountryData ?? 'country'),
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          hintText: _initialCountryData?.phoneMaskWithoutCountryCode,
+          hintStyle: TextStyle(color: Colors.black.withOpacity(.3)),
+          errorStyle: TextStyle(
+            color: Colors.red,
+          ),
+        ),
+        keyboardType: TextInputType.phone,
+        inputFormatters: [
+          PhoneInputFormatter(
+            allowEndlessPhone: false,
+            defaultCountryCode: _initialCountryData?.countryCode,
+          )
+        ],
+      ),
+    )
+  ],
+)
+```
+
 
 ### Formatting a credit / debit card
 

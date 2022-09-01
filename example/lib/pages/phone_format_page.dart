@@ -11,15 +11,7 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
   PhoneCountryData? _countryData;
   TextEditingController _phoneController = TextEditingController();
   PhoneCountryData? _initialCountryData;
-
-  /// this callback is called in PhoneInputFormatter when
-  /// a country is detected by a phone code
-  void _onCountrySelected(PhoneCountryData? countryData) {
-    setState(() {
-      _initialCountryData = countryData;
-    });
-  }
-
+  
   @override
   void dispose() {
     _phoneController.dispose();

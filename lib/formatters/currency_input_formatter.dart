@@ -115,7 +115,6 @@ class CurrencyInputFormatter extends TextInputFormatter {
 
     var oldText = oldValue.text;
     if (oldValue == newValue) {
-      // print('RETURN 1 ${newValue.text}');
       return newValue;
     }
     bool isErasing = newText.length < oldText.length;
@@ -129,7 +128,6 @@ class CurrencyInputFormatter extends TextInputFormatter {
         shorterString: newText,
         longerString: oldText,
       )) {
-        // print('RETURN 2 ${oldValue.text},  $oldCaretIndex');
         return oldValue.copyWith(
           selection: TextSelection.collapsed(
             offset: oldCaretIndex - 1,
@@ -138,7 +136,6 @@ class CurrencyInputFormatter extends TextInputFormatter {
       }
     } else {
       if (_containsIllegalChars(newText)) {
-        // print('RETURN 3 ${oldValue.text}');
         return oldValue;
       }
     }
