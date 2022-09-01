@@ -10,12 +10,13 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PhoneCountryData? _countryData;
   TextEditingController _phoneController = TextEditingController();
+  PhoneCountryData? _initialCountryData;
 
   /// this callback is called in PhoneInputFormatter when
   /// a country is detected by a phone code
   void _onCountrySelected(PhoneCountryData? countryData) {
     setState(() {
-      _countryData = countryData;
+      _initialCountryData = countryData;
     });
   }
 
@@ -47,6 +48,7 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
             child: Form(
               key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   _getText('Type a phone number here and it will automatically' +
                       ' format and detect a country. If the number' +
@@ -66,7 +68,11 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                     keyboardType: TextInputType.phone,
                     inputFormatters: [
                       PhoneInputFormatter(
-                        onCountrySelected: _onCountrySelected,
+                        onCountrySelected: (PhoneCountryData? countryData) {
+                          setState(() {
+                            _countryData = countryData;
+                          });
+                        },
                         allowEndlessPhone: false,
                       )
                     ],
@@ -75,6 +81,53 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                     _countryData == null
                         ? 'A country is not detected'
                         : 'The country is: ${_countryData?.country}',
+                  ),
+                  SizedBox(height: 30.0),
+                  _getText(
+                    'The next input uses a predefined country code',
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: CountryDropdown(
+                          printCountryName: true,
+                          initialCountryCode: 'RU',
+                          onCountrySelected: (PhoneCountryData countryData) {
+                            setState(() {
+                              _initialCountryData = countryData;
+                            });
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 10.0),
+                      Expanded(
+                        flex: 5,
+                        child: TextFormField(
+                          key: ValueKey(_initialCountryData ?? 'country'),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: _initialCountryData?.phoneMaskWithoutCountryCode,
+                            hintStyle: TextStyle(color: Colors.black.withOpacity(.3)),
+                            errorStyle: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            PhoneInputFormatter(
+                              allowEndlessPhone: false,
+                              defaultCountryCode: _initialCountryData?.countryCode,
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  _getText(
+                    _initialCountryData == null
+                        ? 'A country is not detected'
+                        : 'The country is: ${_initialCountryData?.country}',
                   ),
                   SizedBox(
                     height: 10.0,
