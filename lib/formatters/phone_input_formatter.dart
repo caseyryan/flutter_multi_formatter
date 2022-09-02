@@ -93,8 +93,7 @@ class PhoneInputFormatter extends TextInputFormatter {
         );
       }
 
-      final isAustralianPhoneNumber =
-          onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
+      final isAustralianPhoneNumber = onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
       if (isAustralianPhoneNumber) {
         onlyNumbers = '61${onlyNumbers[1]}';
         _countryData = null;
@@ -164,18 +163,10 @@ class PhoneInputFormatter extends TextInputFormatter {
       }
     }
     if (_countryData != null) {
-      String phoneMask = defaultCountryCode != null
-          ? _countryData!.phoneMaskWithoutCountryCode
-          : _countryData!.phoneMask!;
-
-      List<String>? altMasks = defaultCountryCode != null
-          ? _countryData!.altMasksWithoutCountryCodes
-          : _countryData!.altMasks;
-
       return _formatByMask(
         numericString,
-        phoneMask,
-        altMasks,
+        _countryData!.getCorrectMask(defaultCountryCode),
+        _countryData!.getCorrectAltMasks(defaultCountryCode),
         0,
         allowEndlessPhone,
       );
@@ -282,24 +273,26 @@ bool isPhoneValid(
   if (countryData == null) {
     return false;
   }
+  final cMask = countryData.getCorrectMask(defaultCountryCode);
+  final cAltMasks = countryData.getCorrectAltMasks(defaultCountryCode);
   var formatted = _formatByMask(
     phone,
-    countryData.phoneMask!,
-    countryData.altMasks,
+    cMask,
+    cAltMasks,
     0,
     allowEndlessPhone,
   );
-  var rpeprocessed = toNumericString(
+  final preProcessed = toNumericString(
     formatted,
     allowHyphen: false,
   );
   if (allowEndlessPhone) {
-    var contains = phone.contains(rpeprocessed);
+    var contains = phone.contains(preProcessed);
     return contains;
   }
-  var correctLength = formatted.length == countryData.phoneMask!.length;
-  if (correctLength != true && countryData.altMasks != null) {
-    return countryData.altMasks!.any(
+  var correctLength = formatted.length == cMask.length;
+  if (correctLength != true && cAltMasks != null) {
+    return cAltMasks.any(
       (altMask) => formatted.length == altMask.length,
     );
   }
@@ -331,13 +324,22 @@ String? formatAsPhoneNumber(
     }
   }
   phone = toNumericString(phone);
-  var countryData = PhoneCodes.getCountryDataByPhone(phone);
+  PhoneCountryData? countryData;
+  if (defaultCountryCode != null) {
+    countryData = PhoneCodes.getPhoneCountryDataByCountryCode(
+      defaultCountryCode,
+    );
+  } else {
+    countryData = PhoneCodes.getCountryDataByPhone(
+      phone,
+    );
+  }
 
   if (countryData != null) {
     return _formatByMask(
       phone,
-      countryData.phoneMask!,
-      countryData.altMasks,
+      countryData.getCorrectMask(defaultCountryCode),
+      countryData.getCorrectAltMasks(defaultCountryCode),
       0,
       allowEndlessPhone,
     );
@@ -360,7 +362,6 @@ String _formatByMask(
   bool allowEndlessPhone = false,
 ]) {
   text = toNumericString(text, allowHyphen: false);
-  // print("TEXT $text, MASK $mask");
   var result = <String>[];
   var indexInText = 0;
   for (var i = 0; i < mask.length; i++) {
@@ -383,7 +384,8 @@ String _formatByMask(
 
   var actualDigitsInMask = toNumericString(
     mask,
-    allowHyphen: false,
+    allowHyphen: true,
+    allowPeriod: false,
   ).replaceAll(',', '');
   if (actualDigitsInMask.length < text.length) {
     if (altMasks != null && altMaskIndex < altMasks.length) {
@@ -394,7 +396,6 @@ String _formatByMask(
         altMaskIndex + 1,
         allowEndlessPhone,
       );
-      // print('RETURN 1 $formatResult');
       return formatResult;
     }
 
@@ -441,9 +442,16 @@ class PhoneCountryData {
 
   String? _maskWithoutCountryCode;
 
+  String getCorrectMask(String? countryCode) {
+    if (countryCode == null) {
+      return phoneMask!;
+    }
+    return phoneMaskWithoutCountryCode;
+  }
+
   String get phoneMaskWithoutCountryCode {
     if (_maskWithoutCountryCode != null) {
-      // return _maskWithoutCountryCode!;
+      return _maskWithoutCountryCode!;
     }
     _maskWithoutCountryCode = _trimPhoneCode(
       phoneMask: phoneMask!,
@@ -471,7 +479,6 @@ class PhoneCountryData {
           continue;
         }
       } else {
-        
         buffer.add(char);
       }
     }
@@ -488,10 +495,17 @@ class PhoneCountryData {
     return buffer.join().trim();
   }
 
+  List<String>? getCorrectAltMasks(String? countryCode) {
+    if (countryCode == null) {
+      return altMasks;
+    }
+    return altMasksWithoutCountryCodes;
+  }
+
   List<String>? _altMasksWithoutCountryCodes;
   List<String>? get altMasksWithoutCountryCodes {
     if (_altMasksWithoutCountryCodes != null) {
-      // return _altMasksWithoutCountryCodes;
+      return _altMasksWithoutCountryCodes;
     }
     _altMasksWithoutCountryCodes = altMasks
             ?.map((e) => _trimPhoneCode(phoneMask: e, phoneCode: phoneCode!))

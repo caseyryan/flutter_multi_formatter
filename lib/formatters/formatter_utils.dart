@@ -71,12 +71,12 @@ String toNumericString(
   }
   try {
     if (allowPeriod) {
-      return _toDoubleString(
+      result = _toDoubleString(
         result,
         allowPeriod: true,
       );
     } else {
-      return _toDoubleString(
+      result = _toDoubleString(
         result,
         allowPeriod: false,
       );
@@ -85,8 +85,8 @@ String toNumericString(
     if (kDebugMode) {
       print(e);
     }
-    return result;
   }
+  return result;
 }
 
 /// This hack is necessary because double.parse
@@ -218,6 +218,10 @@ String toCurrencyString(
       tSeparator = ',';
       break;
     case ThousandSeparator.Period:
+
+      /// yep, comma here is correct
+      /// because swapCommasAndPreriods = true it will
+      /// swap them all later
       tSeparator = ',';
       swapCommasAndPreriods = true;
       mantissaSeparator = ',';
@@ -233,16 +237,12 @@ String toCurrencyString(
       swapCommasAndPreriods = true;
       mantissaSeparator = ',';
       break;
+    case ThousandSeparator.Space:
+      tSeparator = ' ';
+      break;
   }
   // print(thousandSeparator);
   value = value.replaceAll(_repeatingDotsRegExp, '.');
-  if (mantissaLength == 0) {
-    var substringEnd = value.lastIndexOf('.');
-    if (substringEnd > 0) {
-      value = value.substring(0, substringEnd);
-    }
-  }
-
   value = toNumericString(
     value,
     allowPeriod: mantissaLength > 0,
@@ -257,8 +257,7 @@ String toCurrencyString(
     if (isNegative) {
       var containsMinus = parsed.toString().contains('-');
       if (!containsMinus) {
-        value =
-            '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
+        value = '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
       } else {
         value = '${parsed.toStringAsFixed(mantissaLength)}';
       }
@@ -323,9 +322,8 @@ String toCurrencyString(
     }
   }
 
-  mantissa = noShortening
-      ? _postProcessMantissa(mantissaList.join(''), mantissaLength)
-      : '';
+  mantissa =
+      noShortening ? _postProcessMantissa(mantissaList.join(''), mantissaLength) : '';
   var maxIndex = split.length - 1;
   if (mantissaSeparatorIndex > 0 && noShortening) {
     maxIndex = mantissaSeparatorIndex - 1;
@@ -343,9 +341,7 @@ String toCurrencyString(
       } else {
         if (value.length >= minShorteningLength) {
           if (!isDigit(split[i])) digitCounter = 1;
-          if (digitCounter % 3 == 1 &&
-              digitCounter > 1 &&
-              i > (isNegative ? 1 : 0)) {
+          if (digitCounter % 3 == 1 && digitCounter > 1 && i > (isNegative ? 1 : 0)) {
             list.add(tSeparator);
           }
         }

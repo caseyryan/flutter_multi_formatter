@@ -53,7 +53,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
   final String trailingSymbol;
   final bool useSymbolPadding;
   final int? maxTextLength;
-  final ValueChanged<double>? onValueChange;
+  final ValueChanged<num>? onValueChange;
 
   /// [thousandSeparator] specifies what symbol will be used to separate
   /// each block of 3 digits, e.g. [ThousandSeparator.Comma] will format
@@ -88,6 +88,27 @@ class CurrencyInputFormatter extends TextInputFormatter {
     they might interfere with numbers: -,.+
   ''');
 
+  void _updateValue(String value) {
+    if (onValueChange == null) {
+      return;
+    }
+    _widgetsBinding?.addPostFrameCallback((timeStamp) {
+      try {
+        if (mantissaLength < 1) {
+          onValueChange!(int.tryParse(value) ?? double.nan);
+        } else {
+          onValueChange!(double.tryParse(value) ?? double.nan);
+        }
+      } catch (e) {
+        onValueChange!(double.nan);
+      }
+    });
+  }
+
+  dynamic get _widgetsBinding {
+    return WidgetsBinding.instance;
+  }
+
   String get _mantissaSeparator {
     if (thousandSeparator == ThousandSeparator.Period ||
         thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
@@ -112,6 +133,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
       allowPeriod: true,
       mantissaSeparator: _mantissaSeparator,
     );
+    _updateValue(newAsNumeric);
 
     var oldText = oldValue.text;
     if (oldValue == newValue) {
@@ -120,14 +142,19 @@ class CurrencyInputFormatter extends TextInputFormatter {
     bool isErasing = newText.length < oldText.length;
     if (isErasing) {
       if (mantissaLength == 0 && oldCaretIndex == oldValue.text.length) {
-        return oldValue.copyWith(
+        if (trailingLength > 0) {
+          return oldValue.copyWith(
             selection: TextSelection.collapsed(
-                offset: oldCaretIndex - trailingLength));
+              offset: oldCaretIndex - trailingLength,
+            ),
+          );
+        }
       }
       if (_hasErasedMantissaSeparator(
         shorterString: newText,
         longerString: oldText,
       )) {
+        print('RETURN 2 ${oldValue.text}');
         return oldValue.copyWith(
           selection: TextSelection.collapsed(
             offset: oldCaretIndex - 1,
@@ -136,6 +163,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
       }
     } else {
       if (_containsIllegalChars(newText)) {
+        print('RETURN 3 ${oldValue.text}');
         return oldValue;
       }
     }
@@ -158,7 +186,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
       newText: newText,
       oldText: oldText,
     )) {
-      // print('RETURN 4 ${oldValue.text}');
+      print('RETURN 4 ${oldValue.text}');
       return oldValue.copyWith(
         selection: TextSelection.collapsed(
           offset: oldCaretIndex + 1,
@@ -172,7 +200,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
         oldText: oldText,
         caretPosition: newCaretIndex,
       )) {
-        // print('RETURN 5 $newAsCurrency');
+        print('RETURN 5 $newAsCurrency');
         return TextEditingValue(
           selection: TextSelection.collapsed(
             offset: newCaretIndex,
@@ -180,7 +208,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
           text: newAsCurrency,
         );
       } else {
-        // print('RETURN 6 $newAsCurrency');
+        print('RETURN 6 $newAsCurrency');
         int offset = min(
           newCaretIndex,
           newAsCurrency.length - trailingLength,
@@ -196,7 +224,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
 
     var initialCaretOffset = leadingLength;
     if (_isZeroOrEmpty(newAsNumeric)) {
-      // print('RETURN 7 ${newValue.text}');
+      print('RETURN 7 ${newValue.text}');
       return newValue.copyWith(
         text: newAsCurrency,
         selection: TextSelection.collapsed(
@@ -225,7 +253,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
         initialCaretOffset += 1;
       }
     }
-    // print('RETURN 8 $newAsCurrency');
+    print('RETURN 8 $newAsCurrency');
     return TextEditingValue(
       selection: TextSelection.collapsed(
         offset: initialCaretOffset,
@@ -323,8 +351,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
         var nextChar = '';
         if (caretPosition < newText.length - 1) {
           nextChar = newText[caretPosition];
-          if (!isDigit(nextChar, positiveOnly: true) ||
-              int.tryParse(nextChar) == 0) {
+          if (!isDigit(nextChar, positiveOnly: true) || int.tryParse(nextChar) == 0) {
             return true;
           }
         }

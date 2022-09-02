@@ -16,6 +16,12 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(toCurrencyString(
+      '33422220',
+      trailingSymbol: '',
+      thousandSeparator: ThousandSeparator.Period,
+      mantissaLength: 0,
+    ));
     return Unfocuser(
       child: Scaffold(
         appBar: AppBar(
@@ -31,6 +37,86 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
             ),
             child: Column(
               children: <Widget>[
+                _getText(
+                  'The first field uses no trailing or leading symbols, and no decimal points',
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter a flat numeric value',
+                    hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(
+                        .3,
+                      ),
+                    ),
+                    errorStyle: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
+                  inputFormatters: [
+                    CurrencyInputFormatter(
+                      trailingSymbol: '',
+                      thousandSeparator: ThousandSeparator.Period,
+                      mantissaLength: 0,
+                    )
+                  ],
+                ),
+                SizedBox(height: 10.0,),
+                TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter a flat numeric value',
+                    hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(
+                        .3,
+                      ),
+                    ),
+                    errorStyle: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
+                  inputFormatters: [
+                    CurrencyInputFormatter(
+                      trailingSymbol: '',
+                      thousandSeparator: ThousandSeparator.Comma,
+                      mantissaLength: 0,
+                    )
+                  ],
+                ),
+                SizedBox(height: 10.0,),
+                TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter a flat numeric value',
+                    hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(
+                        .3,
+                      ),
+                    ),
+                    errorStyle: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
+                  inputFormatters: [
+                    CurrencyInputFormatter(
+                      trailingSymbol: '',
+                      thousandSeparator: ThousandSeparator.Space,
+                      mantissaLength: 0,
+                    )
+                  ],
+                ),
                 _getText('Enter a number and it will be automatically formatted ' +
                     'as a value in the US dollars with a leading \$ sign' +
                     'When you need to switch to a fractional side, simply tap a (.) ' +
@@ -54,9 +140,11 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      trailingSymbol: CurrencySymbols.DOLLAR_SIGN,
-                      thousandSeparator: ThousandSeparator.Period,
-                    )
+                        trailingSymbol: CurrencySymbols.DOLLAR_SIGN,
+                        thousandSeparator: ThousandSeparator.Period,
+                        onValueChange: (num value) {
+                          print('NUMERIC VALUE: $value');
+                        })
                   ],
                 ),
                 _getText('Money without a thousand separator'),
@@ -134,6 +222,7 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                       trailingSymbol: CurrencySymbols.EURO_SIGN,
                       // leadingSymbol: 'USD',
                       useSymbolPadding: true,
+                      thousandSeparator: ThousandSeparator.Period,
                       mantissaLength: 0,
                     )
                   ],
@@ -217,15 +306,12 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                     CurrencyInputFormatter(
                       leadingSymbol: CurrencySymbols.DOLLAR_SIGN,
                       useSymbolPadding: true,
-                      thousandSeparator:
-                          ThousandSeparator.SpaceAndPeriodMantissa,
+                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
                       // ThousandSeparator.Comma,
                     )
                   ],
                 ),
-                SizedBox(
-                  height: 10.0,
-                ),
+                SizedBox(height: 10.0),
                 TextFormField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -245,9 +331,34 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      thousandSeparator:
-                          ThousandSeparator.SpaceAndPeriodMantissa,
+                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
                       trailingSymbol: ' USD',
+                      // ThousandSeparator.Comma,
+                    )
+                  ],
+                ),
+                SizedBox(height: 10.0),
+                TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Space separation',
+                    hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(
+                        .3,
+                      ),
+                    ),
+                    errorStyle: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
+                  inputFormatters: [
+                    CurrencyInputFormatter(
+                      thousandSeparator: ThousandSeparator.SpaceAndCommaMantissa,
+                      trailingSymbol: ' U',
                       // ThousandSeparator.Comma,
                     )
                   ],

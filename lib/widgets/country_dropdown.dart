@@ -12,6 +12,25 @@ class CountryDropdown extends StatefulWidget {
   final String? initialCountryCode;
   final ValueChanged<PhoneCountryData> onCountrySelected;
 
+  final int elevation;
+  final TextStyle? style;
+  final Widget? icon;
+  final Color? iconDisabledColor;
+  final Color? iconEnabledColor;
+  final double iconSize;
+  final double? itemHeight;
+  final Color? focusColor;
+  final FocusNode? focusNode;
+  final bool autofocus;
+  final Color? dropdownColor;
+  final InputDecoration? decoration;
+  final FormFieldValidator<PhoneCountryData>? validator;
+  final AutovalidateMode? autovalidateMode;
+  final double? menuMaxHeight;
+  final bool? enableFeedback;
+  final AlignmentGeometry alignment;
+  final BorderRadius? borderRadius;
+
   /// [selectedItemBuilder] use this if you want to make
   /// the selected item look the way you want
   /// [listItemBuilder] the same as [selectedItemBuilder] but
@@ -21,11 +40,29 @@ class CountryDropdown extends StatefulWidget {
   /// the menu is open
   const CountryDropdown({
     Key? key,
-    required this.onCountrySelected,
     this.selectedItemBuilder,
     this.listItemBuilder,
-    this.initialCountryCode,
     this.printCountryName = false,
+    this.initialCountryCode,
+    required this.onCountrySelected,
+    this.elevation = 8,
+    this.style,
+    this.icon,
+    this.iconDisabledColor,
+    this.iconEnabledColor,
+    this.iconSize = 24.0,
+    this.itemHeight = 48.0,
+    this.focusColor,
+    this.focusNode,
+    this.autofocus = false,
+    this.dropdownColor,
+    this.decoration,
+    this.validator,
+    this.autovalidateMode,
+    this.menuMaxHeight,
+    this.enableFeedback,
+    this.alignment = AlignmentDirectional.centerStart,
+    this.borderRadius,
   }) : super(key: key);
 
   @override
@@ -107,8 +144,25 @@ class _CountryDropdownState extends State<CountryDropdown> {
     return DropdownButtonFormField<PhoneCountryData>(
       key: Key('countryDropdown'),
       isDense: true,
+      alignment: widget.alignment,
+      style: widget.style,
+      iconDisabledColor: widget.iconDisabledColor,
+      iconEnabledColor: widget.iconEnabledColor,
+      focusNode: widget.focusNode,
+      iconSize: widget.iconSize,
+      focusColor: widget.focusColor,
+      autofocus: widget.autofocus,
+      dropdownColor: widget.dropdownColor,
+      decoration: widget.decoration,
+      validator: widget.validator,
+      autovalidateMode: widget.autovalidateMode,
+      menuMaxHeight: widget.menuMaxHeight,
+      enableFeedback: widget.enableFeedback,
+      borderRadius: widget.borderRadius,
+      icon: widget.icon,
       isExpanded: true,
-      itemHeight: 48.0,
+      elevation: widget.elevation,
+      itemHeight: widget.itemHeight,
       selectedItemBuilder: (c) {
         return PhoneCodes.getAllCountryDatas()
             .map(

@@ -50,6 +50,7 @@ enum ShorteningPolicy {
 /// [SpaceAndCommaMantissa] 1 000 000,00
 enum ThousandSeparator {
   Comma,
+  Space,
   Period,
   None,
   SpaceAndPeriodMantissa,

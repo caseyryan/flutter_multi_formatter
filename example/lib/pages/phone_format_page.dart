@@ -10,8 +10,10 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   PhoneCountryData? _countryData;
   TextEditingController _phoneController = TextEditingController();
+  TextEditingController _russianPhoneController =
+      TextEditingController(text: '9998887766');
   PhoneCountryData? _initialCountryData;
-  
+
   @override
   void dispose() {
     _phoneController.dispose();
@@ -157,8 +159,7 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                   ),
                   Container(
                     height: 50,
-                    // ignore: deprecated_member_use
-                    child: RaisedButton(
+                    child: MaterialButton(
                       textColor: Colors.white,
                       color: Colors.blue,
                       onPressed: () {
@@ -176,6 +177,58 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                             child: Center(
                               child: Text(
                                 'Apply Format',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Type a phone to format',
+                      hintStyle: TextStyle(
+                        color: Colors.black.withOpacity(.3),
+                      ),
+                      errorStyle: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                    keyboardType: TextInputType.phone,
+                    controller: _russianPhoneController,
+                    validator: (String? value) {
+                      if (!isPhoneValid(
+                        value ?? '',
+                        allowEndlessPhone: true,
+                        defaultCountryCode: 'RU',
+                      )) {
+                        return 'Phone is invalid';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                    height: 50,
+                    child: MaterialButton(
+                      textColor: Colors.white,
+                      color: Colors.pink,
+                      onPressed: () {
+                        _russianPhoneController.text = formatAsPhoneNumber(
+                              _russianPhoneController.text,
+                              allowEndlessPhone: false,
+                              defaultCountryCode: 'RU',
+                            ) ??
+                            '';
+                      },
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                'Apply Format for RU +7',
                               ),
                             ),
                           ),
