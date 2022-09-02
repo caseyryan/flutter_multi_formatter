@@ -1,6 +1,8 @@
 ## [2.7.0]
 - Added a possibility to add a pre-defined country code for phone formatter
 See example to know how to use it
+- Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/91
+- https://github.com/caseyryan/flutter_multi_formatter/issues/89
 ## [2.6.2]
 - Merged https://github.com/caseyryan/flutter_multi_formatter/pull/88
 ## [2.6.1]
