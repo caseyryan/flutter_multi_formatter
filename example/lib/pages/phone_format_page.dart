@@ -101,8 +101,10 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                           key: ValueKey(_initialCountryData ?? 'country'),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            hintText: _initialCountryData?.phoneMaskWithoutCountryCode,
-                            hintStyle: TextStyle(color: Colors.black.withOpacity(.3)),
+                            hintText: _initialCountryData
+                                ?.phoneMaskWithoutCountryCode,
+                            hintStyle:
+                                TextStyle(color: Colors.black.withOpacity(.3)),
                             errorStyle: TextStyle(
                               color: Colors.red,
                             ),
@@ -111,7 +113,8 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                           inputFormatters: [
                             PhoneInputFormatter(
                               allowEndlessPhone: false,
-                              defaultCountryCode: _initialCountryData?.countryCode,
+                              defaultCountryCode:
+                                  _initialCountryData?.countryCode,
                             )
                           ],
                         ),

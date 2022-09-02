@@ -84,8 +84,8 @@ class _CountryDropdownState extends State<CountryDropdown> {
 
   PhoneCountryData get _initialValue {
     if (widget.initialCountryCode != null) {
-      return PhoneCodes.getAllCountryDatas().firstWhereOrNull(
-              (c) => c.countryCode == widget.initialCountryCode!.toUpperCase()) ??
+      return PhoneCodes.getAllCountryDatas().firstWhereOrNull((c) =>
+              c.countryCode == widget.initialCountryCode!.toUpperCase()) ??
           PhoneCodes.getAllCountryDatas().first;
     }
     return PhoneCodes.getAllCountryDatas().first;

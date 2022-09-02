@@ -65,7 +65,9 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                     )
                   ],
                 ),
-                SizedBox(height: 10.0,),
+                SizedBox(
+                  height: 10.0,
+                ),
                 TextFormField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -91,7 +93,9 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                     )
                   ],
                 ),
-                SizedBox(height: 10.0,),
+                SizedBox(
+                  height: 10.0,
+                ),
                 TextFormField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -306,7 +310,8 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                     CurrencyInputFormatter(
                       leadingSymbol: CurrencySymbols.DOLLAR_SIGN,
                       useSymbolPadding: true,
-                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
+                      thousandSeparator:
+                          ThousandSeparator.SpaceAndPeriodMantissa,
                       // ThousandSeparator.Comma,
                     )
                   ],
@@ -331,7 +336,8 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
+                      thousandSeparator:
+                          ThousandSeparator.SpaceAndPeriodMantissa,
                       trailingSymbol: ' USD',
                       // ThousandSeparator.Comma,
                     )
@@ -357,7 +363,8 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      thousandSeparator: ThousandSeparator.SpaceAndCommaMantissa,
+                      thousandSeparator:
+                          ThousandSeparator.SpaceAndCommaMantissa,
                       trailingSymbol: ' U',
                       // ThousandSeparator.Comma,
                     )
