@@ -1,3 +1,5 @@
+## [2.7.1]
+- Added "printCountryName" option to CountryDropdown
 ## [2.7.0]
 - Added a possibility to add a pre-defined country code for phone formatter
 See example to know how to use it. And added a new dropdown type CountryDropdown

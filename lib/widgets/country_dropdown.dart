@@ -51,7 +51,7 @@ class CountryDropdown extends StatefulWidget {
     this.iconDisabledColor,
     this.iconEnabledColor,
     this.iconSize = 24.0,
-    this.itemHeight = 48.0,
+    this.itemHeight = 60.0,
     this.focusColor,
     this.focusNode,
     this.autofocus = false,
@@ -122,6 +122,7 @@ class _CountryDropdownState extends State<CountryDropdown> {
       return widget.listItemBuilder!.call(phoneCountryData);
     }
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(
@@ -135,6 +136,20 @@ class _CountryDropdownState extends State<CountryDropdown> {
             Text('+${phoneCountryData.phoneCode}'),
           ],
         ),
+        widget.printCountryName
+            ? Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 5.0,
+                  ),
+                  child: Text(
+                    phoneCountryData.country ?? '',
+                    style: Theme.of(context).textTheme.bodySmall,
+                    maxLines: 1,
+                  ),
+                ),
+              )
+            : SizedBox.shrink(),
       ],
     );
   }
