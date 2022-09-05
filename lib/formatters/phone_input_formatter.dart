@@ -57,7 +57,11 @@ class PhoneInputFormatter extends TextInputFormatter {
 
   String get masked => _lastValue;
 
-  String get unmasked => '+${toNumericString(_lastValue, allowHyphen: false)}';
+  String get unmasked => '+${toNumericString(
+        _lastValue,
+        allowHyphen: false,
+        allowAllZeroes: true,
+      )}';
 
   bool get isFilled => isPhoneValid(
         masked,
@@ -72,7 +76,10 @@ class PhoneInputFormatter extends TextInputFormatter {
     var isErasing = newValue.text.length < oldValue.text.length;
     _lastValue = newValue.text;
 
-    var onlyNumbers = toNumericString(newValue.text);
+    var onlyNumbers = toNumericString(
+      newValue.text,
+      allowAllZeroes: true,
+    );
     String maskedValue;
     if (isErasing) {
       if (newValue.text.isEmpty) {
@@ -259,6 +266,7 @@ bool isPhoneValid(
     phone,
     allowHyphen: false,
     errorText: null,
+    allowAllZeroes: true,
   );
   if (phone.isEmpty) {
     return false;
@@ -287,6 +295,7 @@ bool isPhoneValid(
     formatted,
     allowHyphen: false,
     errorText: null,
+    allowAllZeroes: true,
   );
   if (allowEndlessPhone) {
     var contains = phone.contains(preProcessed);
@@ -328,6 +337,7 @@ String? formatAsPhoneNumber(
   phone = toNumericString(
     phone,
     errorText: null,
+    allowAllZeroes: true,
   );
   PhoneCountryData? countryData;
   if (defaultCountryCode != null) {
@@ -370,6 +380,7 @@ String _formatByMask(
     text,
     allowHyphen: false,
     errorText: null,
+    allowAllZeroes: true,
   );
   var result = <String>[];
   var indexInText = 0;
@@ -396,8 +407,9 @@ String _formatByMask(
     allowHyphen: true,
     allowPeriod: false,
     errorText: null,
+    allowAllZeroes: true,
   ).replaceAll(',', '');
-  print(actualDigitsInMask);
+  // print(actualDigitsInMask);
   if (actualDigitsInMask.length < text.length) {
     if (altMasks != null && altMaskIndex < altMasks.length) {
       var formatResult = _formatByMask(
@@ -431,7 +443,10 @@ String _formatByMask(
 /// the list will contain one [PhoneCountryData] at max
 /// [returns] A list of [PhoneCountryData] datas or an empty list
 List<PhoneCountryData> getCountryDatasByPhone(String phone) {
-  phone = toNumericString(phone);
+  phone = toNumericString(
+    phone,
+    allowAllZeroes: true,
+  );
   if (phone.isEmpty || phone.length < 11) {
     return <PhoneCountryData>[];
   }
@@ -586,7 +601,12 @@ class PhoneCodes {
     var phoneCode = phone.substring(0, subscringLength);
 
     var rawData = _data.firstWhereOrNull(
-      (data) => toNumericString(data['internalPhoneCode']) == phoneCode,
+      (data) =>
+          toNumericString(
+            data['internalPhoneCode'],
+            allowAllZeroes: true,
+          ) ==
+          phoneCode,
     );
     if (rawData != null) {
       return PhoneCountryData.fromMap(rawData);
@@ -600,7 +620,10 @@ class PhoneCodes {
     phoneCode = phoneCode.replaceAll('+', '');
     var list = <PhoneCountryData>[];
     _data.forEach((data) {
-      var c = toNumericString(data['internalPhoneCode']);
+      var c = toNumericString(
+        data['internalPhoneCode'],
+        allowAllZeroes: true,
+      );
       if (c == phoneCode) {
         list.add(PhoneCountryData.fromMap(data));
       }

@@ -38,12 +38,14 @@ final RegExp _repeatingDotsRegExp = RegExp(r'\.{2,}');
 
 /// [errorText] if you don't want this method to throw any
 /// errors, pass null here
+/// [allowAllZeroes] might be useful e.g. for phone masks
 String toNumericString(
   String? inputString, {
   bool allowPeriod = false,
   bool allowHyphen = true,
   String mantissaSeparator = '.',
   String? errorText,
+  bool allowAllZeroes = false,
 }) {
   if (inputString == null) {
     return '';
@@ -73,25 +75,33 @@ String toNumericString(
     return result;
   }
   try {
-    if (allowPeriod) {
-      result = _toDoubleString(
-        result,
-        allowPeriod: true,
-        errorText: errorText,
-      );
-    } else {
-      result = _toDoubleString(
-        result,
-        allowPeriod: false,
-        errorText: errorText,
-      );
-    }
+    result = _toDoubleString(
+      result,
+      allowPeriod: allowPeriod,
+      errorText: errorText,
+      allowAllZeroes: allowAllZeroes,
+    );
   } catch (e) {
     if (kDebugMode) {
       print(e);
     }
   }
   return result;
+}
+
+String toNumericStringByRegex(
+  String? inputString, {
+  bool allowPeriod = false,
+  bool allowHyphen = true,
+}) {
+  if (inputString == null) return '';
+  var regexWithoutPeriod = allowHyphen ? _digitRegExp : _positiveDigitRegExp;
+  var regExp = allowPeriod ? _digitWithPeriodRegExp : regexWithoutPeriod;
+  return inputString.splitMapJoin(
+    regExp,
+    onMatch: (m) => m.group(0)!,
+    onNonMatch: (nm) => '',
+  );
 }
 
 /// This hack is necessary because double.parse
@@ -105,14 +115,17 @@ String toNumericString(
 /// [errorText] if you don't want this method to throw an
 /// error if a number cannot be formatted
 /// pass null
+/// [allowAllZeroes] might be useful e.g. for phone masks
 String _toDoubleString(
   String input, {
   bool allowPeriod = true,
   String? errorText = 'Invalid number',
+  bool allowAllZeroes = false,
 }) {
   const period = '.';
   const zero = '0';
-  final allowedSymbols = ['-', period];
+  const dash = '-';
+  // final allowedSymbols = ['-', period];
   final temp = <String>[];
   if (input.startsWith(period)) {
     if (allowPeriod) {
@@ -121,31 +134,26 @@ String _toDoubleString(
       return zero;
     }
   }
+  bool periodUsed = false;
 
   for (var i = 0; i < input.length; i++) {
     final char = input[i];
     if (!isDigit(char, positiveOnly: true)) {
-      if (allowedSymbols.contains(char)) {
-        if (char == '-') {
-          if (i > 0) {
-            if (errorText != null) {
-              throw errorText;
-            } else {
-              break;
-            }
-          }
-        } else if (char == period) {
-          if (!allowPeriod) {
-            break;
+      if (char == dash) {
+        if (i > 0) {
+          if (errorText != null) {
+            throw errorText;
+          } else {
+            continue;
           }
         }
-        allowedSymbols.remove(char);
-      } else {
-        if (errorText != null) {
-          throw errorText;
-        } else {
+      } else if (char == period) {
+        if (!allowPeriod) {
           break;
+        } else if (periodUsed) {
+          continue;
         }
+        periodUsed = true;
       }
     }
     temp.add(char);
@@ -160,11 +168,13 @@ String _toDoubleString(
       temp.insert(0, zero);
     }
   } else {
-    while (temp.length > 1) {
-      if (temp.first == zero) {
-        temp.removeAt(0);
-      } else {
-        break;
+    if (!allowAllZeroes) {
+      while (temp.length > 1) {
+        if (temp.first == zero) {
+          temp.removeAt(0);
+        } else {
+          break;
+        }
       }
     }
   }

@@ -1,3 +1,5 @@
+## [2.7.2]
+- Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/93
 ## [2.7.1]
 - Added "printCountryName" option to CountryDropdown
 ## [2.7.0]
