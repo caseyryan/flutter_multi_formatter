@@ -1,6 +1,6 @@
 # flutter_multi_formatter
 
-<a href="https://pub.dev/packages/flutter_multi_formatter"><img src="https://img.shields.io/pub/v/flutter_multi_formatter?logo=dart" alt="pub.dev"></a> [![likes](https://badges.bar/flutter_multi_formatter/likes)](https://pub.dev/packages/flutter_multi_formatter/score) [![popularity](https://badges.bar/flutter_multi_formatter/popularity)](https://pub.dev/packages/flutter_multi_formatter/score) [![pub points](https://badges.bar/flutter_multi_formatter/pub%20points)](https://pub.dev/packages/flutter_multi_formatter/score) [![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://pub.dev/packages/effective_dart) <a href="https://github.com/Solido/awesome-flutter">
+<a href="https://pub.dev/packages/flutter_multi_formatter"><img src="https://img.shields.io/pub/v/flutter_multi_formatter?logo=dart" alt="pub.dev"></a>[![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://pub.dev/packages/effective_dart) <a href="https://github.com/Solido/awesome-flutter">
 <img alt="Awesome Flutter" src="https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat-square" />
 </a>
 

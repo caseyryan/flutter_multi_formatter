@@ -82,9 +82,8 @@ class PhoneInputFormatter extends TextInputFormatter {
     if (onlyNumbers.length == 2) {
       /// хак специально для России, со вводом номера с восьмерки
       /// меняем ее на 7
-      var isRussianWrongNumber =
-          onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
-              onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
+      var isRussianWrongNumber = onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
+          onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
       if (isRussianWrongNumber) {
         onlyNumbers = '7${onlyNumbers[1]}';
         _countryData = null;
@@ -94,8 +93,7 @@ class PhoneInputFormatter extends TextInputFormatter {
         );
       }
 
-      final isAustralianPhoneNumber =
-          onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
+      final isAustralianPhoneNumber = onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
       if (isAustralianPhoneNumber) {
         onlyNumbers = '61${onlyNumbers[1]}';
         _countryData = null;
@@ -260,6 +258,7 @@ bool isPhoneValid(
   phone = toNumericString(
     phone,
     allowHyphen: false,
+    errorText: null,
   );
   if (phone.isEmpty) {
     return false;
@@ -287,6 +286,7 @@ bool isPhoneValid(
   final preProcessed = toNumericString(
     formatted,
     allowHyphen: false,
+    errorText: null,
   );
   if (allowEndlessPhone) {
     var contains = phone.contains(preProcessed);
@@ -325,7 +325,10 @@ String? formatAsPhoneNumber(
         return 'invalid phone';
     }
   }
-  phone = toNumericString(phone);
+  phone = toNumericString(
+    phone,
+    errorText: null,
+  );
   PhoneCountryData? countryData;
   if (defaultCountryCode != null) {
     countryData = PhoneCodes.getPhoneCountryDataByCountryCode(
@@ -363,7 +366,11 @@ String _formatByMask(
   int altMaskIndex = 0,
   bool allowEndlessPhone = false,
 ]) {
-  text = toNumericString(text, allowHyphen: false);
+  text = toNumericString(
+    text,
+    allowHyphen: false,
+    errorText: null,
+  );
   var result = <String>[];
   var indexInText = 0;
   for (var i = 0; i < mask.length; i++) {
@@ -388,7 +395,9 @@ String _formatByMask(
     mask,
     allowHyphen: true,
     allowPeriod: false,
+    errorText: null,
   ).replaceAll(',', '');
+  print(actualDigitsInMask);
   if (actualDigitsInMask.length < text.length) {
     if (altMasks != null && altMaskIndex < altMasks.length) {
       var formatResult = _formatByMask(
@@ -408,6 +417,7 @@ String _formatByMask(
       for (var i = actualDigitsInMask.length; i < text.length; i++) {
         result.add(text[i]);
       }
+      print(result.length);
     }
   }
 
@@ -587,6 +597,7 @@ class PhoneCodes {
   static List<PhoneCountryData> getAllCountryDatasByPhoneCode(
     String phoneCode,
   ) {
+    phoneCode = phoneCode.replaceAll('+', '');
     var list = <PhoneCountryData>[];
     _data.forEach((data) {
       var c = toNumericString(data['internalPhoneCode']);

@@ -112,7 +112,7 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                           keyboardType: TextInputType.phone,
                           inputFormatters: [
                             PhoneInputFormatter(
-                              allowEndlessPhone: false,
+                              allowEndlessPhone: true,
                               defaultCountryCode:
                                   _initialCountryData?.countryCode,
                             )

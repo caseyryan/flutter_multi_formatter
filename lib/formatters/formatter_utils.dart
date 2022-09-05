@@ -36,11 +36,14 @@ final RegExp _maskContentsRegExp = RegExp(r'^[-0-9)( +]{3,}$');
 final RegExp _isMaskSymbolRegExp = RegExp(r'^[-\+ )(]+$');
 final RegExp _repeatingDotsRegExp = RegExp(r'\.{2,}');
 
+/// [errorText] if you don't want this method to throw any
+/// errors, pass null here
 String toNumericString(
   String? inputString, {
   bool allowPeriod = false,
   bool allowHyphen = true,
   String mantissaSeparator = '.',
+  String? errorText,
 }) {
   if (inputString == null) {
     return '';
@@ -74,11 +77,13 @@ String toNumericString(
       result = _toDoubleString(
         result,
         allowPeriod: true,
+        errorText: errorText,
       );
     } else {
       result = _toDoubleString(
         result,
         allowPeriod: false,
+        errorText: errorText,
       );
     }
   } catch (e) {
@@ -95,13 +100,18 @@ String toNumericString(
 /// them into a scientific notation with e+/- power
 /// This function doesnt' really care for numbers, it works
 /// with strings from the very beginning
+/// [input] a value to be converted to a string containing only numbers
+/// [allowPeriod] if you need int pass false here
+/// [errorText] if you don't want this method to throw an
+/// error if a number cannot be formatted
+/// pass null
 String _toDoubleString(
   String input, {
   bool allowPeriod = true,
+  String? errorText = 'Invalid number',
 }) {
   const period = '.';
   const zero = '0';
-  const error = 'Invalid number';
   final allowedSymbols = ['-', period];
   final temp = <String>[];
   if (input.startsWith(period)) {
@@ -118,7 +128,11 @@ String _toDoubleString(
       if (allowedSymbols.contains(char)) {
         if (char == '-') {
           if (i > 0) {
-            throw error;
+            if (errorText != null) {
+              throw errorText;
+            } else {
+              break;
+            }
           }
         } else if (char == period) {
           if (!allowPeriod) {
@@ -127,7 +141,11 @@ String _toDoubleString(
         }
         allowedSymbols.remove(char);
       } else {
-        throw error;
+        if (errorText != null) {
+          throw errorText;
+        } else {
+          break;
+        }
       }
     }
     temp.add(char);
@@ -257,8 +275,7 @@ String toCurrencyString(
     if (isNegative) {
       var containsMinus = parsed.toString().contains('-');
       if (!containsMinus) {
-        value =
-            '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
+        value = '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
       } else {
         value = '${parsed.toStringAsFixed(mantissaLength)}';
       }
@@ -323,9 +340,8 @@ String toCurrencyString(
     }
   }
 
-  mantissa = noShortening
-      ? _postProcessMantissa(mantissaList.join(''), mantissaLength)
-      : '';
+  mantissa =
+      noShortening ? _postProcessMantissa(mantissaList.join(''), mantissaLength) : '';
   var maxIndex = split.length - 1;
   if (mantissaSeparatorIndex > 0 && noShortening) {
     maxIndex = mantissaSeparatorIndex - 1;
@@ -343,9 +359,7 @@ String toCurrencyString(
       } else {
         if (value.length >= minShorteningLength) {
           if (!isDigit(split[i])) digitCounter = 1;
-          if (digitCounter % 3 == 1 &&
-              digitCounter > 1 &&
-              i > (isNegative ? 1 : 0)) {
+          if (digitCounter % 3 == 1 && digitCounter > 1 && i > (isNegative ? 1 : 0)) {
             list.add(tSeparator);
           }
         }
