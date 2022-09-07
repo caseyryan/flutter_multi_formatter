@@ -29,7 +29,6 @@ class CountryDropdown extends StatefulWidget {
   final double? menuMaxHeight;
   final bool? enableFeedback;
   final AlignmentGeometry alignment;
-  final BorderRadius? borderRadius;
 
   /// [selectedItemBuilder] use this if you want to make
   /// the selected item look the way you want
@@ -62,7 +61,6 @@ class CountryDropdown extends StatefulWidget {
     this.menuMaxHeight,
     this.enableFeedback,
     this.alignment = AlignmentDirectional.centerStart,
-    this.borderRadius,
   }) : super(key: key);
 
   @override
@@ -173,7 +171,6 @@ class _CountryDropdownState extends State<CountryDropdown> {
       autovalidateMode: widget.autovalidateMode,
       menuMaxHeight: widget.menuMaxHeight,
       enableFeedback: widget.enableFeedback,
-      borderRadius: widget.borderRadius,
       icon: widget.icon,
       isExpanded: true,
       elevation: widget.elevation,

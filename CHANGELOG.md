@@ -1,3 +1,6 @@
+## [2.7.4]
+- Removed "borderRadius" parameter from CountryDropdown to make it compatible with some older Flutter versions
+- Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/92
 ## [2.7.2]
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/93
 ## [2.7.1]

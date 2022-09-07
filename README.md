@@ -52,6 +52,9 @@ PhoneInputFormatter(
 )
 ```
 ## Using a pre-defined country code 
+
+<img src="https://github.com/caseyryan/images/blob/master/multi_formatter/phone_country_dropdown.gif?raw=true" width="240"/>
+
 ```dart
 PhoneCountryData? _initialCountryData;
 ...
