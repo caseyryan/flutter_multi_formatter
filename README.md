@@ -320,12 +320,15 @@ All supported systems are available as string constants in
 
 ```dart
 class CardSystem {
+  static const String MIR = 'MIR';
+  static const String UNION_PAY = 'UnionPay';
   static const String VISA = 'Visa';
   static const String MASTERCARD = 'Mastercard';
   static const String JCB = 'JCB';
   static const String DISCOVER = 'Discover';
   static const String MAESTRO = 'Maestro';
-  static const String AMERICAN_EXPRESS= 'Amex';
+  static const String AMERICAN_EXPRESS = 'Amex';
+  static const String DINERS_CLUB = 'DinersClub';
 }
 ```
 Anyway, if the number is not supported it will just be returned as it is and your input will not 
