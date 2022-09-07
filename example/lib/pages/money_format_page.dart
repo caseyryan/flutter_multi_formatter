@@ -62,7 +62,8 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                       // trailingSymbol: '',
                       // thousandSeparator: ThousandSeparator.Period,
                       // mantissaLength: 0,
-                      thousandSeparator: ThousandSeparator.Space, mantissaLength: 0,
+                      thousandSeparator: ThousandSeparator.Space,
+                      mantissaLength: 0,
                       trailingSymbol: "\$",
                     )
                   ],
@@ -312,7 +313,8 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                     CurrencyInputFormatter(
                       leadingSymbol: CurrencySymbols.DOLLAR_SIGN,
                       useSymbolPadding: true,
-                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
+                      thousandSeparator:
+                          ThousandSeparator.SpaceAndPeriodMantissa,
                       // ThousandSeparator.Comma,
                     )
                   ],
@@ -337,7 +339,8 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
+                      thousandSeparator:
+                          ThousandSeparator.SpaceAndPeriodMantissa,
                       trailingSymbol: ' USD',
                       // ThousandSeparator.Comma,
                     )
@@ -363,7 +366,8 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      thousandSeparator: ThousandSeparator.SpaceAndCommaMantissa,
+                      thousandSeparator:
+                          ThousandSeparator.SpaceAndCommaMantissa,
                       trailingSymbol: ' U',
                       // ThousandSeparator.Comma,
                     )
