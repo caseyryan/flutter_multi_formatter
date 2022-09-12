@@ -38,7 +38,7 @@ class CreditCardExpirationDateFormatter extends MaskedInputFormatter {
     var numAddedLeadingSymbols = 0;
     String? ammendedMonth;
     if (numericString.length > 0) {
-      var allDigits = numericString.split('');
+      var allDigits = result.split('');
       var stringBuffer = StringBuffer();
       var firstDigit = int.parse(allDigits[0]);
 

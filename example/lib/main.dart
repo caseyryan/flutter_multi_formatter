@@ -70,9 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Container(
         height: 50,
         // ignore: deprecated_member_use
-        child: RaisedButton(
-          textColor: Colors.white,
-          color: color,
+        child: ElevatedButton(
           onPressed: () {
             openPage(
               pageBuilder(),
