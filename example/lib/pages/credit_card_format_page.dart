@@ -92,7 +92,8 @@ class _CreditCardFormatPageState extends State<CreditCardFormatPage> {
                     ),
                   ),
                   _getText(
-                      'Valid through\n (this formatter won\'t let you type the "month" part value larger than 12)'),
+                    'Valid through\n (this formatter won\'t let you type the "month" part value larger than 12)',
+                  ),
                   TextFormField(
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),

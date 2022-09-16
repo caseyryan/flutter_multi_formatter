@@ -1,3 +1,5 @@
+## [2.7.5]
+- Fixed a critical bug with CreditCardExpirationInputFormatter https://github.com/caseyryan/flutter_multi_formatter/issues/96
 ## [2.7.4]
 - Removed "borderRadius" parameter from CountryDropdown to make it compatible with some older Flutter versions
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/92

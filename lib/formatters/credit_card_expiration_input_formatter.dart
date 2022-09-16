@@ -34,7 +34,10 @@ class CreditCardExpirationDateFormatter extends MaskedInputFormatter {
   FormattedValue applyMask(String text) {
     var fv = super.applyMask(text);
     var result = fv.toString();
-    var numericString = toNumericString(result);
+    var numericString = toNumericString(
+      result,
+      allowAllZeroes: true,
+    );
     var numAddedLeadingSymbols = 0;
     String? ammendedMonth;
     if (numericString.length > 0) {
