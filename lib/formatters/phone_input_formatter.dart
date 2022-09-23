@@ -465,6 +465,7 @@ class PhoneCountryData {
   /// Kazakhstan has the same code as Russia +7 but internal code is 77
   /// because most phones there start with 77 while in Russia it's 79
   final String? phoneCode;
+  final String? internalPhoneCode;
   final String? countryCode;
   final String? phoneMask;
 
@@ -558,10 +559,22 @@ class PhoneCountryData {
     this.phoneMask,
     this.altMasks,
     this.phoneCode,
+    this.internalPhoneCode,
   });
 
   String phoneCodeToString() {
     return '+$phoneCode';
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'country': country,
+      'internalPhoneCode': internalPhoneCode,
+      'phoneCode': phoneCode,
+      'countryCode': countryCode,
+      'phoneMask': phoneMask,
+      'altMasks': altMasks,
+    };
   }
 
   factory PhoneCountryData.fromMap(Map value) {
@@ -573,6 +586,7 @@ class PhoneCountryData {
       /// so we only need to check if the field is present and set
       /// the dafult one if not
       phoneCode: value['phoneCode'] ?? value['internalPhoneCode'],
+      internalPhoneCode: value['internalPhoneCode'],
       countryCode: value['countryCode'],
       phoneMask: value['phoneMask'],
       altMasks: value['altMasks'],

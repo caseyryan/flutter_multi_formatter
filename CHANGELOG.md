@@ -1,3 +1,6 @@
+## [2.7.6]
+- PhoneCountryData now has toMap() method, that converts it into a hash map. 
+This might be useful e.g. for json encoders/revivers 
 ## [2.7.5]
 - Fixed a critical bug with CreditCardExpirationInputFormatter https://github.com/caseyryan/flutter_multi_formatter/issues/96
 ## [2.7.4]

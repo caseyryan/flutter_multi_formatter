@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 import 'formatter_utils.dart';
 import 'money_input_enums.dart';
