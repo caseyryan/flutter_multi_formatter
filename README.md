@@ -121,6 +121,7 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 ```dart
 /// for phone numbers with a fully automated detection
 PhoneInputFormatter
+PinyinFormatter
 
 /// for anything that can be masked
 MaskedInputFormatter
