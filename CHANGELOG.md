@@ -1,3 +1,5 @@
+## [2.8.0]
+- Introducing PinyinFormatter for Chinese language 
 ## [2.7.6]
 - PhoneCountryData now has toMap() method, that converts it into a hash map. 
 This might be useful e.g. for json encoders/revivers 

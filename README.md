@@ -10,6 +10,7 @@
 2. `Credit / Debit Card Formatter`
 3. `Money Formatter`
 4. `Masked Formatter`
+5. `Pinyin syllable separating formatter`
 
 ## Special utilities 
 
@@ -438,7 +439,30 @@ TextFormField(
         PosInputFormatter(),
     ],
 ),
-...
+```
+
+
+## Chinese Pinyin separating
+
+<img src="https://github.com/caseyryan/images/blob/master/multi_formatter/pinyin.gif?raw=true" width="240"/>
+
+```dart
+PinyinFormatter
+```
+Allows to split a phrase into pinyin syllables
+e.g. wohenhaonine?
+will turn into 
+wo'hen'hao'ni'ne? 
+It works irregarding tones, so you can enter text with plain english
+characters and it will still work
+
+```dart
+TextFormField(
+    inputFormatters: [
+        PinyinFormatter(),
+    ],
+),
+```
 
 
 For more details see [example](https://github.com/caseyryan/flutter_multi_formatter/tree/master/example) project. And feel free to open an issue if you find any bugs of errors

@@ -8,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
+import 'pages/pinyin_formatter_page.dart';
+
 typedef PageBuilder = Widget Function();
 
 void main() => runApp(MyApp());
@@ -143,6 +145,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 iconData: Icons.money_off,
                 label: 'Pos Formatter',
                 pageBuilder: () => PosFormatPage(),
+              ),
+              _buildButton(
+                color: Colors.red,
+                iconData: Icons.abc,
+                label: 'Chinese Pinyin Formatter',
+                pageBuilder: () => PinyinFormatterPage(),
               ),
             ],
           ),
