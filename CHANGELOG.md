@@ -1,3 +1,5 @@
+## [2.8.1]
+- Added a utility method PinyinUtils.simplifyPinyin();
 ## [2.8.0]
 - Introducing PinyinFormatter for Chinese language 
 ## [2.7.6]

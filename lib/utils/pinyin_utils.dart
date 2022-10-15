@@ -66,6 +66,25 @@ class PinyinUtils {
     return value.replaceAll(_punctuationRegex, '');
   }
 
+  static final RegExp _aRegex = RegExp(r'[āáǎăà]+');
+  static final RegExp _eRegex = RegExp(r'[ēéěĕè]+');
+  static final RegExp _iRegex = RegExp(r'[īíǐĭì]+');
+  static final RegExp _oRegex = RegExp(r'[ōóǒŏò]+');
+  static final RegExp _uRegex = RegExp(r'[ūúǔŭùüǖǘǚǚü̆ǜ]+');
+  static final RegExp _vRegex = RegExp(r'[v̄v́v̆v̌v̀]+');
+
+  /// converts all spcial symbols in pinyin to it's
+  /// normal latin analog like ě -> e or ǔ -> u
+  static String simplifyPinyin(String pinyin) {
+    return pinyin
+        .replaceAll(_aRegex, 'a')
+        .replaceAll(_eRegex, 'e')
+        .replaceAll(_iRegex, 'i')
+        .replaceAll(_oRegex, 'o')
+        .replaceAll(_uRegex, 'u')
+        .replaceAll(_vRegex, 'v');
+  }
+
   static String splitToSyllablesBySeparator(
     String value, [
     String separator = '\'',
