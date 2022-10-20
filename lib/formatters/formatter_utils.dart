@@ -271,6 +271,14 @@ String toCurrencyString(
   }
   // print(thousandSeparator);
   value = value.replaceAll(_repeatingDotsRegExp, '.');
+  if (mantissaLength == 0) {
+    if (value.contains('.')) {
+      value = value.substring(
+        0,
+        value.indexOf('.'),
+      );
+    }
+  }
   value = toNumericString(
     value,
     allowPeriod: mantissaLength > 0,

@@ -1,3 +1,5 @@
+## [2.8.2]
+- Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/97
 ## [2.8.1]
 - Added a utility method PinyinUtils.simplifyPinyin();
 ## [2.8.0]

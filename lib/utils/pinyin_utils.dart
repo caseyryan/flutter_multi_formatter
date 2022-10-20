@@ -87,9 +87,13 @@ class PinyinUtils {
 
   static String splitToSyllablesBySeparator(
     String value, [
-    String separator = '\'',
+    String separator = " ",
   ]) {
-    return splitToSyllables(value).join(separator);
+    final result = splitToSyllables(value)
+        .join(" ")
+        .replaceAll(RegExp(r"[']+"), " ")
+        .replaceAll(RegExp(r"\s+"), separator);
+    return result;
   }
 
   /// [value] a string to split into pinyin syllables

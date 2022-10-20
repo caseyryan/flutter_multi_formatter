@@ -16,12 +16,12 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(toCurrencyString(
-      '33422220',
-      trailingSymbol: '',
-      thousandSeparator: ThousandSeparator.Period,
-      mantissaLength: 0,
-    ));
+    // print(toCurrencyString(
+    //   1000.0.toString(),
+    //   trailingSymbol: '',
+    //   thousandSeparator: ThousandSeparator.Period,
+    //   mantissaLength: 0,
+    // ));
     return Unfocuser(
       child: Scaffold(
         appBar: AppBar(
@@ -59,11 +59,10 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      // trailingSymbol: '',
-                      // thousandSeparator: ThousandSeparator.Period,
+                      // thousandSeparator: ThousandSeparator.Comma,
                       // mantissaLength: 0,
                       thousandSeparator: ThousandSeparator.Space,
-                      mantissaLength: 0,
+                      mantissaLength: 2,
                       trailingSymbol: "\$",
                     )
                   ],
