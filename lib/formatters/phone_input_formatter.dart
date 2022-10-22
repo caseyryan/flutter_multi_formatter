@@ -800,7 +800,7 @@ class PhoneCodes {
       'country': 'Belarus',
       'internalPhoneCode': '375',
       'countryCode': 'BY',
-      'phoneMask': '+000 000 000 0000',
+      'phoneMask': '+000 (00) 000-00-00',
     },
     {
       'country': 'Belgium',

@@ -1,3 +1,8 @@
+## [2.8.4]
+- Advanced Pinyin splitter. It does not depend on regular expressions anymore
+- Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/100
+instead it uses a list of real syllables thus works much better
+it can also detect a syllable tone
 ## [2.8.2]
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/97
 ## [2.8.1]

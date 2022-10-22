@@ -4,6 +4,23 @@
 <img alt="Awesome Flutter" src="https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat-square" />
 </a>
 
+
+You might also like my other packages
+
+**lite_state** 
+(Very simple and easy to use state machine for Flutter)
+
+<a href="https://pub.dev/packages/lite_state"><img src="https://img.shields.io/pub/v/lite_state?logo=dart" alt="pub.dev"></a>[![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://pub.dev/packages/effective_dart) <a href="https://github.com/Solido/awesome-flutter">
+<img alt="Awesome Flutter" src="https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat-square" />
+</a>
+
+**flutter_instagram_storyboard** 
+(A UI for setting up stories like in Instagram)
+
+<a href="https://pub.dev/packages/flutter_instagram_storyboard"><img src="https://img.shields.io/pub/v/flutter_instagram_storyboard?logo=dart" alt="pub.dev"></a>[![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://pub.dev/packages/effective_dart) <a href="https://github.com/Solido/awesome-flutter"></a>
+
+
+
 ## Formatters Included
 
 1. `Phone Formatter`
@@ -20,7 +37,13 @@
 4. `"Is digit" checker (Simply checks if an input string value a digit or not)`
 5. `Currency string formatter (allows to convert a number to a currency string representation e.g. this 10000 to this 10,000.00$)`
 6. `Unfocuser (a widget that is used to unfocus any text fields without any boilerplate code. Extremely simple to use)`
-
+7. PinyinUtils class that contains a few usefull methods to work with chinese 
+pinyin
+    - PinyinUtils.clearPunctuation : removes all punctuations from a string, including special chinese punctuation
+    - PinyinUtils.containsTone: returns true if a string contains some tone. False otherwise
+    - PinyinUtils.getPinyinTones returns a list of int's with all syllable tones in a sentence
+    - PinyinUtils.getPinyinTone the same as PinyinUtils.getPinyinTones but for a single syllable. Returns its tone. 5 means neutral tone
+    - PinyinUtils.splitToSyllables<T>: a generic function that can accept String or SyllableData as a generic constraint and return a list of objects of this type. SyllableData is more advanced then just a string. Use it if you need to know if a string is a valid pinyin as well as its tone
 
 
 ### Formatting a phone
@@ -463,6 +486,14 @@ TextFormField(
         PinyinFormatter(),
     ],
 ),
+```
+
+Or you can use some utility methods like 
+```dart 
+final value = PinyinUtils.splitToSyllablesBySeparator(
+    'wǒhěngāoxìngrènshinǐ',
+);
+print(value); /// wǒ'hěn'gāo'xìng'rèn'shi'nǐ
 ```
 
 

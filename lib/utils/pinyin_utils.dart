@@ -1,77 +1,496 @@
-/// The logic of this class is almost a direct Dart port of this JS
-/// repo https://github.com/Connum/npm-pinyin-separate
-/// with some minor changes and improvements
+import 'dart:convert';
+
+class SyllableData {
+  String value;
+  int tone;
+  bool isValidSyllable;
+  SyllableData({
+    required this.value,
+    required this.tone,
+    required this.isValidSyllable,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'value': value,
+      'tone': tone,
+      'isValidSyllable': isValidSyllable,
+    };
+  }
+
+  @override
+  String toString() {
+    return jsonEncode(toMap());
+  }
+}
+
 class PinyinUtils {
   static final RegExp _punctuationRegex = RegExp(r"['!?.\[\],，。？！；：（ ）【 】［］]");
-  static const vowels = 'aāáǎăàeēéěĕèiīíǐĭìoōóǒŏòuūúǔŭùüǖǘǚǚü̆ǜvv̄v́v̆v̌v̀';
-  static const tones =
-      'ā|á|ǎ|ă|à|ē|é|ě|ĕ|è|ī|í|ǐ|ĭ|ì|ō|ó|ǒ|ŏ|ò|ū|ú|ǔ|ŭ|ù|ǖ|ǘ|ǚ|ǚ|ü̆|ǜ|v̄|v́|v̆|v̌|v̀';
-  static const initials = 'b|p|m|f|d|t|n|l|g|k|h|j|q|x|zh|ch|sh|r|z|c|s';
-  static final List<RegExp> _regExps = [
-    RegExp('\'', caseSensitive: false),
-    RegExp('($tones)($tones)', caseSensitive: false),
-    // RegExp('([$vowels])([^${vowels}nr])', caseSensitive: false),
-    /// Not sure about this line. If use the upper (commented one) it will not split
-    /// syllable "ne" in phrases like wo hen hau ni ne
-    RegExp('([$vowels])(([^${vowels}nr])|(ne))', caseSensitive: false),
-    RegExp('(\\w)([csz]h)', caseSensitive: false),
-    RegExp('([\${vowels}]{2}(ng? )?)([^\\snr])', caseSensitive: false),
-    RegExp('([\${vowels}]{2})(n[\${vowels}])', caseSensitive: false),
-    RegExp('(n)([^${vowels}vg])', caseSensitive: false),
-    RegExp('((ch|sh|(y|b|p|m|f|d|t|n|l|j|q|x)i)(a|ā|á|ǎ|ă|à)) (o)',
-        caseSensitive: false),
-    RegExp(
-      '(w|gu|ku|hu|zhu|chu|shu)(a|ā|á|ǎ|ă|à) (i)',
-      caseSensitive: false,
-    ),
-    RegExp(
-      '((a|ā|á|ǎ|ă|à)o)($initials)',
-      caseSensitive: false,
-    ),
-    RegExp(
-      '((o|ō|ó|ǒ|ŏ|ò)u)($initials)',
-      caseSensitive: false,
-    ),
-    RegExp(
-      '(y(u|ū|ú|ǔ|ŭ|ù|ü|ǖ|ǘ|ǚ|ǚ|ü̆|ǜ|v|v̄|v́|v̆|v̌|v̀))(n)(u|ū|ú|ǔ|ŭ|ù|ü|ǖ|ǘ|ǚ|ǚ|ü̆|ǜ|v|v̄|v́|v̆|v̌|v̀)',
-      caseSensitive: false,
-    ),
-    RegExp(
-      '([${vowels}v])([^$vowels\\w\\s])([${vowels}v])',
-      caseSensitive: false,
-    ),
-    RegExp(
-      '([${vowels}v])(n)(g)([${vowels}v])',
-      caseSensitive: false,
-    ),
-    RegExp(
-      '([gr])([^$vowels])',
-      caseSensitive: false,
-    ),
-    RegExp(
-      '([^eēéěĕè\\w\\s])(r)',
-      caseSensitive: false,
-    ),
-    RegExp(
-      '([^\\w\\s])([eēéěĕè]r)',
-      caseSensitive: false,
-    ),
-    RegExp(
-      '\\s{2,}/',
-      caseSensitive: false,
-    ),
+  static final _notAsteristRegex = RegExp(r'[^*]');
+  static const _allSyllables = [
+    "zhuang",
+    "shuang",
+    "chuang",
+    "jiong",
+    "xiang",
+    "kuang",
+    "shang",
+    "chuai",
+    "zhuan",
+    "chong",
+    "guang",
+    "shuan",
+    "chang",
+    "jiang",
+    "zheng",
+    "shuai",
+    "qiong",
+    "huang",
+    "zhuai",
+    "liang",
+    "zhong",
+    "xiong",
+    "sheng",
+    "cheng",
+    "chuan",
+    "zhang",
+    "qiang",
+    "niang",
+    "cang",
+    "ping",
+    "kuan",
+    "chai",
+    "chou",
+    "rong",
+    "heng",
+    "lang",
+    "xing",
+    "qian",
+    "miao",
+    "zhui",
+    "dong",
+    "mang",
+    "cong",
+    "tuan",
+    "juan",
+    "shai",
+    "shen",
+    "shun",
+    "tang",
+    "ceng",
+    "deng",
+    "shei",
+    "lian",
+    "xiao",
+    "seng",
+    "zhan",
+    "tian",
+    "geng",
+    "ting",
+    "pang",
+    "shui",
+    "ming",
+    "zhen",
+    "ruan",
+    "dang",
+    "kuai",
+    "huai",
+    "suan",
+    "tiao",
+    "gang",
+    "guai",
+    "piao",
+    "biao",
+    "hong",
+    "liao",
+    "guan",
+    "bing",
+    "ying",
+    "ding",
+    "shan",
+    "shou",
+    "cuan",
+    "gong",
+    "kong",
+    "duan",
+    "shao",
+    "neng",
+    "pian",
+    "ning",
+    "chua",
+    "wang",
+    "tong",
+    "long",
+    "chuo",
+    "qing",
+    "jing",
+    "huan",
+    "keng",
+    "song",
+    "nang",
+    "yong",
+    "zhou",
+    "chao",
+    "zhei",
+    "hang",
+    "zhun",
+    "chun",
+    "zhao",
+    "zong",
+    "diao",
+    "xuan",
+    "zhua",
+    "zuan",
+    "shua",
+    "mian",
+    "sang",
+    "jiao",
+    "peng",
+    "luan",
+    "feng",
+    "fang",
+    "niao",
+    "nuan",
+    "zhuo",
+    "meng",
+    "yang",
+    "leng",
+    "nong",
+    "chan",
+    "zhai",
+    "ling",
+    "chui",
+    "zeng",
+    "xian",
+    "dian",
+    "shuo",
+    "chen",
+    "bian",
+    "kang",
+    "weng",
+    "quan",
+    "teng",
+    "zang",
+    "rang",
+    "nian",
+    "beng",
+    "yuan",
+    "jian",
+    "reng",
+    "qiao",
+    "bang",
+    "xia",
+    "zuo",
+    "gei",
+    "duo",
+    "bai",
+    "lei",
+    "ran",
+    "cen",
+    "zan",
+    "sui",
+    "nen",
+    "zai",
+    "bei",
+    "yao",
+    "jiu",
+    "hui",
+    "guo",
+    "chi",
+    "yun",
+    "wai",
+    "den",
+    "mao",
+    "hou",
+    "she",
+    "gui",
+    "tui",
+    "diu",
+    "dan",
+    "wei",
+    "hao",
+    "tai",
+    "gan",
+    "lve",
+    "zha",
+    "huo",
+    "luo",
+    "kuo",
+    "sou",
+    "jia",
+    "bie",
+    "qin",
+    "niu",
+    "lie",
+    "mai",
+    "hun",
+    "kei",
+    "tun",
+    "gai",
+    "que",
+    "chu",
+    "dai",
+    "ruo",
+    "fen",
+    "xun",
+    "nai",
+    "ang",
+    "sao",
+    "miu",
+    "kua",
+    "hen",
+    "xie",
+    "mou",
+    "you",
+    "kai",
+    "nie",
+    "suo",
+    "fei",
+    "gua",
+    "nou",
+    "san",
+    "pou",
+    "zao",
+    "lun",
+    "cuo",
+    "gou",
+    "tao",
+    "gen",
+    "zhe",
+    "yue",
+    "zei",
+    "tie",
+    "dui",
+    "dun",
+    "kui",
+    "jin",
+    "bin",
+    "qie",
+    "shi",
+    "cei",
+    "nao",
+    "tou",
+    "xin",
+    "pen",
+    "zhu",
+    "lao",
+    "fou",
+    "can",
+    "man",
+    "tan",
+    "fan",
+    "zui",
+    "pie",
+    "zen",
+    "dei",
+    "sun",
+    "nin",
+    "zun",
+    "ben",
+    "yan",
+    "cao",
+    "lia",
+    "wan",
+    "rao",
+    "rui",
+    "jie",
+    "ken",
+    "hei",
+    "lou",
+    "pao",
+    "men",
+    "pei",
+    "hai",
+    "kan",
+    "xiu",
+    "nan",
+    "yin",
+    "kao",
+    "mei",
+    "kou",
+    "gao",
+    "tuo",
+    "qun",
+    "ren",
+    "cui",
+    "bao",
+    "cai",
+    "nei",
+    "zhi",
+    "pin",
+    "cun",
+    "hng",
+    "lan",
+    "rua",
+    "cou",
+    "sha",
+    "qia",
+    "lai",
+    "jun",
+    "sei",
+    "rou",
+    "gun",
+    "shu",
+    "kun",
+    "dao",
+    "run",
+    "nuo",
+    "che",
+    "ban",
+    "min",
+    "liu",
+    "jue",
+    "xue",
+    "lin",
+    "zou",
+    "hua",
+    "cha",
+    "mie",
+    "sai",
+    "han",
+    "dou",
+    "pai",
+    "qiu",
+    "wen",
+    "die",
+    "pan",
+    "sen",
+    "nve",
+    "ha",
+    "nu",
+    "xi",
+    "le",
+    "lu",
+    "pu",
+    "ke",
+    "zu",
+    "en",
+    "xu",
+    "gu",
+    "du",
+    "ji",
+    "wu",
+    "pa",
+    "li",
+    "ei",
+    "lv",
+    "se",
+    "hu",
+    "yi",
+    "ze",
+    "ka",
+    "ti",
+    "ri",
+    "bu",
+    "bo",
+    "ye",
+    "hm",
+    "zi",
+    "er",
+    "su",
+    "an",
+    "wa",
+    "mu",
+    "yu",
+    "po",
+    "cu",
+    "di",
+    "ku",
+    "ru",
+    "ga",
+    "da",
+    "ne",
+    "tu",
+    "ya",
+    "qi",
+    "ng",
+    "la",
+    "qu",
+    "ao",
+    "ni",
+    "mo",
+    "ta",
+    "ci",
+    "ju",
+    "ge",
+    "fo",
+    "he",
+    "de",
+    "sa",
+    "fu",
+    "ca",
+    "nv",
+    "bi",
+    "wo",
+    "re",
+    "me",
+    "si",
+    "ma",
+    "mi",
+    "ce",
+    "te",
+    "na",
+    "ai",
+    "pi",
+    "za",
+    "fa",
+    "ou",
+    "ba",
+    "e",
+    "m",
+    "o",
+    "n",
+    "a",
+    "r",
   ];
 
   static String clearPunctuation(String value) {
     return value.replaceAll(_punctuationRegex, '');
   }
 
-  static final RegExp _aRegex = RegExp(r'[āáǎăà]+');
-  static final RegExp _eRegex = RegExp(r'[ēéěĕè]+');
-  static final RegExp _iRegex = RegExp(r'[īíǐĭì]+');
-  static final RegExp _oRegex = RegExp(r'[ōóǒŏò]+');
-  static final RegExp _uRegex = RegExp(r'[ūúǔŭùüǖǘǚǚü̆ǜ]+');
-  static final RegExp _vRegex = RegExp(r'[v̄v́v̆v̌v̀]+');
+  final _toneRegexp = RegExp(r'[āáǎàēéěèōóǒòīíǐìūúǔùǖǘǚǜü]+');
+
+  bool containsTone(String text) {
+    return _toneRegexp.hasMatch(text);
+  }
+
+  /// Returns a list of tones for the whole sentence
+  static List<int> getPinyinTones(String sentence) {
+    return splitToSyllables<String>(sentence).map(getPinyinTone).toList();
+  }
+
+  /// Detects a tone of a single syllable where 5 means neutral tone
+  /// it works for one syllable only. If you need to detect
+  /// tones of a sentence, use getPinyinTones() instead
+  static int getPinyinTone(String syllable) {
+    final tones = [
+      ['ā', 'ē', 'ō', 'ī', 'ū', 'ǖ'],
+      ['á', 'é', 'ó', 'í', 'ú', 'ǘ'],
+      ['ǎ', 'ě', 'ǒ', 'ǐ', 'ǔ', 'ǚ'],
+      ['à', 'è', 'ò', 'ì', 'ù', 'ǜ'],
+    ];
+    for (int i = 0; i < tones.length; i++) {
+      final list = tones[i];
+      if (list.any((s) => syllable.contains(s))) {
+        return i + 1;
+      }
+    }
+    return 5;
+  }
+
+  static const _aS = 'āáǎăà';
+  static const _eS = 'ēéěĕè';
+  static const _iS = 'īíǐĭì';
+  static const _oS = 'ōóǒŏò';
+  static const _uS = 'ūúǔŭùüǖǘǚǚü̆ǜ';
+  static const _vS = 'v̄v́v̆v̌v̀';
+
+  static final RegExp _aRegex = RegExp('[$_aS]+');
+  static final RegExp _eRegex = RegExp('[$_eS]+');
+  static final RegExp _iRegex = RegExp('[$_iS]+');
+  static final RegExp _oRegex = RegExp('[$_oS]+');
+  static final RegExp _uRegex = RegExp('[$_uS]+');
+  static final RegExp _vRegex = RegExp('[$_vS]+');
 
   /// converts all spcial symbols in pinyin to it's
   /// normal latin analog like ě -> e or ǔ -> u
@@ -87,47 +506,188 @@ class PinyinUtils {
 
   static String splitToSyllablesBySeparator(
     String value, [
-    String separator = " ",
+    String separator = "'",
   ]) {
-    final result = splitToSyllables(value)
-        .join(" ")
-        .replaceAll(RegExp(r"[']+"), " ")
-        .replaceAll(RegExp(r"\s+"), separator);
-    return result;
+    final spaceRegexp = RegExp(r"\s+");
+    final apostropheRegexp = RegExp("[$separator]+");
+    const empty = '';
+    value = value
+        .replaceAll(apostropheRegexp, empty)
+        .replaceAll(spaceRegexp, empty);
+    return splitToSyllables<String>(value).join(separator);
+  }
+
+  static List<T> splitToSyllables<T>(
+    String value, {
+    bool removePunctuation = true,
+  }) {
+    var reversedValues = _innerSplitToSyllablesReversed(
+      value,
+      removePunctuation: false,
+      firstRun: true,
+      accumulatedValues: {},
+    );
+    return _postProcessSyllables<T>(
+      reversedValues,
+      value,
+    );
+  }
+
+  static List<T> _postProcessSyllables<T>(
+    Map<int, Map<String, dynamic>> reversed,
+    String initialValue,
+  ) {
+    assert(
+      T == String || T == SyllableData,
+      'T can only be a String or SyllableData',
+    );
+    final list = <T>[];
+    var s = StringBuffer();
+    for (var kv in reversed.entries.toList().reversed) {
+      final end = initialValue.length - kv.key;
+      final isValid = kv.value['isValid'];
+      final value = _reverseString(kv.value['value']);
+      final start = initialValue.length - (value.length + kv.key);
+      final sub = initialValue.substring(start, end);
+      if (isValid) {
+        if (s.isNotEmpty) {
+          /// записывает невалидные значения
+          if (T == SyllableData) {
+            list.add(
+              SyllableData(
+                value: s.toString(),
+                tone: -1,
+                isValidSyllable: false,
+              ) as T,
+            );
+          }
+          if (T == String) {
+            list.add(s.toString() as T);
+          }
+        }
+
+        if (T == SyllableData) {
+          list.add(
+            SyllableData(
+              value: sub,
+              tone: getPinyinTone(sub),
+              isValidSyllable: true,
+            ) as T,
+          );
+        } else if (T == String) {
+          list.add(sub as T);
+        }
+        s = StringBuffer();
+      } else {
+        s.write(sub);
+      }
+    }
+    if (s.isNotEmpty) {
+      if (T == SyllableData) {
+        list.add(
+          SyllableData(
+            value: s.toString(),
+            tone: -1,
+            isValidSyllable: false,
+          ) as T,
+        );
+      } else {
+        list.add(s.toString() as T);
+      }
+    }
+    return list;
   }
 
   /// [value] a string to split into pinyin syllables
   /// [removePunctuation] whether to remove punctuation marks
   /// like commas, periods, colons etc. or not
-  static List<String> splitToSyllables(
+  /// [initialValue] is required to save original request
+  /// and map the syllables to it
+  static Map<int, Map<String, dynamic>> _innerSplitToSyllablesReversed(
     String value, {
     bool removePunctuation = true,
+    bool firstRun = true,
+    required Map<int, Map<String, dynamic>> accumulatedValues,
   }) {
     if (value.isEmpty) {
-      return [];
+      return {};
     }
     if (removePunctuation) {
       value = clearPunctuation(value);
     }
-    final pinyin = value
-        .replaceAll(_regExps[0], ' ')
-        .replaceAllMapped(_regExps[1], (m) => '${m[1]} ${m[2]}')
-        .replaceAllMapped(_regExps[2], (m) => '${m[1]} ${m[2]}')
-        .replaceAllMapped(_regExps[3], (m) => '${m[1]} ${m[2]}')
-        .replaceAllMapped(_regExps[4], (m) => '${m[1]} ${m[3]}')
-        .replaceAllMapped(_regExps[5], (m) => '${m[1]} ${m[2]}')
-        .replaceAllMapped(_regExps[6], (m) => '${m[1]} ${m[2]}')
-        .replaceAllMapped(_regExps[7], (m) => '${m[1]}${m[5]}')
-        .replaceAllMapped(_regExps[8], (m) => '${m[1]}${m[2]}${m[3]}')
-        .replaceAllMapped(_regExps[9], (m) => '${m[1]} ${m[3]}')
-        .replaceAllMapped(_regExps[10], (m) => '${m[1]} ${m[3]}')
-        .replaceAllMapped(_regExps[11], (m) => '${m[1]} ${m[3]}${m[4]}')
-        .replaceAllMapped(_regExps[12], (m) => '${m[1]} ${m[2]}${m[3]}')
-        .replaceAllMapped(_regExps[13], (m) => '${m[1]}${m[2]} ${m[3]}${m[4]}')
-        .replaceAllMapped(_regExps[14], (m) => '${m[1]} ${m[2]}')
-        .replaceAllMapped(_regExps[15], (m) => '${m[1]} ${m[2]}')
-        .replaceAllMapped(_regExps[16], (m) => '${m[1]} ${m[2]}')
-        .replaceAll(_regExps[17], ' ');
-    return pinyin.split(' ');
+    var tempValue = firstRun ? _reverseString(simplifyPinyin(value)) : value;
+    var reversedSyllables = _allSyllables.reversed.map(_reverseString).toList();
+
+    /// the number of iterations here doesn't matter
+    /// it must be as big as possible. Anyway the loop breaks
+    /// when all possible syllables are checked
+    for (var i = 0; i < 10000000; i++) {
+      final start = tempValue.indexOf(_notAsteristRegex);
+      String foundCandidate = '';
+      for (var syl in reversedSyllables) {
+        if (tempValue.indexOf(syl) == start && start > -1) {
+          foundCandidate = syl;
+        }
+      }
+
+      if (foundCandidate.isEmpty) {
+        /// if no candidate was found at the beginning,
+        /// we need to repeate the search by with a shortened string
+        if (start + 1 < tempValue.length) {
+          final accValue = tempValue.substring(start, start + 1);
+          accumulatedValues[start] = {
+            'value': accValue,
+            'isValid': false,
+          };
+          return _innerSplitToSyllablesReversed(
+            tempValue.replaceRange(start, start + 1, '*'),
+            firstRun: false,
+            removePunctuation: false,
+            accumulatedValues: accumulatedValues,
+          );
+        } else {
+          /// nothing found at all
+          final unfoundValue = tempValue.replaceAll('*', '');
+          accumulatedValues[start] = {
+            'value': unfoundValue,
+            'isValid': false,
+          };
+          break;
+        }
+      }
+      if (foundCandidate.isNotEmpty) {
+        final end = start + foundCandidate.length;
+        final accValue = tempValue.substring(start, end);
+        accumulatedValues[start] = {
+          'value': accValue,
+          'isValid': true,
+        };
+        tempValue = tempValue.replaceRange(
+          start,
+          end,
+          _getFiller(foundCandidate),
+        );
+        if (end >= tempValue.length) {
+          break;
+        }
+      }
+    }
+    return accumulatedValues;
+  }
+
+  static String _reverseString(String value) {
+    StringBuffer s = StringBuffer();
+    for (var i = value.length - 1; i >= 0; i--) {
+      s.write(value[i]);
+    }
+    return s.toString();
+  }
+
+  static String _getFiller(String syllable) {
+    StringBuffer s = StringBuffer();
+    for (var i = 0; i < syllable.length; i++) {
+      s.write('*');
+    }
+    return s.toString();
   }
 }
