@@ -5,17 +5,19 @@
 </a>
 
 
-You might also like my other packages
+**You might also like my other packages**
 
-**lite_state** 
+***lite_state*** 
 (Very simple and easy to use state machine for Flutter)
+https://pub.dev/packages/lite_state
 
 <a href="https://pub.dev/packages/lite_state"><img src="https://img.shields.io/pub/v/lite_state?logo=dart" alt="pub.dev"></a>[![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://pub.dev/packages/effective_dart) <a href="https://github.com/Solido/awesome-flutter">
 <img alt="Awesome Flutter" src="https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat-square" />
 </a>
 
-**flutter_instagram_storyboard** 
+***flutter_instagram_storyboard***
 (A UI for setting up stories like in Instagram)
+https://pub.dev/packages/flutter_instagram_storyboard
 
 <a href="https://pub.dev/packages/flutter_instagram_storyboard"><img src="https://img.shields.io/pub/v/flutter_instagram_storyboard?logo=dart" alt="pub.dev"></a>[![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://pub.dev/packages/effective_dart) <a href="https://github.com/Solido/awesome-flutter"></a>
 
