@@ -137,14 +137,14 @@ class CurrencyInputFormatter extends TextInputFormatter {
 
     var oldText = oldValue.text;
     if (oldValue == newValue) {
-      print('RETURN 0 ${oldValue.text}');
+      // print('RETURN 0 ${oldValue.text}');
       return newValue;
     }
     bool isErasing = newText.length < oldText.length;
     if (isErasing) {
       if (mantissaLength == 0 && oldCaretIndex == oldValue.text.length) {
         if (trailingLength > 0) {
-          print('RETURN 1 ${oldValue.text}');
+          // print('RETURN 1 ${oldValue.text}');
           return oldValue.copyWith(
             selection: TextSelection.collapsed(
               offset: min(
@@ -159,7 +159,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
         shorterString: newText,
         longerString: oldText,
       )) {
-        print('RETURN 2 ${oldValue.text}');
+        // print('RETURN 2 ${oldValue.text}');
         return oldValue.copyWith(
           selection: TextSelection.collapsed(
             offset: min(
@@ -171,7 +171,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
       }
     } else {
       if (_containsIllegalChars(newText)) {
-        print('RETURN 3 ${oldValue.text}');
+        // print('RETURN 3 ${oldValue.text}');
         return oldValue;
       }
     }
@@ -194,7 +194,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
       newText: newText,
       oldText: oldText,
     )) {
-      print('RETURN 4 ${oldValue.text.length} $oldCaretIndex');
+      // print('RETURN 4 ${oldValue.text.length} $oldCaretIndex');
       return oldValue.copyWith(
         selection: TextSelection.collapsed(
           offset: min(
@@ -211,7 +211,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
         oldText: oldText,
         caretPosition: newCaretIndex,
       )) {
-        print('RETURN 5 $newAsCurrency');
+        // print('RETURN 5 $newAsCurrency');
         return TextEditingValue(
           selection: TextSelection.collapsed(
             offset: newCaretIndex,
@@ -219,7 +219,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
           text: newAsCurrency,
         );
       } else {
-        print('RETURN 6 $newAsCurrency');
+        // print('RETURN 6 $newAsCurrency');
         int offset = min(
           newCaretIndex,
           newAsCurrency.length - trailingLength,
@@ -235,7 +235,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
 
     var initialCaretOffset = leadingLength;
     if (_isZeroOrEmpty(newAsNumeric)) {
-      print('RETURN 7 ${newValue.text}');
+      // print('RETURN 7 ${newValue.text}');
       int offset = min(
         newValue.text.length,
         initialCaretOffset + 1,
@@ -271,7 +271,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
         initialCaretOffset += 1;
       }
     }
-    print('RETURN 8 $newAsCurrency');
+    // print('RETURN 8 $newAsCurrency');
     return TextEditingValue(
       selection: TextSelection.collapsed(
         offset: initialCaretOffset,

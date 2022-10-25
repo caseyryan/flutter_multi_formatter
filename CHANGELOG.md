@@ -1,3 +1,5 @@
+## [2.8.5]
+- Cleaned up some prints
 ## [2.8.4]
 - Advanced Pinyin splitter. It does not depend on regular expressions anymore
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/100
