@@ -485,23 +485,54 @@ class PinyinUtils {
   static const _uS = 'ūúǔŭùüǖǘǚǚü̆ǜ';
   static const _vS = 'v̄v́v̆v̌v̀';
 
-  static final RegExp _aRegex = RegExp('[$_aS]+');
-  static final RegExp _eRegex = RegExp('[$_eS]+');
-  static final RegExp _iRegex = RegExp('[$_iS]+');
-  static final RegExp _oRegex = RegExp('[$_oS]+');
-  static final RegExp _uRegex = RegExp('[$_uS]+');
-  static final RegExp _vRegex = RegExp('[$_vS]+');
+  static final RegExp _aRegex = RegExp('[$_aS]{1}');
+  static final RegExp _eRegex = RegExp('[$_eS]{1}');
+  static final RegExp _iRegex = RegExp('[$_iS]{1}');
+  static final RegExp _oRegex = RegExp('[$_oS]{1}');
+  static final RegExp _uRegex = RegExp('[$_uS]{1}');
+  static final RegExp _vRegex = RegExp('[$_vS]{1}');
 
   /// converts all spcial symbols in pinyin to it's
   /// normal latin analog like ě -> e or ǔ -> u
   static String simplifyPinyin(String pinyin) {
-    return pinyin
-        .replaceAll(_aRegex, 'a')
-        .replaceAll(_eRegex, 'e')
-        .replaceAll(_iRegex, 'i')
-        .replaceAll(_oRegex, 'o')
-        .replaceAll(_uRegex, 'u')
-        .replaceAll(_vRegex, 'v');
+    /// i is just a safeguard from an endless loop
+    int i = pinyin.length;
+    while (pinyin.contains(_aRegex)) {
+      i--;
+      pinyin = pinyin.replaceFirst(_aRegex, 'a');
+      if (i <= 0) break;
+    }
+    i = pinyin.length;
+    while (pinyin.contains(_eRegex)) {
+      i--;
+      pinyin = pinyin.replaceFirst(_eRegex, 'e');
+      if (i <= 0) break;
+    }
+    i = pinyin.length;
+    while (pinyin.contains(_iRegex)) {
+      i--;
+      pinyin = pinyin.replaceFirst(_iRegex, 'i');
+      if (i <= 0) break;
+    }
+    i = pinyin.length;
+    while (pinyin.contains(_oRegex)) {
+      i--;
+      pinyin = pinyin.replaceFirst(_oRegex, 'o');
+      if (i <= 0) break;
+    }
+    i = pinyin.length;
+    while (pinyin.contains(_uRegex)) {
+      i--;
+      pinyin = pinyin.replaceFirst(_uRegex, 'u');
+      if (i <= 0) break;
+    }
+    i = pinyin.length;
+    while (pinyin.contains(_vRegex)) {
+      i--;
+      pinyin = pinyin.replaceFirst(_vRegex, 'v');
+      if (i <= 0) break;
+    }
+    return pinyin;
   }
 
   static String splitToSyllablesBySeparator(

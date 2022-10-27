@@ -1,3 +1,6 @@
+## [2.8.6]
+- Fixed PinyinUtils.simplifyPinyin() it could broke on pinyins 
+with the same letters coming in a row line bùdéérzhī 
 ## [2.8.5]
 - Cleaned up some prints
 ## [2.8.4]
