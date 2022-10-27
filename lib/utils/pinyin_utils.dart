@@ -482,55 +482,47 @@ class PinyinUtils {
   static const _eS = 'ēéěĕè';
   static const _iS = 'īíǐĭì';
   static const _oS = 'ōóǒŏò';
-  static const _uS = 'ūúǔŭùüǖǘǚǚü̆ǜ';
+  static const _uS = 'ūúǔŭù';
   static const _vS = 'v̄v́v̆v̌v̀';
 
-  static final RegExp _aRegex = RegExp('[$_aS]{1}');
-  static final RegExp _eRegex = RegExp('[$_eS]{1}');
-  static final RegExp _iRegex = RegExp('[$_iS]{1}');
-  static final RegExp _oRegex = RegExp('[$_oS]{1}');
-  static final RegExp _uRegex = RegExp('[$_uS]{1}');
-  static final RegExp _vRegex = RegExp('[$_vS]{1}');
+  static final RegExp _aRegex = RegExp('[$_aS]');
+  static final RegExp _eRegex = RegExp('[$_eS]');
+  static final RegExp _iRegex = RegExp('[$_iS]');
+  static final RegExp _oRegex = RegExp('[$_oS]');
+  static final RegExp _uRegex = RegExp('[$_uS]');
+
+  /// https://stackoverflow.com/questions/74223173/simple-regexp-matches-what-it-shouldnt/74223270#74223270
+  static final RegExp _uDottedRegex = RegExp('(?:ü|ǖ|ǘ|ǚ|ǚ|ü̆|ǜ)', unicode: true);
+  static final RegExp _vRegex = RegExp('[$_vS]');
 
   /// converts all spcial symbols in pinyin to it's
   /// normal latin analog like ě -> e or ǔ -> u
   static String simplifyPinyin(String pinyin) {
+    while (pinyin.contains(_aRegex)) {
+      pinyin = pinyin.replaceFirst(_aRegex, 'a');
+    }
+    while (pinyin.contains(_eRegex)) {
+      pinyin = pinyin.replaceFirst(_eRegex, 'e');
+    }
+    while (pinyin.contains(_iRegex)) {
+      pinyin = pinyin.replaceFirst(_iRegex, 'i');
+    }
+    while (pinyin.contains(_oRegex)) {
+      pinyin = pinyin.replaceFirst(_oRegex, 'o');
+    }
+    while (pinyin.contains(_uRegex)) {
+      pinyin = pinyin.replaceFirst(_uRegex, 'u');
+    }
+
     /// i is just a safeguard from an endless loop
     int i = pinyin.length;
-    while (pinyin.contains(_aRegex)) {
+    while (pinyin.contains(_uDottedRegex)) {
       i--;
-      pinyin = pinyin.replaceFirst(_aRegex, 'a');
+      pinyin = pinyin.replaceFirst(_uDottedRegex, 'u');
       if (i <= 0) break;
     }
-    i = pinyin.length;
-    while (pinyin.contains(_eRegex)) {
-      i--;
-      pinyin = pinyin.replaceFirst(_eRegex, 'e');
-      if (i <= 0) break;
-    }
-    i = pinyin.length;
-    while (pinyin.contains(_iRegex)) {
-      i--;
-      pinyin = pinyin.replaceFirst(_iRegex, 'i');
-      if (i <= 0) break;
-    }
-    i = pinyin.length;
-    while (pinyin.contains(_oRegex)) {
-      i--;
-      pinyin = pinyin.replaceFirst(_oRegex, 'o');
-      if (i <= 0) break;
-    }
-    i = pinyin.length;
-    while (pinyin.contains(_uRegex)) {
-      i--;
-      pinyin = pinyin.replaceFirst(_uRegex, 'u');
-      if (i <= 0) break;
-    }
-    i = pinyin.length;
     while (pinyin.contains(_vRegex)) {
-      i--;
       pinyin = pinyin.replaceFirst(_vRegex, 'v');
-      if (i <= 0) break;
     }
     return pinyin;
   }
@@ -542,9 +534,7 @@ class PinyinUtils {
     final spaceRegexp = RegExp(r"\s+");
     final apostropheRegexp = RegExp("[$separator]+");
     const empty = '';
-    value = value
-        .replaceAll(apostropheRegexp, empty)
-        .replaceAll(spaceRegexp, empty);
+    value = value.replaceAll(apostropheRegexp, empty).replaceAll(spaceRegexp, empty);
     return splitToSyllables<String>(value).join(separator);
   }
 

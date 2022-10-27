@@ -1,8 +1,10 @@
+## [2.8.8]
+- One more minor fix for PinyinUtils
 ## [2.8.7]
 - Fixed Pakistan number mask https://github.com/caseyryan/flutter_multi_formatter/issues/103
 ## [2.8.6]
-- Fixed PinyinUtils.simplifyPinyin() it could broke on pinyins 
-with the same letters coming in a row line bùdéérzhī 
+- Fixed PinyinUtils.simplifyPinyin() it could brake on pinyins 
+with the same letters coming in a row like bùdéérzhī 
 ## [2.8.5]
 - Cleaned up some prints
 ## [2.8.4]
