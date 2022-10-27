@@ -1563,7 +1563,7 @@ class PhoneCodes {
       'country': 'Pakistan',
       'internalPhoneCode': '92',
       'countryCode': 'PK',
-      'phoneMask': '+00 0000000',
+      'phoneMask': '+00 000 0000000',
     },
     {
       'country': 'Palau',
