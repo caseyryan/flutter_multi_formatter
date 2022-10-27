@@ -156,10 +156,6 @@ CreditCardNumberInputFormatter
 CreditCardCvcInputFormatter
 CreditCardExpirationDateFormatter
 
-/// for any inputs where you need to restrict or
-/// allow some characters
-RestrictingInputFormatter
-
 /// for currencies
 CurrencyInputFormatter
 PosInputFormatter
