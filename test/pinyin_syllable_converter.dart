@@ -6,7 +6,7 @@ void main() {
     var result = PinyinUtils.splitToSyllables<SyllableData>(
       'wǒhěngāoxìngrènshinǐ',
     );
-    final numValid = result.where((e) => e.isValidSyllable).length;
+    final numValid = result.where((e) => e.isValid).length;
     expect(
       numValid,
       7,

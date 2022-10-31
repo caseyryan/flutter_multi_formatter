@@ -1,3 +1,6 @@
+## [2.9.0]
+- Added more pinyin utils + HanziUtils
+- Added to utility methods for currencies isCryptoCurrency(String currencyId) and isFiatCurrency(String currencyId)
 ## [2.8.8]
 - One more minor fix for PinyinUtils
 ## [2.8.7]

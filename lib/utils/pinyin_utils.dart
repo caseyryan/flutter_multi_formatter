@@ -1,20 +1,29 @@
+import 'dart:collection';
 import 'dart:convert';
+
+import 'package:collection/collection.dart';
+
+import 'hanzi_utils.dart';
 
 class SyllableData {
   String value;
   int tone;
-  bool isValidSyllable;
+  bool isValid;
+  int start;
+  int end;
   SyllableData({
     required this.value,
     required this.tone,
-    required this.isValidSyllable,
+    required this.isValid,
+    required this.start,
+    required this.end,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'value': value,
       'tone': tone,
-      'isValidSyllable': isValidSyllable,
+      'isValid': isValid,
     };
   }
 
@@ -26,7 +35,6 @@ class SyllableData {
 
 class PinyinUtils {
   static final RegExp _punctuationRegex = RegExp(r"['!?.\[\],，。？！；：（ ）【 】［］]");
-  static final _notAsteristRegex = RegExp(r'[^*]');
   static const _allSyllables = [
     "zhuang",
     "shuang",
@@ -403,7 +411,6 @@ class PinyinUtils {
     "tu",
     "ya",
     "qi",
-    "ng",
     "la",
     "qu",
     "ao",
@@ -431,18 +438,22 @@ class PinyinUtils {
     "te",
     "na",
     "ai",
-    "pi",
-    "za",
     "fa",
-    "ou",
     "ba",
     "e",
-    "m",
-    "o",
-    "n",
     "a",
     "r",
   ];
+
+  /// Converts unicode sequences to chinese characters
+  static String encodeUnicodeToChinese(String unicodeString) {
+    unicodeString = unicodeString.replaceAll(r'\\u', r'\u');
+    var presplit = unicodeString.split(r'\u')..removeAt(0);
+    final result = String.fromCharCodes(
+      presplit.map<int>((hex) => int.parse(hex, radix: 16)),
+    );
+    return result;
+  }
 
   static String clearPunctuation(String value) {
     return value.replaceAll(_punctuationRegex, '');
@@ -484,6 +495,7 @@ class PinyinUtils {
   static const _oS = 'ōóǒŏò';
   static const _uS = 'ūúǔŭù';
   static const _vS = 'v̄v́v̆v̌v̀';
+  static const _uDottedS = '(?:ü|ǖ|ǘ|ǚ|ǚ|ü̆|ǜ)';
 
   static final RegExp _aRegex = RegExp('[$_aS]');
   static final RegExp _eRegex = RegExp('[$_eS]');
@@ -492,8 +504,54 @@ class PinyinUtils {
   static final RegExp _uRegex = RegExp('[$_uS]');
 
   /// https://stackoverflow.com/questions/74223173/simple-regexp-matches-what-it-shouldnt/74223270#74223270
-  static final RegExp _uDottedRegex = RegExp('(?:ü|ǖ|ǘ|ǚ|ǚ|ü̆|ǜ)', unicode: true);
+  static final RegExp _uDottedRegex = RegExp(_uDottedS, unicode: true);
   static final RegExp _vRegex = RegExp('[$_vS]');
+  static final RegExp _spaceRegex = RegExp(r'\s+');
+
+  /// createds a generic regular expression that allows
+  /// you to search a pinyin regardless of its tone
+  /// e.g. in a database request
+  static RegExp? createRegexpForPinyinSearch(String syllable) {
+    if (syllable.isEmpty) return null;
+    syllable = simplifyPinyin(syllable);
+    final allVowelsMatch = RegExp('[aouei]+').firstMatch(syllable);
+    if (allVowelsMatch != null) {
+      final vowels = syllable.substring(
+        allVowelsMatch.start,
+        allVowelsMatch.end,
+      );
+      final presplit = vowels.split('');
+
+      String preffix = '^';
+      final buffer = StringBuffer('');
+      if (allVowelsMatch.start > 0) {
+        preffix += syllable.substring(
+          0,
+          allVowelsMatch.start,
+        );
+      }
+      for (var v in presplit) {
+        if (v == 'u') {
+          buffer.write('[(?:u|ū|ú|ǔ|ŭ|ù|ü|ǖ|ǘ|ǚ|ǚ|ü̆|ǜ)]');
+        } else if (v == 'a') {
+          buffer.write('[aāáǎăà]');
+        } else if (v == 'o') {
+          buffer.write('[oōóǒŏò]');
+        } else if (v == 'e') {
+          buffer.write('[eēéěĕè]');
+        } else if (v == 'i') {
+          buffer.write('[iīíǐĭì]');
+        }
+      }
+      if (allVowelsMatch.end < syllable.length) {
+        buffer.write(syllable.substring(allVowelsMatch.end));
+      }
+      buffer.write(r'$');
+      final result = '$preffix${buffer.toString()}';
+      return RegExp(result);
+    }
+    return RegExp(syllable);
+  }
 
   /// converts all spcial symbols in pinyin to it's
   /// normal latin analog like ě -> e or ǔ -> u
@@ -527,6 +585,13 @@ class PinyinUtils {
     return pinyin;
   }
 
+  /// some sillables might be mistakingly separated in a wrong way
+  /// this map contains exceptions. That must replace original text
+  /// so it would split more precisely
+  static const Map<String, String> _splittableExceptions = {
+    'nine': 'ni ne',
+  };
+
   static String splitToSyllablesBySeparator(
     String value, [
     String separator = "'",
@@ -534,7 +599,9 @@ class PinyinUtils {
     final spaceRegexp = RegExp(r"\s+");
     final apostropheRegexp = RegExp("[$separator]+");
     const empty = '';
-    value = value.replaceAll(apostropheRegexp, empty).replaceAll(spaceRegexp, empty);
+    value = value
+        .replaceAll(apostropheRegexp, empty)
+        .replaceAll(spaceRegexp, empty);
     return splitToSyllables<String>(value).join(separator);
   }
 
@@ -542,166 +609,389 @@ class PinyinUtils {
     String value, {
     bool removePunctuation = true,
   }) {
-    var reversedValues = _innerSplitToSyllablesReversed(
-      value,
-      removePunctuation: false,
-      firstRun: true,
-      accumulatedValues: {},
-    );
-    return _postProcessSyllables<T>(
-      reversedValues,
-      value,
-    );
-  }
-
-  static List<T> _postProcessSyllables<T>(
-    Map<int, Map<String, dynamic>> reversed,
-    String initialValue,
-  ) {
     assert(
       T == String || T == SyllableData,
-      'T can only be a String or SyllableData',
+      'T can only be a String or a SyllableData',
     );
-    final list = <T>[];
-    var s = StringBuffer();
-    for (var kv in reversed.entries.toList().reversed) {
-      final end = initialValue.length - kv.key;
-      final isValid = kv.value['isValid'];
-      final value = _reverseString(kv.value['value']);
-      final start = initialValue.length - (value.length + kv.key);
-      final sub = initialValue.substring(start, end);
-      if (isValid) {
-        if (s.isNotEmpty) {
-          /// записывает невалидные значения
-          if (T == SyllableData) {
-            list.add(
-              SyllableData(
-                value: s.toString(),
-                tone: -1,
-                isValidSyllable: false,
-              ) as T,
-            );
-          }
-          if (T == String) {
-            list.add(s.toString() as T);
-          }
-        }
+    var simplified = simplifyPinyin(value);
 
-        if (T == SyllableData) {
-          list.add(
-            SyllableData(
-              value: sub,
-              tone: getPinyinTone(sub),
-              isValidSyllable: true,
-            ) as T,
-          );
-        } else if (T == String) {
-          list.add(sub as T);
+    /// тут надо вставить предопределенные пробелы, чтобы
+    /// избежать случаев, когда, анприметр nine делится не как
+    /// ni ne, а как nin e
+    for (var kv in _splittableExceptions.entries) {
+      if (simplified.contains(kv.key)) {
+        int indexOfSpace = kv.value.indexOf(' ');
+        int indexOfFoundValue = simplified.indexOf(kv.key);
+        final presplit = value.split('');
+        presplit.insert(indexOfFoundValue + indexOfSpace, ' ');
+        value = presplit.join();
+        return splitToSyllables(value);
+      }
+    }
+
+    if (value.contains(_spaceRegex)) {
+      final list = value.split(_spaceRegex);
+      final res = <T>[];
+      for (var subsentence in list) {
+        final results = splitToSyllables<T>(subsentence);
+        res.addAll(results);
+      }
+      return res;
+    }
+    List<_Sentence> allPossibleSentences = [];
+    _findSentenceWithBiggerScore(
+      value,
+      allPossibleSentences: allPossibleSentences,
+    );
+    if (allPossibleSentences.isNotEmpty) {
+      _Sentence? sentence;
+      // print(allPossibleSentences);
+      if (allPossibleSentences.length > 1) {
+        for (var s in allPossibleSentences) {
+          s.toCorrectSequence(true);
         }
-        s = StringBuffer();
-      } else {
-        s.write(sub);
-      }
-    }
-    if (s.isNotEmpty) {
-      if (T == SyllableData) {
-        list.add(
-          SyllableData(
-            value: s.toString(),
-            tone: -1,
-            isValidSyllable: false,
-          ) as T,
+        allPossibleSentences.sort(
+          (a, b) => a.totalUseRank.compareTo(b.totalUseRank),
         );
-      } else {
-        list.add(s.toString() as T);
       }
+      sentence = allPossibleSentences.first;
+      final correctSequence = sentence.toCorrectSequence();
+      if (T == String) {
+        return correctSequence.map((e) => e.value).toList() as List<T>;
+      }
+      return correctSequence as List<T>;
     }
-    return list;
+
+    return [];
   }
 
-  /// [value] a string to split into pinyin syllables
-  /// [removePunctuation] whether to remove punctuation marks
-  /// like commas, periods, colons etc. or not
-  /// [initialValue] is required to save original request
-  /// and map the syllables to it
-  static Map<int, Map<String, dynamic>> _innerSplitToSyllablesReversed(
-    String value, {
-    bool removePunctuation = true,
-    bool firstRun = true,
-    required Map<int, Map<String, dynamic>> accumulatedValues,
-  }) {
-    if (value.isEmpty) {
-      return {};
+  /// counts the number of syllables in a text line
+  static int countNumSyllables(String value) {
+    return RegExp('[aouei]{1,2}').allMatches(value).length;
+  }
+
+  /// суть в том, чтобы для каждого максимально длинного слона найти
+  /// из списка его под слоги и сгруппировать с ним а потом, при каждом ошибочном
+  /// использовании слога, увеличивать итератор и брать для подстановки следующий
+  /// из списка
+  //   {
+  //   "syllables": [],
+  //   "iterator": 0,
+  // }
+
+  static List<_Subsyllable> _splitToSubsyllables(
+    List<String> syllables,
+  ) {
+    var result = <_Subsyllable>[];
+    syllables.sort(((a, b) => b.length.compareTo(a.length)));
+
+    for (int i = 0; i < syllables.length; i++) {
+      var syl = syllables[i];
+      result.add(_Subsyllable()..syllables.add(syl));
+      for (var j = i + 1; j < syllables.length; j++) {
+        var subSyl = syllables[j];
+        if (syl.contains(subSyl)) {
+          result.last.syllables.add(subSyl);
+        }
+      }
     }
+    return result;
+  }
+
+  /// this method tries to find the maximum number of possible
+  /// syllables in a line of text. It might happen that it finds
+  /// more than one sentence with the same summary length of all
+  /// syllables. To avoid this it will take every syllable,
+  /// calculate a power of its length, and then sum up all powers
+  /// This allows it to sort the sentences with longer syllables
+  /// before the others. So in 99% of cases the first sentence in
+  /// an array will be the most fitting one
+  static void _findSentenceWithBiggerScore(
+    String value, {
+    List<String>? allPossibleSyllables,
+    int? numSyllables,
+    String? simplified,
+    List<_Subsyllable>? subsyllables,
+    List<_Sentence>? allPossibleSentences,
+    bool removePunctuation = true,
+  }) {
     if (removePunctuation) {
       value = clearPunctuation(value);
     }
-    var tempValue = firstRun ? _reverseString(simplifyPinyin(value)) : value;
-    var reversedSyllables = _allSyllables.reversed.map(_reverseString).toList();
-
-    /// the number of iterations here doesn't matter
-    /// it must be as big as possible. Anyway the loop breaks
-    /// when all possible syllables are checked
-    for (var i = 0; i < 10000000; i++) {
-      final start = tempValue.indexOf(_notAsteristRegex);
-      String foundCandidate = '';
-      for (var syl in reversedSyllables) {
-        if (tempValue.indexOf(syl) == start && start > -1) {
-          foundCandidate = syl;
-        }
-      }
-
-      if (foundCandidate.isEmpty) {
-        /// if no candidate was found at the beginning,
-        /// we need to repeate the search by with a shortened string
-        if (start + 1 < tempValue.length) {
-          final accValue = tempValue.substring(start, start + 1);
-          accumulatedValues[start] = {
-            'value': accValue,
-            'isValid': false,
-          };
-          return _innerSplitToSyllablesReversed(
-            tempValue.replaceRange(start, start + 1, '*'),
-            firstRun: false,
-            removePunctuation: false,
-            accumulatedValues: accumulatedValues,
-          );
-        } else {
-          /// nothing found at all
-          final unfoundValue = tempValue.replaceAll('*', '');
-          accumulatedValues[start] = {
-            'value': unfoundValue,
-            'isValid': false,
-          };
-          break;
-        }
-      }
-      if (foundCandidate.isNotEmpty) {
-        final end = start + foundCandidate.length;
-        final accValue = tempValue.substring(start, end);
-        accumulatedValues[start] = {
-          'value': accValue,
-          'isValid': true,
-        };
-        tempValue = tempValue.replaceRange(
-          start,
-          end,
-          _getFiller(foundCandidate),
-        );
-        if (end >= tempValue.length) {
-          break;
+    simplified ??= simplifyPinyin(value);
+    numSyllables ??= countNumSyllables(simplified);
+    if (allPossibleSyllables == null) {
+      allPossibleSyllables = [];
+      for (var syl in _allSyllables) {
+        final regExp = RegExp(syl);
+        final numOccurences = regExp.allMatches(simplified).length;
+        for (var i = 0; i < numOccurences; i++) {
+          allPossibleSyllables.add(syl);
         }
       }
     }
-    return accumulatedValues;
+    subsyllables ??= _splitToSubsyllables(allPossibleSyllables);
+    if (_hasIncomplete(subsyllables)) {
+      allPossibleSentences ??= [];
+      String tempValue = simplified;
+      _Sentence sentence = _Sentence(
+        simplified: simplified,
+        initialValue: value,
+      );
+      allPossibleSentences.add(sentence);
+      for (var subsyl in subsyllables) {
+        final curSyl = subsyl.currentSyllable;
+        if (tempValue.contains(curSyl)) {
+          sentence.possibleSyllables.add(curSyl);
+          tempValue = tempValue.replaceFirst(curSyl, '');
+        }
+      }
+
+      /// нужно обязательно переключить на следующий подслог
+      /// чтобы избежать бесконечной рекурсии
+      subsyllables.firstWhereOrNull((s) => s.isIncomplete)?.next();
+
+      /// надо вызывать рекурентно до тех пор, пока не закончатся все варианты
+      _findSentenceWithBiggerScore(
+        value,
+        allPossibleSyllables: allPossibleSyllables,
+        numSyllables: numSyllables,
+        simplified: simplified,
+        subsyllables: subsyllables,
+        allPossibleSentences: allPossibleSentences,
+        removePunctuation: removePunctuation,
+      );
+    } else {
+      final maxScoredSentences =
+          _getSentencesWithMaxScore(allPossibleSentences!);
+      allPossibleSentences.clear();
+      allPossibleSentences.addAll(maxScoredSentences);
+    }
   }
 
-  static String _reverseString(String value) {
-    StringBuffer s = StringBuffer();
-    for (var i = value.length - 1; i >= 0; i--) {
-      s.write(value[i]);
+  static List<_Sentence> _getSentencesWithMaxScore(List<_Sentence> value) {
+    final temp = <_Sentence>[];
+    value = HashSet<_Sentence>.from(value).toList();
+
+    /// тут уже все возможные варианты отсортированные по скору
+    /// скор расчитывается как отношение общей длины всех найденных слогов
+    /// к длине исходной фразы. Чем больше скор, тем больше совпадений в предложении
+    value.sort((a, b) => b.score.compareTo(a.score));
+    final maxScore = value.first.score;
+    for (var s in value) {
+      if (s.score < maxScore) {
+        break;
+      }
+      temp.add(s);
     }
-    return s.toString();
+    // temp.sort((a, b) => b.syllablesWeight.compareTo(a.syllablesWeight));
+    // int maxWeight = temp.first.syllablesWeight;
+    // var temp2 = <_Sentence>[];
+    // for (var s in temp) {
+    //   if (s.syllablesWeight < maxWeight) {
+    //     break;
+    //   }
+    //   temp2.add(s);
+    // }
+    // return temp2;
+    return temp;
+  }
+
+  static bool _hasIncomplete(List<_Subsyllable> subsyllables) {
+    return subsyllables.any((e) => e.isIncomplete);
+  }
+}
+
+/// при проверке совпадений в слове берется первый из таких объектов
+/// у которого isComplete == false, и дальше в слово начинают подставляться
+/// все последующие слоги. После первой неудачной попытки у слога вызвается next()
+/// чтобы повысить итератор, и снова происходит та же процедура.
+/// Как только подслог становится isComplete == true, переключаемся на слудующий
+/// слог и там та же процедура
+class _Subsyllable {
+  int _iterator = 0;
+  List<String> syllables = [];
+
+  /// нужно, чтобы переключиться на проверку следующего слога из списка
+  bool get isComplete {
+    return _iterator >= syllables.length - 1;
+  }
+
+  bool get isIncomplete {
+    return !isComplete;
+  }
+
+  void next() {
+    _iterator++;
+    if (_iterator >= syllables.length) {
+      _iterator = syllables.length - 1;
+    }
+  }
+
+  String get currentSyllable {
+    return syllables[_iterator];
+  }
+}
+
+class _Sentence {
+  final String initialValue;
+  final String simplified;
+
+  List<String> possibleSyllables = [];
+  _Sentence({
+    required this.initialValue,
+    required this.simplified,
+  });
+
+  @override
+  bool operator ==(covariant _Sentence other) {
+    return other.toString() == toString();
+  }
+
+  @override
+  int get hashCode {
+    return toString().hashCode;
+  }
+
+  int get totalSyllablesLength {
+    int l = 0;
+    for (var syl in possibleSyllables) {
+      l += syl.length;
+    }
+    return l;
+  }
+
+  double get score {
+    return totalSyllablesLength / initialValue.length;
+  }
+
+  /// бывает так, что в список попадают предложения с
+  /// одинаковым весом, но в одном больше длинных слогов, а в
+  /// другом больше коротких. Предпочтение надо отдавать тем предложениям
+  /// в которых наибольшее количество длинных слогов
+  /// для этого суммируются не длины каждого слога, а их степени
+  // int get syllablesWeight {
+  //   int power = 0;
+  //   for (var syl in possibleSyllables) {
+  //     // power += pow(syl.length, 2).toInt();
+  //   }
+  //   return power;
+  // }
+
+  /// заполняется только если найдено более одного варианта предложений
+  int _totalUseRank = 0;
+  int get totalUseRank => _totalUseRank;
+
+  List<SyllableData>? _correctSequence;
+
+  List<SyllableData> toCorrectSequence([
+    bool rankByUse = false,
+  ]) {
+    if (_correctSequence != null) {
+      return _correctSequence!;
+    }
+    _correctSequence = <SyllableData>[];
+    var temp = simplified;
+    possibleSyllables.sort((a, b) => b.length.compareTo(a.length));
+    for (var syl in possibleSyllables) {
+      int start = temp.indexOf(syl);
+      int end = start + syl.length;
+      if (start < 0) {
+        continue;
+      }
+      temp = temp.replaceFirst(
+        syl,
+        _getFiller(syl),
+      );
+      final realSyllable = initialValue.substring(
+        start,
+        end,
+      );
+
+      /// valid syllable addition
+      _correctSequence!.add(
+        SyllableData(
+          value: realSyllable,
+          tone: PinyinUtils.getPinyinTone(realSyllable),
+          isValid: true,
+          start: start,
+          end: end,
+        ),
+      );
+    }
+    const invalidTone = -1;
+    _correctSequence!.sort((a, b) => a.start.compareTo(b.start));
+    final wrongSyllables = <SyllableData>[];
+
+    /// here we also need to find all the parts that were
+    /// not parts of valid syllables but are parts of innitial
+    /// input
+    for (int i = 0; i < _correctSequence!.length; i++) {
+      final curSyllable = _correctSequence![i];
+      final isFirst = i == 0;
+      final isLast = i == _correctSequence!.length - 1;
+      if (isFirst) {
+        if (curSyllable.start != 0) {
+          wrongSyllables.add(
+            SyllableData(
+              value: initialValue.substring(
+                0,
+                curSyllable.start,
+              ),
+              tone: invalidTone,
+              isValid: false,
+              start: 0,
+              end: curSyllable.start,
+            ),
+          );
+        }
+      } else if (isLast) {
+        if (curSyllable.end != initialValue.length) {
+          wrongSyllables.add(
+            SyllableData(
+              value: initialValue.substring(
+                curSyllable.end,
+              ),
+              tone: invalidTone,
+              isValid: false,
+              start: curSyllable.end,
+              end: initialValue.length,
+            ),
+          );
+        }
+      } else {
+        /// не первый и не последний
+        final previous = _correctSequence![i - 1];
+        if (previous.end != curSyllable.start) {
+          final wrongSyllable = initialValue.substring(
+            previous.end,
+            curSyllable.start,
+          );
+
+          wrongSyllables.add(
+            SyllableData(
+              value: wrongSyllable,
+              tone: invalidTone,
+              isValid: false,
+              start: previous.end,
+              end: curSyllable.start,
+            ),
+          );
+        }
+      }
+    }
+    if (rankByUse) {
+      for (var r in _correctSequence!) {
+        List<HanziRankInfo> rankInfo =
+            HanziUtils.findHanziRankByPinyin(r.value);
+        int rank = rankInfo.firstOrNull?.fequencyRank ?? 10000;
+        _totalUseRank += rank;
+      }
+    }
+
+    _correctSequence!.addAll(wrongSyllables);
+    _correctSequence!.sort((a, b) => a.start.compareTo(b.start));
+    return _correctSequence!;
   }
 
   static String _getFiller(String syllable) {
@@ -710,5 +1000,11 @@ class PinyinUtils {
       s.write('*');
     }
     return s.toString();
+  }
+
+  @override
+  String toString() {
+    possibleSyllables.sort();
+    return possibleSyllables.join(' ');
   }
 }
