@@ -1872,7 +1872,7 @@ class PhoneCodes {
       'country': 'Wallis and Futuna',
       'internalPhoneCode': '681',
       'countryCode': 'WF',
-      'phoneMask': '‎+000 00 0000',
+      'phoneMask': '+000 00 0000',
     },
     {
       'country': 'Yemen',

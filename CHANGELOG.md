@@ -1,3 +1,5 @@
+## [2.9.2]
+- Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/104
 ## [2.9.1]
 - Fixed crashes in PinyinUtils if the provided string is empty
 ## [2.9.0]
