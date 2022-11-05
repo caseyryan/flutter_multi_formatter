@@ -776,24 +776,16 @@ class PinyinUtils {
     /// тут уже все возможные варианты отсортированные по скору
     /// скор расчитывается как отношение общей длины всех найденных слогов
     /// к длине исходной фразы. Чем больше скор, тем больше совпадений в предложении
-    value.sort((a, b) => b.score.compareTo(a.score));
-    final maxScore = value.first.score;
-    for (var s in value) {
-      if (s.score < maxScore) {
-        break;
+    if (value.isNotEmpty) {
+      value.sort((a, b) => b.score.compareTo(a.score));
+      final maxScore = value.first.score;
+      for (var s in value) {
+        if (s.score < maxScore) {
+          break;
+        }
+        temp.add(s);
       }
-      temp.add(s);
     }
-    // temp.sort((a, b) => b.syllablesWeight.compareTo(a.syllablesWeight));
-    // int maxWeight = temp.first.syllablesWeight;
-    // var temp2 = <_Sentence>[];
-    // for (var s in temp) {
-    //   if (s.syllablesWeight < maxWeight) {
-    //     break;
-    //   }
-    //   temp2.add(s);
-    // }
-    // return temp2;
     return temp;
   }
 

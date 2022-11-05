@@ -1,3 +1,5 @@
+## [2.9.1]
+- Fixed crashes in PinyinUtils if the provided string is empty
 ## [2.9.0]
 - Added more pinyin utils + HanziUtils
 - Added to utility methods for currencies isCryptoCurrency(String currencyId) and isFiatCurrency(String currencyId)
