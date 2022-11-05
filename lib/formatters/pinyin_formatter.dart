@@ -1,10 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:flutter_multi_formatter/utils/pinyin_utils.dart';
 
 class PinyinFormatter implements TextInputFormatter {
   static final RegExp _apostropheRegexp = RegExp('\'');
+  static final RegExp _badApostrophes = RegExp(r"[’']+");
 
   const PinyinFormatter();
 
@@ -20,10 +22,17 @@ class PinyinFormatter implements TextInputFormatter {
     final numOldSeparatos = _countSeparators(
       oldValue.text,
     );
-    final newText = PinyinUtils.splitToSyllablesBySeparator(
+    String newText = newValue.text.replaceAll(_badApostrophes, '');
+    final syllables = PinyinUtils.splitToSyllables<SyllableData>(
       newValue.text.trim(),
-      "'",
     );
+    newText = syllables.map((e) => e.value).join('\'');
+    if (newText.isEmpty) {
+      newText = newValue.text;
+    }
+    if (newText.endsWith('\'')) {
+      newText = newText.removeLast();
+    }
     final numNewSeparatos = _countSeparators(
       newText,
     );

@@ -600,7 +600,10 @@ class PinyinUtils {
     final apostropheRegexp = RegExp("[$separator]+");
     const empty = '';
     value = value
-        .replaceAll(apostropheRegexp, empty)
+        .replaceAll(
+          apostropheRegexp,
+          empty,
+        )
         .replaceAll(spaceRegexp, empty);
     return splitToSyllables<String>(value).join(separator);
   }
@@ -776,15 +779,13 @@ class PinyinUtils {
     /// тут уже все возможные варианты отсортированные по скору
     /// скор расчитывается как отношение общей длины всех найденных слогов
     /// к длине исходной фразы. Чем больше скор, тем больше совпадений в предложении
-    if (value.isNotEmpty) {
-      value.sort((a, b) => b.score.compareTo(a.score));
-      final maxScore = value.first.score;
-      for (var s in value) {
-        if (s.score < maxScore) {
-          break;
-        }
-        temp.add(s);
+    value.sort((a, b) => b.score.compareTo(a.score));
+    final maxScore = value.firstOrNull?.score ?? 0;
+    for (var s in value) {
+      if (s.score < maxScore) {
+        break;
       }
+      temp.add(s);
     }
     return temp;
   }
@@ -937,7 +938,8 @@ class _Sentence {
             ),
           );
         }
-      } else if (isLast) {
+      }
+      if (isLast) {
         if (curSyllable.end != initialValue.length) {
           wrongSyllables.add(
             SyllableData(
@@ -951,8 +953,8 @@ class _Sentence {
             ),
           );
         }
-      } else {
-        /// не первый и не последний
+      }
+      if (!isFirst && !isLast) {
         final previous = _correctSequence![i - 1];
         if (previous.end != curSyllable.start) {
           final wrongSyllable = initialValue.substring(

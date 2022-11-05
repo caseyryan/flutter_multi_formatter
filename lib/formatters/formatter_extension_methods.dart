@@ -82,6 +82,11 @@ extension StringInputFormatting on String {
     return fu.isCryptoCurrency(this);
   }
 
+  String removeLast() {
+    if (isEmpty) return this;
+    return substring(0, length - 1);
+  }
+
   /// [thousandSeparator] specifies what symbol will be used to separate
   /// each block of 3 digits, e.g. [ThousandSeparator.Comma] will format
   /// a million as 1,000,000
