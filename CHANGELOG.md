@@ -1,3 +1,5 @@
+## [2.9.4]
+- Fixed a problem when pinyin splitter didn't work if there's only one syllable provided
 ## [2.9.3]
 - More fixes to pinyin utils
 ## [2.9.2]
