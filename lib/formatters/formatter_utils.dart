@@ -35,7 +35,8 @@ final RegExp _oneDashRegExp = RegExp(r'[-]{2,}');
 final RegExp _startPlusRegExp = RegExp(r'^\+{1}[)(\d]+');
 final RegExp _maskContentsRegExp = RegExp(r'^[-0-9)( +]{3,}$');
 final RegExp _isMaskSymbolRegExp = RegExp(r'^[-\+ )(]+$');
-final RegExp _repeatingDotsRegExp = RegExp(r'\.{2,}');
+// final RegExp _repeatingDotsRegExp = RegExp(r'\.{2,}');
+final _spaceRegex = RegExp(r'[\s]+');
 
 /// [errorText] if you don't want this method to throw any
 /// errors, pass null here
@@ -226,6 +227,265 @@ void checkMask(String mask) {
 /// end of your resulting string like 1,250€ instead of €1,250
 /// [useSymbolPadding] adds a space between the number and trailing / leading symbols
 /// like 1,250€ -> 1,250 € or €1,250€ -> € 1,250
+// String toCurrencyString(
+//   String value, {
+//   int mantissaLength = 2,
+//   ThousandSeparator thousandSeparator = ThousandSeparator.Comma,
+//   ShorteningPolicy shorteningPolicy = ShorteningPolicy.NoShortening,
+//   String leadingSymbol = '',
+//   String trailingSymbol = '',
+//   bool useSymbolPadding = false,
+// }) {
+//   var swapCommasAndPreriods = false;
+//   if (mantissaLength <= 0) {
+//     mantissaLength = 0;
+//   }
+
+//   String? tSeparator;
+//   String mantissaSeparator = '.';
+//   switch (thousandSeparator) {
+//     case ThousandSeparator.Comma:
+//       tSeparator = ',';
+//       break;
+//     case ThousandSeparator.Period:
+
+//       /// yep, comma here is correct
+//       /// because swapCommasAndPreriods = true it will
+//       /// swap them all later
+//       tSeparator = ',';
+//       swapCommasAndPreriods = true;
+//       mantissaSeparator = ',';
+//       break;
+//     case ThousandSeparator.None:
+//       tSeparator = '';
+//       break;
+//     case ThousandSeparator.SpaceAndPeriodMantissa:
+//       tSeparator = ' ';
+//       break;
+//     case ThousandSeparator.SpaceAndCommaMantissa:
+//       tSeparator = ' ';
+//       swapCommasAndPreriods = true;
+//       mantissaSeparator = ',';
+//       break;
+//     case ThousandSeparator.Space:
+//       tSeparator = ' ';
+//       break;
+//   }
+//   // print(thousandSeparator);
+//   value = value.replaceAll(_repeatingDotsRegExp, '.');
+//   if (mantissaLength == 0) {
+//     if (value.contains('.')) {
+//       value = value.substring(
+//         0,
+//         value.indexOf('.'),
+//       );
+//     }
+//   }
+//   value = toNumericString(
+//     value,
+//     allowPeriod: mantissaLength > 0,
+//     mantissaSeparator: mantissaSeparator,
+//   );
+//   var isNegative = value.contains('-');
+
+//   /// parsing here is done to avoid any unnecessary symbols inside
+//   /// a number
+//   var parsed = (double.tryParse(value) ?? 0.0);
+//   if (parsed == 0.0) {
+//     if (isNegative) {
+//       var containsMinus = parsed.toString().contains('-');
+//       if (!containsMinus) {
+//         value =
+//             '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
+//       } else {
+//         value = '${parsed.toStringAsFixed(mantissaLength)}';
+//       }
+//     } else {
+//       value = parsed.toStringAsFixed(mantissaLength);
+//     }
+//   }
+//   var noShortening = shorteningPolicy == ShorteningPolicy.NoShortening;
+
+//   var minShorteningLength = 0;
+// switch (shorteningPolicy) {
+//   case ShorteningPolicy.NoShortening:
+//     break;
+//   case ShorteningPolicy.RoundToThousands:
+//     minShorteningLength = 4;
+//     value = '${_getRoundedValue(value, 1000)}K';
+//     break;
+//   case ShorteningPolicy.RoundToMillions:
+//     minShorteningLength = 7;
+//     value = '${_getRoundedValue(value, 1000000)}M';
+//     break;
+//   case ShorteningPolicy.RoundToBillions:
+//     minShorteningLength = 10;
+//     value = '${_getRoundedValue(value, 1000000000)}B';
+//     break;
+//   case ShorteningPolicy.RoundToTrillions:
+//     minShorteningLength = 13;
+//     value = '${_getRoundedValue(value, 1000000000000)}T';
+//     break;
+//   case ShorteningPolicy.Automatic:
+//     // find out what shortening to use base on the length of the string
+//     var intValStr = (int.tryParse(value) ?? 0).toString();
+//     if (intValStr.length < 7) {
+//       minShorteningLength = 4;
+//       value = '${_getRoundedValue(value, 1000)}K';
+//     } else if (intValStr.length < 10) {
+//       minShorteningLength = 7;
+//       value = '${_getRoundedValue(value, 1000000)}M';
+//     } else if (intValStr.length < 13) {
+//       minShorteningLength = 10;
+//       value = '${_getRoundedValue(value, 1000000000)}B';
+//     } else {
+//       minShorteningLength = 13;
+//       value = '${_getRoundedValue(value, 1000000000000)}T';
+//     }
+//     break;
+// }
+//   var list = <String?>[];
+//   var mantissa = '';
+//   var split = value.split('');
+//   var mantissaList = <String>[];
+//   var mantissaSeparatorIndex = value.indexOf('.');
+//   if (mantissaSeparatorIndex > -1) {
+//     var start = mantissaSeparatorIndex + 1;
+//     var end = start + mantissaLength;
+//     for (var i = start; i < end; i++) {
+//       if (i < split.length) {
+//         mantissaList.add(split[i]);
+//       } else {
+//         mantissaList.add('0');
+//       }
+//     }
+//   }
+
+//   mantissa = noShortening
+//       ? _postProcessMantissa(mantissaList.join(''), mantissaLength)
+//       : '';
+//   var maxIndex = split.length - 1;
+//   if (mantissaSeparatorIndex > 0 && noShortening) {
+//     maxIndex = mantissaSeparatorIndex - 1;
+//   }
+//   var digitCounter = 0;
+//   if (maxIndex > -1) {
+//     for (var i = maxIndex; i >= 0; i--) {
+//       digitCounter++;
+//       list.add(split[i]);
+//       if (noShortening) {
+//         // в случае с отрицательным числом, запятая перед минусом не нужна
+//         if (digitCounter % 3 == 0 && i > (isNegative ? 1 : 0)) {
+//           list.add(tSeparator);
+//         }
+//       } else {
+//         if (value.length >= minShorteningLength) {
+//           if (!isDigit(split[i])) digitCounter = 1;
+//           if (digitCounter % 3 == 1 &&
+//               digitCounter > 1 &&
+//               i > (isNegative ? 1 : 0)) {
+//             list.add(tSeparator);
+//           }
+//         }
+//       }
+//     }
+//   } else {
+//     list.add('0');
+//   }
+
+//   if (leadingSymbol.isNotEmpty) {
+//     if (useSymbolPadding) {
+//       list.add('$leadingSymbol ');
+//     } else {
+//       list.add(leadingSymbol);
+//     }
+//   }
+//   var reversed = list.reversed.join('');
+//   String result;
+
+//   if (trailingSymbol.isNotEmpty) {
+//     if (useSymbolPadding) {
+//       result = '$reversed$mantissa $trailingSymbol';
+//     } else {
+//       result = '$reversed$mantissa$trailingSymbol';
+//     }
+//   } else {
+//     result = '$reversed$mantissa';
+//   }
+
+//   if (swapCommasAndPreriods) {
+//     return _swapCommasAndPeriods(result);
+//   }
+//   return result;
+// }
+
+String _getThousandSeparator(
+  ThousandSeparator thousandSeparator,
+) {
+  if (thousandSeparator == ThousandSeparator.Comma) {
+    return ',';
+  }
+  if (thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa ||
+      thousandSeparator == ThousandSeparator.SpaceAndPeriodMantissa ||
+      thousandSeparator == ThousandSeparator.Space) {
+    return ' ';
+  }
+  if (thousandSeparator == ThousandSeparator.Period) {
+    return '.';
+  }
+  return '';
+}
+
+String _getMantissaSeparator(
+  ThousandSeparator thousandSeparator,
+) {
+  if (thousandSeparator == ThousandSeparator.Comma) {
+    return '.';
+  }
+  if (thousandSeparator == ThousandSeparator.Period ||
+      thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
+    return ',';
+  }
+  return '.';
+}
+
+final RegExp _possibleFractionRegExp = RegExp(r'[,.]');
+String? _detectFractionSeparator(String value) {
+  final index = value.lastIndexOf(_possibleFractionRegExp);
+  if (index < 0) {
+    return null;
+  }
+  final separator = value[index];
+  int numOccurences = 0;
+  for (var i = 0; i < value.length; i++) {
+    final char = value[i];
+    if (char == separator) {
+      numOccurences++;
+    }
+  }
+  if (numOccurences == 1) {
+    return separator;
+  }
+  return null;
+}
+
+ShorteningPolicy _detectShorteningPolicyByStrLength(String evenPart) {
+  if (evenPart.length > 3 && evenPart.length < 7) {
+    return ShorteningPolicy.RoundToThousands;
+  }
+  if (evenPart.length > 6 && evenPart.length < 10) {
+    return ShorteningPolicy.RoundToMillions;
+  }
+  if (evenPart.length > 9 && evenPart.length < 13) {
+    return ShorteningPolicy.RoundToBillions;
+  }
+  if (evenPart.length > 12) {
+    return ShorteningPolicy.RoundToTrillions;
+  }
+
+  return ShorteningPolicy.NoShortening;
+}
+
 String toCurrencyString(
   String value, {
   int mantissaLength = 2,
@@ -235,199 +495,159 @@ String toCurrencyString(
   String trailingSymbol = '',
   bool useSymbolPadding = false,
 }) {
-  var swapCommasAndPreriods = false;
-  if (mantissaLength <= 0) {
-    mantissaLength = 0;
+  value = value.replaceAll(_spaceRegex, '');
+  if (value.isEmpty) {
+    return value;
   }
+  String mSeparator = _getMantissaSeparator(thousandSeparator);
+  String tSeparator = _getThousandSeparator(thousandSeparator);
+  String? fractionalSeparator = _detectFractionSeparator(value);
 
-  String? tSeparator;
-  String mantissaSeparator = '.';
-  switch (thousandSeparator) {
-    case ThousandSeparator.Comma:
-      tSeparator = ',';
-      break;
-    case ThousandSeparator.Period:
-
-      /// yep, comma here is correct
-      /// because swapCommasAndPreriods = true it will
-      /// swap them all later
-      tSeparator = ',';
-      swapCommasAndPreriods = true;
-      mantissaSeparator = ',';
-      break;
-    case ThousandSeparator.None:
-      tSeparator = '';
-      break;
-    case ThousandSeparator.SpaceAndPeriodMantissa:
-      tSeparator = ' ';
-      break;
-    case ThousandSeparator.SpaceAndCommaMantissa:
-      tSeparator = ' ';
-      swapCommasAndPreriods = true;
-      mantissaSeparator = ',';
-      break;
-    case ThousandSeparator.Space:
-      tSeparator = ' ';
-      break;
-  }
-  // print(thousandSeparator);
-  value = value.replaceAll(_repeatingDotsRegExp, '.');
-  if (mantissaLength == 0) {
-    if (value.contains('.')) {
-      value = value.substring(
-        0,
-        value.indexOf('.'),
-      );
-    }
-  }
-  value = toNumericString(
-    value,
-    allowPeriod: mantissaLength > 0,
-    mantissaSeparator: mantissaSeparator,
-  );
-  var isNegative = value.contains('-');
-
-  /// parsing here is done to avoid any unnecessary symbols inside
-  /// a number
-  var parsed = (double.tryParse(value) ?? 0.0);
-  if (parsed == 0.0) {
-    if (isNegative) {
-      var containsMinus = parsed.toString().contains('-');
-      if (!containsMinus) {
-        value =
-            '-${parsed.toStringAsFixed(mantissaLength).replaceFirst('0.', '.')}';
-      } else {
-        value = '${parsed.toStringAsFixed(mantissaLength)}';
+  var sb = StringBuffer();
+  bool addedMantissaSeparator = false;
+  for (var i = 0; i < value.length; i++) {
+    final char = value[i];
+    if (char == '-') {
+      if (i > 0) {
+        continue;
       }
-    } else {
-      value = parsed.toStringAsFixed(mantissaLength);
+      sb.write(char);
     }
-  }
-  var noShortening = shorteningPolicy == ShorteningPolicy.NoShortening;
-
-  var minShorteningLength = 0;
-  switch (shorteningPolicy) {
-    case ShorteningPolicy.NoShortening:
-      break;
-    case ShorteningPolicy.RoundToThousands:
-      minShorteningLength = 4;
-      value = '${_getRoundedValue(value, 1000)}K';
-      break;
-    case ShorteningPolicy.RoundToMillions:
-      minShorteningLength = 7;
-      value = '${_getRoundedValue(value, 1000000)}M';
-      break;
-    case ShorteningPolicy.RoundToBillions:
-      minShorteningLength = 10;
-      value = '${_getRoundedValue(value, 1000000000)}B';
-      break;
-    case ShorteningPolicy.RoundToTrillions:
-      minShorteningLength = 13;
-      value = '${_getRoundedValue(value, 1000000000000)}T';
-      break;
-    case ShorteningPolicy.Automatic:
-      // find out what shortening to use base on the length of the string
-      var intValStr = (int.tryParse(value) ?? 0).toString();
-      if (intValStr.length < 7) {
-        minShorteningLength = 4;
-        value = '${_getRoundedValue(value, 1000)}K';
-      } else if (intValStr.length < 10) {
-        minShorteningLength = 7;
-        value = '${_getRoundedValue(value, 1000000)}M';
-      } else if (intValStr.length < 13) {
-        minShorteningLength = 10;
-        value = '${_getRoundedValue(value, 1000000000)}B';
+    if (isDigit(char, positiveOnly: true)) {
+      sb.write(char);
+    }
+    if (char == fractionalSeparator) {
+      if (!addedMantissaSeparator) {
+        sb.write('.');
+        addedMantissaSeparator = true;
       } else {
-        minShorteningLength = 13;
-        value = '${_getRoundedValue(value, 1000000000000)}T';
-      }
-      break;
-  }
-  var list = <String?>[];
-  var mantissa = '';
-  var split = value.split('');
-  var mantissaList = <String>[];
-  var mantissaSeparatorIndex = value.indexOf('.');
-  if (mantissaSeparatorIndex > -1) {
-    var start = mantissaSeparatorIndex + 1;
-    var end = start + mantissaLength;
-    for (var i = start; i < end; i++) {
-      if (i < split.length) {
-        mantissaList.add(split[i]);
-      } else {
-        mantissaList.add('0');
+        continue;
       }
     }
   }
 
-  mantissa = noShortening
-      ? _postProcessMantissa(mantissaList.join(''), mantissaLength)
-      : '';
-  var maxIndex = split.length - 1;
-  if (mantissaSeparatorIndex > 0 && noShortening) {
-    maxIndex = mantissaSeparatorIndex - 1;
+  final str = sb.toString();
+  final evenPart =
+      addedMantissaSeparator ? str.substring(0, str.indexOf('.')) : str;
+
+  int skipEvenNumbers = 0;
+  String shorteningName = '';
+  if (shorteningPolicy != ShorteningPolicy.NoShortening) {
+    switch (shorteningPolicy) {
+      case ShorteningPolicy.NoShortening:
+        break;
+      case ShorteningPolicy.RoundToThousands:
+        skipEvenNumbers = 3;
+        shorteningName = 'K';
+        break;
+      case ShorteningPolicy.RoundToMillions:
+        skipEvenNumbers = 6;
+        shorteningName = 'M';
+        break;
+      case ShorteningPolicy.RoundToBillions:
+        skipEvenNumbers = 9;
+        shorteningName = 'B';
+        break;
+      case ShorteningPolicy.RoundToTrillions:
+        skipEvenNumbers = 12;
+        shorteningName = 'T';
+        break;
+      case ShorteningPolicy.Automatic:
+        // find out what shortening to use base on the length of the string
+        final policy = _detectShorteningPolicyByStrLength(evenPart);
+        return toCurrencyString(
+          value,
+          leadingSymbol: leadingSymbol,
+          mantissaLength: mantissaLength,
+          shorteningPolicy: policy,
+          thousandSeparator: thousandSeparator,
+          trailingSymbol: trailingSymbol,
+          useSymbolPadding: useSymbolPadding,
+        );
+    }
   }
-  var digitCounter = 0;
-  if (maxIndex > -1) {
-    for (var i = maxIndex; i >= 0; i--) {
-      digitCounter++;
-      list.add(split[i]);
-      if (noShortening) {
-        // в случае с отрицательным числом, запятая перед минусом не нужна
-        if (digitCounter % 3 == 0 && i > (isNegative ? 1 : 0)) {
-          list.add(tSeparator);
-        }
-      } else {
-        if (value.length >= minShorteningLength) {
-          if (!isDigit(split[i])) digitCounter = 1;
-          if (digitCounter % 3 == 1 &&
-              digitCounter > 1 &&
-              i > (isNegative ? 1 : 0)) {
-            list.add(tSeparator);
-          }
+  bool ignoreMantissa = skipEvenNumbers > 0;
+
+  final fractionalPart =
+      addedMantissaSeparator ? str.substring(str.indexOf('.') + 1) : '';
+  final reversed = evenPart.split('').reversed.toList();
+  List<String> temp = [];
+  bool skippedLast = false;
+  for (var i = 0; i < reversed.length; i++) {
+    final char = reversed[i];
+    if (skipEvenNumbers > 0) {
+      skipEvenNumbers--;
+      skippedLast = true;
+      continue;
+    }
+    if (i > 0) {
+      if (i % 3 == 0) {
+        if (!skippedLast) {
+          temp.add(tSeparator);
         }
       }
     }
-  } else {
-    list.add('0');
+    skippedLast = false;
+    temp.add(char);
   }
-
-  if (leadingSymbol.isNotEmpty) {
-    if (useSymbolPadding) {
-      list.add('$leadingSymbol ');
+  value = temp.reversed.join('');
+  sb = StringBuffer();
+  for (var i = 0; i < mantissaLength; i++) {
+    if (i < fractionalPart.length) {
+      sb.write(fractionalPart[i]);
     } else {
-      list.add(leadingSymbol);
+      sb.write('0');
     }
   }
-  var reversed = list.reversed.join('');
-  String result;
 
-  if (trailingSymbol.isNotEmpty) {
-    if (useSymbolPadding) {
-      result = '$reversed$mantissa $trailingSymbol';
-    } else {
-      result = '$reversed$mantissa$trailingSymbol';
-    }
+  final fraction = sb.toString();
+  if (value.isEmpty) {
+    value = '0';
+  }
+  if (ignoreMantissa) {
+    value = '$value$shorteningName';
   } else {
-    result = '$reversed$mantissa';
+    value = '$value$mSeparator$fraction';
   }
 
-  if (swapCommasAndPreriods) {
-    return _swapCommasAndPeriods(result);
+  // print(value);
+
+  /// add leading and trailing
+  sb = StringBuffer();
+  for (var i = 0; i < value.length; i++) {
+    if (i == 0) {
+      if (leadingSymbol.isNotEmpty) {
+        sb.write(leadingSymbol);
+        if (useSymbolPadding) {
+          sb.write(' ');
+        }
+      }
+    }
+    sb.write(value[i]);
+    if (i == value.length - 1) {
+      if (trailingSymbol.isNotEmpty) {
+        if (useSymbolPadding) {
+          sb.write(' ');
+        }
+        sb.write(trailingSymbol);
+      }
+    }
   }
-  return result;
+  value = sb.toString();
+  print(value);
+  return value;
 }
 
 /// просто меняет точки и запятые местами
-String _swapCommasAndPeriods(String input) {
-  var temp = input;
-  if (temp.indexOf('.,') > -1) {
-    temp = temp.replaceAll('.,', ',,');
-  }
-  temp = temp.replaceAll('.', 'PERIOD').replaceAll(',', 'COMMA');
-  temp = temp.replaceAll('PERIOD', ',').replaceAll('COMMA', '.');
-  return temp;
-}
+// String _swapCommasAndPeriods(String input) {
+//   var temp = input;
+//   if (temp.indexOf('.,') > -1) {
+//     temp = temp.replaceAll('.,', ',,');
+//   }
+//   temp = temp.replaceAll('.', 'PERIOD').replaceAll(',', 'COMMA');
+//   temp = temp.replaceAll('PERIOD', ',').replaceAll('COMMA', '.');
+//   return temp;
+// }
 
 bool isUnmaskableSymbol(String? symbol) {
   if (symbol == null || symbol.length > 1) {
@@ -481,11 +701,11 @@ bool isCryptoCurrency(String currencyId) {
 
 /// simply adds a period to an existing fractional part
 /// or adds an empty fractional part if it was not filled
-String _postProcessMantissa(String mantissaValue, int mantissaLength) {
-  if (mantissaLength < 1) return '';
-  if (mantissaValue.isNotEmpty) return '.$mantissaValue';
-  return '.${List.filled(mantissaLength, '0').join('')}';
-}
+// String _postProcessMantissa(String mantissaValue, int mantissaLength) {
+//   if (mantissaLength < 1) return '';
+//   if (mantissaValue.isNotEmpty) return '.$mantissaValue';
+//   return '.${List.filled(mantissaLength, '0').join('')}';
+// }
 
 /// [character] a character to check if it's a digit against
 /// [positiveOnly] if true it will not allow a minus (dash) character

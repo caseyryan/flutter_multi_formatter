@@ -1,3 +1,5 @@
+## [2.9.6]
+- Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/105
 ## [2.9.5]
 - Added hsk levels to HanziUtils
 ## [2.9.4]

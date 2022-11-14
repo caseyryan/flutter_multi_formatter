@@ -82,6 +82,10 @@ extension StringInputFormatting on String {
     return fu.isCryptoCurrency(this);
   }
 
+  String reverse() {
+    return split('').reversed.join();
+  }
+
   String removeLast() {
     if (isEmpty) return this;
     return substring(0, length - 1);
