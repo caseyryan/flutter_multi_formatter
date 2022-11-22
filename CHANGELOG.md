@@ -1,3 +1,5 @@
+## [2.9.7]
+- Fixed a period at the end if mantissa length is 0 https://github.com/caseyryan/flutter_multi_formatter/issues/106
 ## [2.9.6]
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/105
 ## [2.9.5]

@@ -438,7 +438,11 @@ String _getThousandSeparator(
 
 String _getMantissaSeparator(
   ThousandSeparator thousandSeparator,
+  int mantissaLength,
 ) {
+  if (mantissaLength < 1) {
+    return '';
+  }
   if (thousandSeparator == ThousandSeparator.Comma) {
     return '.';
   }
@@ -499,7 +503,7 @@ String toCurrencyString(
   if (value.isEmpty) {
     return value;
   }
-  String mSeparator = _getMantissaSeparator(thousandSeparator);
+  String mSeparator = _getMantissaSeparator(thousandSeparator, mantissaLength);
   String tSeparator = _getThousandSeparator(thousandSeparator);
   String? fractionalSeparator = _detectFractionSeparator(value);
 
@@ -634,7 +638,6 @@ String toCurrencyString(
     }
   }
   value = sb.toString();
-  print(value);
   return value;
 }
 
