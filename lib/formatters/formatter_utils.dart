@@ -659,27 +659,27 @@ bool isUnmaskableSymbol(String? symbol) {
   return _isMaskSymbolRegExp.hasMatch(symbol);
 }
 
-String _getRoundedValue(
-  String numericString,
-  double roundTo,
-) {
-  assert(roundTo != 0.0);
-  var numericValue = double.tryParse(numericString) ?? 0.0;
-  var result = numericValue / roundTo;
+// String _getRoundedValue(
+//   String numericString,
+//   double roundTo,
+// ) {
+//   assert(roundTo != 0.0);
+//   var numericValue = double.tryParse(numericString) ?? 0.0;
+//   var result = numericValue / roundTo;
 
-  /// e.g. for a number of 1700 return 1.7, instead of 1
-  /// after rounding to 1000
-  var remainder = result.remainder(1.0);
-  String prepared;
-  if (remainder != 0.0) {
-    prepared = result.toStringAsFixed(2);
-    if (prepared[prepared.length - 1] == '0') {
-      prepared = prepared.substring(0, prepared.length - 1);
-    }
-    return prepared;
-  }
-  return result.toInt().toString();
-}
+//   /// e.g. for a number of 1700 return 1.7, instead of 1
+//   /// after rounding to 1000
+//   var remainder = result.remainder(1.0);
+//   String prepared;
+//   if (remainder != 0.0) {
+//     prepared = result.toStringAsFixed(2);
+//     if (prepared[prepared.length - 1] == '0') {
+//       prepared = prepared.substring(0, prepared.length - 1);
+//     }
+//     return prepared;
+//   }
+//   return result.toInt().toString();
+// }
 
 /// Checks if currency is fiat
 bool isFiatCurrency(String currencyId) {
