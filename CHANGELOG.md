@@ -1,4 +1,4 @@
-## [2.9.9]
+## [2.9.8]
 - Fixed a bug when pinyin formatter removed all characters that didn't match valid syllables
 ## [2.9.7]
 - Fixed a period at the end if mantissa length is 0 https://github.com/caseyryan/flutter_multi_formatter/issues/106
