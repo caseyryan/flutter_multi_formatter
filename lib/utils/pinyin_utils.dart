@@ -34,6 +34,9 @@ class SyllableData {
 }
 
 class PinyinUtils {
+  static const String UNICODE_SQUARE = '⬜';
+
+  static final RegExp _unstarredTextRegexp = RegExp(r'[^*]+');
   static final RegExp _punctuationRegex = RegExp(r"['!?.\[\],，。？！；：（ ）【 】［］]");
   static const _allSyllables = [
     "zhuang",
@@ -646,6 +649,7 @@ class PinyinUtils {
       value,
       allPossibleSentences: allPossibleSentences,
     );
+    // print(allPossibleSentences);
     if (allPossibleSentences.isNotEmpty) {
       _Sentence? sentence;
       // print(allPossibleSentences);
@@ -902,10 +906,8 @@ class _Sentence {
       if (start < 0) {
         continue;
       }
-      temp = temp.replaceFirst(
-        syl,
-        _getFiller(syl),
-      );
+      final filler = _getFiller(syl);
+      temp = temp.replaceFirst(syl, filler);
       final realSyllable = initialValue.substring(
         start,
         end,
@@ -922,6 +924,24 @@ class _Sentence {
         ),
       );
     }
+    print(temp);
+    final unstarred = PinyinUtils._unstarredTextRegexp;
+
+    /// заменяет оставшиеся символы, которые не совпали с валидными слогами
+    final matches = unstarred.allMatches(temp);
+    for (var m in matches) {
+      final text = temp.substring(m.start, m.end);
+      _correctSequence!.add(
+        SyllableData(
+          value: text,
+          tone: -1,
+          isValid: false,
+          start: m.start,
+          end: m.end,
+        ),
+      );
+    }
+
     const invalidTone = -1;
     _correctSequence!.sort((a, b) => a.start.compareTo(b.start));
     final wrongSyllables = <SyllableData>[];

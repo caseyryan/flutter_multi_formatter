@@ -8,7 +8,13 @@ class PinyinFormatter implements TextInputFormatter {
   static final RegExp _apostropheRegexp = RegExp('\'');
   static final RegExp _badApostrophes = RegExp(r"[’']+");
 
-  const PinyinFormatter();
+  final String? replacementForSpace;
+
+  /// [replacementForSpace] in case you need to replace
+  /// a space with something, just pass it here
+  const PinyinFormatter({
+    this.replacementForSpace,
+  });
 
   int _countSeparators(String value) {
     return _apostropheRegexp.allMatches(value).length;
@@ -22,13 +28,18 @@ class PinyinFormatter implements TextInputFormatter {
     final numOldSeparatos = _countSeparators(
       oldValue.text,
     );
+    String initialText = newValue.text;
     String newText = newValue.text.replaceAll(_badApostrophes, '');
+    if (replacementForSpace != null) {
+      initialText = initialText.replaceAll(' ', replacementForSpace!);
+      newText = newText.replaceAll(' ', replacementForSpace!);
+    }
     final syllables = PinyinUtils.splitToSyllables<SyllableData>(
-      newValue.text.trim(),
+      newText.trim(),
     );
     newText = syllables.map((e) => e.value).join('\'');
     if (newText.isEmpty) {
-      newText = newValue.text;
+      newText = initialText;
     }
     if (newText.endsWith('\'')) {
       newText = newText.removeLast();

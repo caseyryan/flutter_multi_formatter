@@ -216,8 +216,10 @@ class PhoneInputFormatter extends TextInputFormatter {
         existingList.add(m);
       });
     }
-    print('Alternative masks for country "${countryData['country']}"' +
-        ' is now ${countryData['altMasks']}');
+    // if (kDebugMode) {
+    //   print('Alternative masks for country "${countryData['country']}"' +
+    //       ' is now ${countryData['altMasks']}');
+    // }
   }
 
   /// Replaces an existing phone mask for the given country

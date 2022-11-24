@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
-import 'package:flutter_multi_formatter/utils/pinyin_utils.dart';
 
 class PinyinFormatterPage extends StatelessWidget {
   const PinyinFormatterPage({
@@ -9,8 +8,6 @@ class PinyinFormatterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final result = PinyinUtils.splitToSyllablesBySeparator('xingh');
-    print(result);
     return Unfocuser(
       child: Scaffold(
         appBar: AppBar(
@@ -27,6 +24,7 @@ class PinyinFormatterPage extends StatelessWidget {
                 ),
                 SizedBox(height: 12.0),
                 TextFormField(
+                  autocorrect: false,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
                     hintText: 'Enter pinyin phrase',
