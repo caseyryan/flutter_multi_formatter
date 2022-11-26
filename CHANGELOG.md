@@ -1,3 +1,5 @@
+## [2.9.9]
+- Cleared some prints
 ## [2.9.8]
 - Fixed a bug when pinyin formatter removed all characters that didn't match valid syllables
 ## [2.9.7]

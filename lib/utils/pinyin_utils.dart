@@ -924,7 +924,6 @@ class _Sentence {
         ),
       );
     }
-    print(temp);
     final unstarred = PinyinUtils._unstarredTextRegexp;
 
     /// заменяет оставшиеся символы, которые не совпали с валидными слогами
