@@ -1,3 +1,5 @@
+## [2.9.10]
+- Added di pinyin to HanziUtils
 ## [2.9.9]
 - Cleared some prints
 ## [2.9.8]
