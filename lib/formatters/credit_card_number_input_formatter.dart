@@ -86,7 +86,7 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     );
   }
 
-  /// this is a small dirty hask to be able to remove the first character
+  /// this is a small dirty hack to be able to remove the first character
   Future _removeFirstLetter() async {
     await Future.delayed(
       Duration(
@@ -127,14 +127,19 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
   }
 }
 
-/// checks not only for length and characters but also
-/// for card system code code. If it's not found the succession of numbers
+/// checks not only for a length and characters but also
+/// for card system code. If it's not found the succession of numbers
 /// will not be marked as a valid card number
 bool isCardValidNumber(
   String cardNumber, {
   bool checkLength = false,
 }) {
-  cardNumber = toNumericString(cardNumber);
+  cardNumber = toNumericString(
+    cardNumber,
+    allowAllZeroes: true,
+    allowHyphen: false,
+    allowPeriod: false,
+  );
   if (cardNumber.isEmpty) {
     return false;
   }

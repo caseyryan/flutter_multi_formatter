@@ -462,6 +462,23 @@ class PinyinUtils {
     return value.replaceAll(_punctuationRegex, '');
   }
 
+  /// Pass a tone or untoned pinyin and get a list
+  /// of toned vowels that can be in this pinyin
+  static List<String> promptTonesForPinyin(String pinyin) {
+    final chars = HashSet<String>.from(
+      PinyinUtils.simplifyPinyin(pinyin).split(''),
+    ).toList();
+    final temp = <String>[];
+    for (var i = 0; i < chars.length; i++) {
+      final char = chars[i];
+      if (_mappedVowels.containsKey(char)) {
+        temp.addAll(_mappedVowels[char]!);
+      }
+    }
+
+    return temp;
+  }
+
   final _toneRegexp = RegExp(r'[āáǎàēéěèōóǒòīíǐìūúǔùǖǘǚǜü]+');
 
   bool containsTone(String text) {
@@ -499,6 +516,18 @@ class PinyinUtils {
   static const _uS = 'ūúǔŭù';
   static const _vS = 'v̄v́v̆v̌v̀';
   static const _uDottedS = '(?:ü|ǖ|ǘ|ǚ|ǚ|ü̆|ǜ)';
+
+  static const Map<String, List<String>> _mappedVowels = {
+    'a': ['ā', 'á', 'ǎ', 'à'],
+    'e': ['ē', 'é', 'ě', 'è'],
+    'i': ['ī', 'í', 'ǐ', 'ì'],
+    'o': ['ō', 'ó', 'ǒ', 'ò'],
+    'u': ['ū', 'ú', 'ǔ', 'ù', 'ü', 'ǖ', 'ǘ', 'ǚ', 'ǜ'],
+  };
+
+  static Map<String, List<String>> get mappedVowels {
+    return _mappedVowels;
+  }
 
   static final RegExp _aRegex = RegExp('[$_aS]');
   static final RegExp _eRegex = RegExp('[$_eS]');

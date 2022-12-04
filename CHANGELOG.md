@@ -1,3 +1,6 @@
+## [2.9.11]
+- Added promptTonesForPinyin() static function to PinyinUtils. 
+It can give you a list of its vowels with all possible tones
 ## [2.9.10]
 - Added di pinyin to HanziUtils
 ## [2.9.9]
