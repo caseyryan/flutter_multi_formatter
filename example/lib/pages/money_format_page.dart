@@ -16,12 +16,15 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
 
   @override
   Widget build(BuildContext context) {
-    // print(toCurrencyString(
-    //   1000.0.toString(),
-    //   trailingSymbol: '',
-    //   thousandSeparator: ThousandSeparator.Period,
-    //   mantissaLength: 0,
-    // ));
+    print(
+      toCurrencyString(
+        'M1,1111'.toString(),
+        mantissaLength: 0,
+        thousandSeparator: ThousandSeparator.Comma,
+        leadingSymbol: 'M',
+      ),
+    );
+
     return Unfocuser(
       child: Scaffold(
         appBar: AppBar(
@@ -59,12 +62,15 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      // thousandSeparator: ThousandSeparator.Comma,
-                      // mantissaLength: 0,
-                      thousandSeparator: ThousandSeparator.Space,
-                      mantissaLength: 2,
-                      trailingSymbol: "\$",
-                    )
+                      mantissaLength: 0,
+                      thousandSeparator: ThousandSeparator.Comma,
+                      leadingSymbol: 'M',
+                    ),
+                    // CurrencyInputFormatter(
+                    //   thousandSeparator: ThousandSeparator.Space,
+                    //   mantissaLength: 2,
+                    //   trailingSymbol: "\$",
+                    // )
                   ],
                 ),
                 SizedBox(
@@ -312,8 +318,7 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                     CurrencyInputFormatter(
                       leadingSymbol: CurrencySymbols.DOLLAR_SIGN,
                       useSymbolPadding: true,
-                      thousandSeparator:
-                          ThousandSeparator.SpaceAndPeriodMantissa,
+                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
                       // ThousandSeparator.Comma,
                     )
                   ],
@@ -338,8 +343,7 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      thousandSeparator:
-                          ThousandSeparator.SpaceAndPeriodMantissa,
+                      thousandSeparator: ThousandSeparator.SpaceAndPeriodMantissa,
                       trailingSymbol: ' USD',
                       // ThousandSeparator.Comma,
                     )
@@ -365,8 +369,7 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      thousandSeparator:
-                          ThousandSeparator.SpaceAndCommaMantissa,
+                      thousandSeparator: ThousandSeparator.SpaceAndCommaMantissa,
                       trailingSymbol: ' U',
                       // ThousandSeparator.Comma,
                     )

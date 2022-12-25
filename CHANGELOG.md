@@ -1,3 +1,5 @@
+## [2.9.14]
+- Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/111
 ## [2.9.11]
 - Added promptTonesForPinyin() static function to PinyinUtils. 
 It can give you a list of its vowels with all possible tones

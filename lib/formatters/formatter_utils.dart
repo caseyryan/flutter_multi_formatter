@@ -505,7 +505,8 @@ String toCurrencyString(
   }
   String mSeparator = _getMantissaSeparator(thousandSeparator, mantissaLength);
   String tSeparator = _getThousandSeparator(thousandSeparator);
-  String? fractionalSeparator = _detectFractionSeparator(value);
+  String? fractionalSeparator =
+      mantissaLength > 0 ? _detectFractionSeparator(value) : null;
 
   var sb = StringBuffer();
   bool addedMantissaSeparator = false;
@@ -531,8 +532,7 @@ String toCurrencyString(
   }
 
   final str = sb.toString();
-  final evenPart =
-      addedMantissaSeparator ? str.substring(0, str.indexOf('.')) : str;
+  final evenPart = addedMantissaSeparator ? str.substring(0, str.indexOf('.')) : str;
 
   int skipEvenNumbers = 0;
   String shorteningName = '';
