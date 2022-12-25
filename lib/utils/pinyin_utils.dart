@@ -809,7 +809,8 @@ class PinyinUtils {
         removePunctuation: removePunctuation,
       );
     } else {
-      final maxScoredSentences = _getSentencesWithMaxScore(allPossibleSentences!);
+      final maxScoredSentences =
+          _getSentencesWithMaxScore(allPossibleSentences!);
       allPossibleSentences.clear();
       allPossibleSentences.addAll(maxScoredSentences);
     }
@@ -1034,7 +1035,8 @@ class _Sentence {
     }
     if (rankByUse) {
       for (var r in _correctSequence!) {
-        List<HanziRankInfo> rankInfo = HanziUtils.findHanziRankByPinyin(r.value);
+        List<HanziRankInfo> rankInfo =
+            HanziUtils.findHanziRankByPinyin(r.value);
         int rank = rankInfo.firstOrNull?.fequencyRank ?? 10000;
         _totalUseRank += rank;
       }

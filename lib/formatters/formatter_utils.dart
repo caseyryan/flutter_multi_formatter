@@ -501,10 +501,25 @@ String toCurrencyString(
 }) {
   value = value.replaceAll(_spaceRegex, '');
   if (value.isEmpty) {
-    return value;
+    value = '0';
   }
-  String mSeparator = _getMantissaSeparator(thousandSeparator, mantissaLength);
-  String tSeparator = _getThousandSeparator(thousandSeparator);
+  String mSeparator = _getMantissaSeparator(
+    thousandSeparator,
+    mantissaLength,
+  );
+  String tSeparator = _getThousandSeparator(
+    thousandSeparator,
+  );
+
+  /// нужно только для того, чтобы недопустить числа начинающиеся с нуля
+  /// 04.00 и т.д
+  value = toNumericString(
+    value,
+    allowAllZeroes: false,
+    allowHyphen: true,
+    allowPeriod: true,
+    mantissaSeparator: mSeparator,
+  );
   String? fractionalSeparator =
       mantissaLength > 0 ? _detectFractionSeparator(value) : null;
 
@@ -532,7 +547,8 @@ String toCurrencyString(
   }
 
   final str = sb.toString();
-  final evenPart = addedMantissaSeparator ? str.substring(0, str.indexOf('.')) : str;
+  final evenPart =
+      addedMantissaSeparator ? str.substring(0, str.indexOf('.')) : str;
 
   int skipEvenNumbers = 0;
   String shorteningName = '';
@@ -641,45 +657,12 @@ String toCurrencyString(
   return value;
 }
 
-/// просто меняет точки и запятые местами
-// String _swapCommasAndPeriods(String input) {
-//   var temp = input;
-//   if (temp.indexOf('.,') > -1) {
-//     temp = temp.replaceAll('.,', ',,');
-//   }
-//   temp = temp.replaceAll('.', 'PERIOD').replaceAll(',', 'COMMA');
-//   temp = temp.replaceAll('PERIOD', ',').replaceAll('COMMA', '.');
-//   return temp;
-// }
-
 bool isUnmaskableSymbol(String? symbol) {
   if (symbol == null || symbol.length > 1) {
     return false;
   }
   return _isMaskSymbolRegExp.hasMatch(symbol);
 }
-
-// String _getRoundedValue(
-//   String numericString,
-//   double roundTo,
-// ) {
-//   assert(roundTo != 0.0);
-//   var numericValue = double.tryParse(numericString) ?? 0.0;
-//   var result = numericValue / roundTo;
-
-//   /// e.g. for a number of 1700 return 1.7, instead of 1
-//   /// after rounding to 1000
-//   var remainder = result.remainder(1.0);
-//   String prepared;
-//   if (remainder != 0.0) {
-//     prepared = result.toStringAsFixed(2);
-//     if (prepared[prepared.length - 1] == '0') {
-//       prepared = prepared.substring(0, prepared.length - 1);
-//     }
-//     return prepared;
-//   }
-//   return result.toInt().toString();
-// }
 
 /// Checks if currency is fiat
 bool isFiatCurrency(String currencyId) {
@@ -701,14 +684,6 @@ bool isCryptoCurrency(String currencyId) {
   }
   return !isFiatCurrency(currencyId);
 }
-
-/// simply adds a period to an existing fractional part
-/// or adds an empty fractional part if it was not filled
-// String _postProcessMantissa(String mantissaValue, int mantissaLength) {
-//   if (mantissaLength < 1) return '';
-//   if (mantissaValue.isNotEmpty) return '.$mantissaValue';
-//   return '.${List.filled(mantissaLength, '0').join('')}';
-// }
 
 /// [character] a character to check if it's a digit against
 /// [positiveOnly] if true it will not allow a minus (dash) character
