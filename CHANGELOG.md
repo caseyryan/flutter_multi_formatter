@@ -1,3 +1,5 @@
+## [2.10.0]
+- Merged https://github.com/caseyryan/flutter_multi_formatter/pull/112
 ## [2.9.14]
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/111
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/110

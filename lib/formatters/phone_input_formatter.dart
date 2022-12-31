@@ -580,7 +580,10 @@ class PhoneCountryData {
     };
   }
 
-  factory PhoneCountryData.fromMap(Map value, {String lang = ""}) {
+  factory PhoneCountryData.fromMap(
+    Map value, {
+    String lang = '',
+  }) {
     final countryData = PhoneCountryData._init(
       country: value['country$lang'],
 
@@ -662,10 +665,10 @@ class PhoneCodes {
 
   static List<PhoneCountryData>? _allCountryDatas;
 
-  static List<PhoneCountryData> getAllCountryDatas({String langCode = ""}) {
+  static List<PhoneCountryData> getAllCountryDatas({String langCode = ''}) {
     if (_allCountryDatas == null) {
       _allCountryDatas = _data
-          .map((e) => e.containsKey("country${langCode.toUpperCase()}")
+          .map((e) => e.containsKey('country${langCode.toUpperCase()}')
               ? PhoneCountryData.fromMap(e, lang: langCode)
               : PhoneCountryData.fromMap(e))
           .toList();
