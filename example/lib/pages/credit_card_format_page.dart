@@ -22,6 +22,11 @@ class _CreditCardFormatPageState extends State<CreditCardFormatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final negativeString = toCurrencyString(
+      '-888',
+      mantissaLength: 2,
+    );
+    print(negativeString);
     return Unfocuser(
       child: Scaffold(
         appBar: AppBar(

@@ -1,3 +1,6 @@
+## [2.10.2]
+- Fixed a problem with incorrect card system detection
+- Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/113
 ## [2.10.1]
 - A few fixes to PinyinUtils
 ## [2.10.0]

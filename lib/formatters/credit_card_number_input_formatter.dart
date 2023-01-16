@@ -230,41 +230,52 @@ class _CardSystemDatas {
   /// рекурсивно ищет в номере карты код системы, начиная с конца
   /// нужно для того, чтобы даже после setState и обнуления данных карты
   /// снова правильно отформатировать ее номер
-  static CardSystemData? getCardSystemDataByNumber(String cardNumber,
-      {int? subscringLength}) {
+  static CardSystemData? getCardSystemDataByNumber(
+    String cardNumber, {
+    int? subscringLength,
+  }) {
     if (cardNumber.isEmpty) return null;
     subscringLength = subscringLength ?? cardNumber.length;
 
     if (subscringLength < 1) return null;
-    var systemCode = cardNumber.substring(0, subscringLength);
-
-    var rawData = _data.firstWhere((Map<String, dynamic>? data) {
-      if (data != null) {
-        var numericValue = toNumericString(data['systemCode']);
-        var numDigits = data['numDigits'];
-        return numericValue == systemCode &&
-            numDigits >= cardNumber.length &&
-            numDigits <= _maxDigitsInCard;
+    Map? rawData;
+    List<Map> tempSystems = [];
+    for (var data in _data) {
+      final systemCode = data['systemCode'];
+      if (cardNumber.startsWith(systemCode)) {
+        tempSystems.add(data);
       }
-      return false;
-    }, orElse: () => null);
-    if (rawData != null) {
-      return CardSystemData.fromMap(rawData);
     }
-    return getCardSystemDataByNumber(
-      cardNumber,
-      subscringLength: subscringLength - 1,
-    );
+    if (tempSystems.isEmpty) {
+      return null;
+    }
+    if (tempSystems.length == 1) {
+      rawData = tempSystems.first;
+    } else {
+      tempSystems.sort((a, b) => b['systemCode'].compareTo(a['systemCode']));
+      final int maxCodeLength = tempSystems.first['systemCode'].length;
+      tempSystems = tempSystems
+          .where(
+            (e) => e['systemCode'].length == maxCodeLength,
+          )
+          .toList();
+
+      tempSystems.sort((a, b) => a['systemCode'].compareTo(b['systemCode']));
+      for (var data in tempSystems) {
+        final int numMaskDigits = data['numDigits']!;
+        if (cardNumber.length <= numMaskDigits) {
+          rawData = data;
+          break;
+        }
+      }
+      if (rawData == null) {
+        rawData = tempSystems.last;
+      }
+    }
+    return CardSystemData.fromMap(rawData);
   }
 
-  static int get _maxDigitsInCard {
-    return _data.map((data) {
-      int numDigits = data!['numDigits'];
-      return numDigits;
-    }).reduce(max);
-  }
-
-  static List<Map<String, dynamic>?> _data = <Map<String, dynamic>?>[
+  static List<Map<String, dynamic>> _data = <Map<String, dynamic>>[
     {
       'system': CardSystem.VISA,
       'systemCode': '4',
@@ -327,16 +338,16 @@ class _CardSystemDatas {
     },
     {
       'system': CardSystem.JCB,
-      'systemCode': '3589',
-      'numberMask': '0000 0000 0000 0000 000',
-      'numDigits': 19,
-    },
-    {
-      'system': CardSystem.JCB,
-      'systemCode': '3528',
+      'systemCode': '35',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
     },
+    // {
+    //   'system': CardSystem.JCB,
+    //   'systemCode': '35',
+    //   'numberMask': '0000 0000 0000 0000 000',
+    //   'numDigits': 19,
+    // },
     {
       'system': CardSystem.DISCOVER,
       'systemCode': '60',

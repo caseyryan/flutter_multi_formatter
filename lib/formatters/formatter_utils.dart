@@ -499,6 +499,11 @@ String toCurrencyString(
   String trailingSymbol = '',
   bool useSymbolPadding = false,
 }) {
+  bool isNegative = false;
+  if (value.startsWith('-')) {
+    value = value.replaceAll(RegExp(r'^[-+]+'), '');
+    isNegative = true;
+  }
   value = value.replaceAll(_spaceRegex, '');
   if (value.isEmpty) {
     value = '0';
@@ -654,6 +659,9 @@ String toCurrencyString(
     }
   }
   value = sb.toString();
+  if (isNegative) {
+    return '-$value';
+  }
   return value;
 }
 
