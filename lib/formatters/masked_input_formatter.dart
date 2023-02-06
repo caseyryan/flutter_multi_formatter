@@ -45,6 +45,7 @@ class MaskedInputFormatter extends TextInputFormatter {
   final String _onlyDigitMask = '0';
   final RegExp? allowedCharMatcher;
   final List<_Separator> _separators = [];
+  final String prefix;
 
   // List<int> _separatorIndices = <int>[];
   // List<String> _separatorChars = <String>[];
@@ -66,6 +67,7 @@ class MaskedInputFormatter extends TextInputFormatter {
   MaskedInputFormatter(
     this.mask, {
     this.allowedCharMatcher,
+    this.prefix = ''
   });
 
   bool get isFilled => _maskedValue.length == mask.length;
@@ -88,10 +90,14 @@ class MaskedInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final FormattedValue oldFormattedValue = applyMask(
-      oldValue.text,
+      oldValue.text.length >= this.prefix.length
+          ? oldValue.text.substring(this.prefix.length)
+          : oldValue.text,
     );
     final FormattedValue newFormattedValue = applyMask(
-      newValue.text,
+      newValue.text.length >= this.prefix.length
+          ? newValue.text.substring(this.prefix.length)
+          : newValue.text,
     );
     var numSeparatorsInNew = 0;
     var numSeparatorsInOld = 0;
@@ -118,9 +124,9 @@ class MaskedInputFormatter extends TextInputFormatter {
     }
 
     return TextEditingValue(
-      text: _maskedValue,
+      text: '${this.prefix}$_maskedValue',
       selection: TextSelection.collapsed(
-        offset: selectionOffset + addOffset,
+        offset: selectionOffset + addOffset + this.prefix.length,
         affinity: TextAffinity.upstream,
       ),
     );
