@@ -1064,7 +1064,7 @@ class PhoneCodes {
       'countryRU': 'Дания',
       'internalPhoneCode': '45',
       'countryCode': 'DK',
-      'phoneMask': '+00 0 000 0000',
+      'phoneMask': '+00 00 00 00 00',
     },
     {
       'country': 'Djibouti',
