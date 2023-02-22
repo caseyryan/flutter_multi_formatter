@@ -35,6 +35,7 @@ import 'phone_input_enums.dart';
 class PhoneInputFormatter extends TextInputFormatter {
   final ValueChanged<PhoneCountryData?>? onCountrySelected;
   final bool allowEndlessPhone;
+  final bool allowDefaultCountryOverride;
   final String? defaultCountryCode;
 
   PhoneCountryData? _countryData;
@@ -49,10 +50,13 @@ class PhoneInputFormatter extends TextInputFormatter {
   /// [defaultCountryCode] if you set a default country code,
   /// the phone will be formatted according to its country mask
   /// and no leading country code will be present in the masked value
+  /// [allowDefaultCountryOverride] if set to true, the default country
+  /// can be overriden by the user by adding a + and the country code
   PhoneInputFormatter({
     this.onCountrySelected,
     this.allowEndlessPhone = false,
     this.defaultCountryCode,
+    this.allowDefaultCountryOverride = false,
   });
 
   String get masked => _lastValue;
@@ -89,9 +93,7 @@ class PhoneInputFormatter extends TextInputFormatter {
     if (onlyNumbers.length == 2) {
       /// хак специально для России, со вводом номера с восьмерки
       /// меняем ее на 7
-      var isRussianWrongNumber =
-          onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
-              onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
+      var isRussianWrongNumber = onlyNumbers[0] == '8' && onlyNumbers[1] == '9' || onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
       if (isRussianWrongNumber) {
         onlyNumbers = '7${onlyNumbers[1]}';
         _countryData = null;
@@ -101,8 +103,7 @@ class PhoneInputFormatter extends TextInputFormatter {
         );
       }
 
-      final isAustralianPhoneNumber =
-          onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
+      final isAustralianPhoneNumber = onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
       if (isAustralianPhoneNumber) {
         onlyNumbers = '61${onlyNumbers[1]}';
         _countryData = null;
@@ -160,7 +161,7 @@ class PhoneInputFormatter extends TextInputFormatter {
     } else {
       PhoneCountryData? countryData;
 
-      if (defaultCountryCode != null) {
+      if (defaultCountryCode != null && (allowDefaultCountryOverride == false || !numericString.contains('+'))) {
         countryData = PhoneCodes.getPhoneCountryDataByCountryCode(
           defaultCountryCode!,
         );
@@ -239,8 +240,7 @@ class PhoneInputFormatter extends TextInputFormatter {
     var currentMask = countryData['phoneMask'];
     if (currentMask != newMask) {
       print(
-        'Phone mask for country "${countryData['country']}"' +
-            ' was replaced from $currentMask to $newMask',
+        'Phone mask for country "${countryData['country']}"' + ' was replaced from $currentMask to $newMask',
       );
       countryData['phoneMask'] = newMask;
     }
@@ -539,10 +539,7 @@ class PhoneCountryData {
     if (_altMasksWithoutCountryCodes != null) {
       return _altMasksWithoutCountryCodes;
     }
-    _altMasksWithoutCountryCodes = altMasks
-            ?.map((e) => _trimPhoneCode(phoneMask: e, phoneCode: phoneCode!))
-            .toList() ??
-        <String>[];
+    _altMasksWithoutCountryCodes = altMasks?.map((e) => _trimPhoneCode(phoneMask: e, phoneCode: phoneCode!)).toList() ?? <String>[];
     return _altMasksWithoutCountryCodes;
   }
 
@@ -602,8 +599,7 @@ class PhoneCountryData {
 
   @override
   String toString() {
-    return '[PhoneCountryData(country: $country,' +
-        ' phoneCode: $phoneCode, countryCode: $countryCode)]';
+    return '[PhoneCountryData(country: $country,' + ' phoneCode: $phoneCode, countryCode: $countryCode)]';
   }
 }
 
@@ -668,9 +664,7 @@ class PhoneCodes {
   static List<PhoneCountryData> getAllCountryDatas({String langCode = ''}) {
     if (_allCountryDatas == null) {
       _allCountryDatas = _data
-          .map((e) => e.containsKey('country${langCode.toUpperCase()}')
-              ? PhoneCountryData.fromMap(e, lang: langCode)
-              : PhoneCountryData.fromMap(e))
+          .map((e) => e.containsKey('country${langCode.toUpperCase()}') ? PhoneCountryData.fromMap(e, lang: langCode) : PhoneCountryData.fromMap(e))
           .toList();
       _allCountryDatas!.sort((a, b) => a.phoneCode!.compareTo(b.phoneCode!));
     }
