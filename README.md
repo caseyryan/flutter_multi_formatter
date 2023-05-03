@@ -91,7 +91,7 @@ Row(
       flex: 3,
       child: CountryDropdown(
         printCountryName: true,
-        initialCountryCode: 'RU',
+        initialPhoneCode: '7',
         onCountrySelected: (PhoneCountryData countryData) {
           setState(() {
             _initialCountryData = countryData;

@@ -9,7 +9,7 @@ class CountryDropdown extends StatefulWidget {
   final CountryItemBuilder? selectedItemBuilder;
   final CountryItemBuilder? listItemBuilder;
   final bool printCountryName;
-  final String? initialCountryCode;
+  final String? initialPhoneCode;
   final ValueChanged<PhoneCountryData> onCountrySelected;
 
   final int elevation;
@@ -30,6 +30,7 @@ class CountryDropdown extends StatefulWidget {
   final bool? enableFeedback;
   final AlignmentGeometry alignment;
 
+  /// [initialPhoneCode] a phone code of the country without leading +
   /// [selectedItemBuilder] use this if you want to make
   /// the selected item look the way you want
   /// [listItemBuilder] the same as [selectedItemBuilder] but
@@ -42,7 +43,7 @@ class CountryDropdown extends StatefulWidget {
     this.selectedItemBuilder,
     this.listItemBuilder,
     this.printCountryName = false,
-    this.initialCountryCode,
+    this.initialPhoneCode,
     required this.onCountrySelected,
     this.elevation = 8,
     this.style,
@@ -81,9 +82,9 @@ class _CountryDropdownState extends State<CountryDropdown> {
   }
 
   PhoneCountryData get _initialValue {
-    if (widget.initialCountryCode != null) {
+    if (widget.initialPhoneCode != null) {
       return PhoneCodes.getAllCountryDatas().firstWhereOrNull((c) =>
-              c.countryCode == widget.initialCountryCode!.toUpperCase()) ??
+              c.phoneCode == widget.initialPhoneCode) ??
           PhoneCodes.getAllCountryDatas().first;
     }
     return PhoneCodes.getAllCountryDatas().first;
