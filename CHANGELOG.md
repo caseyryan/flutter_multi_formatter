@@ -1,3 +1,5 @@
+## [2.10.3]
+- CountryDropdown now does not have initialCountryCode parameter but uses initialPhoneCode instead, because some countries might have a few phone codes and we need to determin which one of them should be used
 ## [2.10.2]
 - Fixed a problem with incorrect card system detection
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/113
