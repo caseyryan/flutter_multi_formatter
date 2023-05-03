@@ -71,8 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       child: Container(
         height: 50,
-        // ignore: deprecated_member_use
-        child: RaisedButton(
+        child: MaterialButton(
           textColor: Colors.white,
           color: color,
           onPressed: () {
