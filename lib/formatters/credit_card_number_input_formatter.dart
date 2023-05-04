@@ -26,7 +26,6 @@ THE SOFTWARE.
 
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'formatter_utils.dart';

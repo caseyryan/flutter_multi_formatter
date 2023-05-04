@@ -1,3 +1,6 @@
+## [2.10.4]
+- Unfocuser now has isEnabled parameter so it can be easily disabled when it's 
+not necessage e.g. on the web
 ## [2.10.3]
 - CountryDropdown now does not have initialCountryCode parameter but uses initialPhoneCode instead, because some countries might have a few phone codes and we need to determin which one of them should be used
 ## [2.10.2]

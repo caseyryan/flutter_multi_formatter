@@ -36,12 +36,14 @@ import 'package:flutter/rendering.dart';
 /// In case you want it to always unfocus current text field
 /// just set this value to 0.0
 class Unfocuser extends StatefulWidget {
-  final Widget? child;
+  final Widget child;
   final double minScrollDistance;
+  final bool isEnabled;
 
   const Unfocuser({
     Key? key,
-    this.child,
+    required this.child,
+    this.isEnabled = true,
     this.minScrollDistance = 10.0,
   }) : super(key: key);
 
@@ -55,6 +57,9 @@ class _UnfocuserState extends State<Unfocuser> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.isEnabled) {
+      return widget.child;
+    }
     return Listener(
       onPointerDown: (e) {
         _touchStartPosition = e.position;
@@ -73,8 +78,8 @@ class _UnfocuserState extends State<Unfocuser> {
         var result = BoxHitTestResult();
         rb.hitTest(result, position: touchStopPosition);
 
-        if (result.path.any(
-            (entry) => entry.target.runtimeType == IgnoreUnfocuserRenderBox)) {
+        if (result.path
+            .any((entry) => entry.target.runtimeType == IgnoreUnfocuserRenderBox)) {
           return;
         }
         var isEditable = result.path.any((entry) =>
@@ -120,8 +125,7 @@ class IgnoreUnfocuser extends SingleChildRenderObjectWidget {
 }
 
 class ForceUnfocuser extends SingleChildRenderObjectWidget {
-  const ForceUnfocuser({Key? key, required Widget child})
-      : super(key: key, child: child);
+  const ForceUnfocuser({Key? key, required Widget child}) : super(key: key, child: child);
 
   @override
   ForceUnfocuserRenderBox createRenderObject(BuildContext context) {
