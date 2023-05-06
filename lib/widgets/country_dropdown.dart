@@ -10,6 +10,7 @@ class CountryDropdown extends StatefulWidget {
   final CountryItemBuilder? listItemBuilder;
   final bool printCountryName;
   final String? initialPhoneCode;
+  final List<PhoneCountryData>? countryItems;
   final ValueChanged<PhoneCountryData> onCountrySelected;
 
   final int elevation;
@@ -44,6 +45,7 @@ class CountryDropdown extends StatefulWidget {
     this.listItemBuilder,
     this.printCountryName = false,
     this.initialPhoneCode,
+    this.countryItems,
     required this.onCountrySelected,
     this.elevation = 8,
     this.style,
@@ -82,12 +84,18 @@ class _CountryDropdownState extends State<CountryDropdown> {
   }
 
   PhoneCountryData get _initialValue {
+    final items = _countryItems;
+
     if (widget.initialPhoneCode != null) {
-      return PhoneCodes.getAllCountryDatas().firstWhereOrNull((c) =>
-              c.phoneCode == widget.initialPhoneCode) ??
-          PhoneCodes.getAllCountryDatas().first;
+      return items.firstWhereOrNull(
+              (c) => c.phoneCode == widget.initialPhoneCode) ??
+          items.first;
     }
-    return PhoneCodes.getAllCountryDatas().first;
+    return items.first;
+  }
+
+  List<PhoneCountryData> get _countryItems {
+    return widget.countryItems ?? PhoneCodes.getAllCountryDatas();
   }
 
   Widget _buildSelectedLabel(
@@ -177,7 +185,7 @@ class _CountryDropdownState extends State<CountryDropdown> {
       elevation: widget.elevation,
       itemHeight: widget.itemHeight,
       selectedItemBuilder: (c) {
-        return PhoneCodes.getAllCountryDatas()
+        return _countryItems
             .map(
               (e) => DropdownMenuItem<PhoneCountryData>(
                 child: _buildSelectedLabel(e),
@@ -186,7 +194,7 @@ class _CountryDropdownState extends State<CountryDropdown> {
             )
             .toList();
       },
-      items: PhoneCodes.getAllCountryDatas()
+      items: _countryItems
           .map(
             (e) => DropdownMenuItem<PhoneCountryData>(
               child: _buildListLabel(e),
