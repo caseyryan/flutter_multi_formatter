@@ -435,6 +435,15 @@ class CurrencyInputFormatter extends TextInputFormatter {
     if (input.isEmpty) return false;
     var clearedInput = input;
     if (leadingSymbol.isNotEmpty) {
+      /// allows to get read of an odd minus in front of a leading symbol
+      /// https://github.com/caseyryan/flutter_multi_formatter/issues/123
+      var sub = clearedInput.substring(
+        0,
+        clearedInput.indexOf(leadingSymbol) + 1,
+      );
+      if (sub.length > leadingSymbol.length) {
+        return true;
+      }
       clearedInput = clearedInput.replaceAll(leadingSymbol, '');
     }
     if (trailingSymbol.isNotEmpty) {
