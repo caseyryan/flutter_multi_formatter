@@ -13,6 +13,7 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
   TextEditingController _russianPhoneController =
       TextEditingController(text: '9998887766');
   PhoneCountryData? _initialCountryData;
+  PhoneCountryData? _initialCountryDataFiltered;
 
   @override
   void dispose() {
@@ -121,10 +122,63 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                       )
                     ],
                   ),
+                  SizedBox(height: 30.0),
                   _getText(
-                    _initialCountryData == null
+                    'The next input uses a predefined country code',
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: CountryDropdown(
+                          printCountryName: true,
+                          initialPhoneCode: '7',
+                          filter: PhoneCodes.findCountryDatasByCountryCodes(
+                            countryIsoCodes: [
+                              'RU',
+                              'BR',
+                              'DE',
+                            ],
+                          ),
+                          onCountrySelected: (PhoneCountryData countryData) {
+                            setState(() {
+                              _initialCountryDataFiltered = countryData;
+                            });
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 10.0),
+                      Expanded(
+                        flex: 5,
+                        child: TextFormField(
+                          key: ValueKey(
+                              _initialCountryDataFiltered ?? 'country'),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: _initialCountryDataFiltered
+                                ?.phoneMaskWithoutCountryCode,
+                            hintStyle:
+                                TextStyle(color: Colors.black.withOpacity(.3)),
+                            errorStyle: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            PhoneInputFormatter(
+                              allowEndlessPhone: true,
+                              defaultCountryCode:
+                                  _initialCountryDataFiltered?.countryCode,
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  _getText(
+                    _initialCountryDataFiltered == null
                         ? 'A country is not detected'
-                        : 'The country is: ${_initialCountryData?.country}',
+                        : 'The country is: ${_initialCountryDataFiltered?.country}',
                   ),
                   SizedBox(
                     height: 10.0,

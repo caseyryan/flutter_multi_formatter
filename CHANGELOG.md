@@ -1,3 +1,23 @@
+## [2.10.5]
+- CountryDropdown can now be filtered. If you need it to show only a 
+predefined list of countries. Just pass "filter" parameter like this 
+```child: CountryDropdown(
+        printCountryName: true,
+        initialPhoneCode: '7',
+        filter: PhoneCodes.findCountryDatasByCountryCodes(
+        countryIsoCodes: [
+            'RU',
+            'BR',
+            'DE',
+        ],
+        ),
+        onCountrySelected: (PhoneCountryData countryData) {
+        setState(() {
+            _initialCountryData = countryData;
+        });
+        },
+    ) 
+```
 ## [2.10.4]
 - Unfocuser now has isEnabled parameter so it can be easily disabled when it's 
 not necessage e.g. on the web

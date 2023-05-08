@@ -125,6 +125,21 @@ Row(
 )
 ```
 
+You can also filter the list of countries if you need 
+
+```dart
+CountryDropdown(
+    printCountryName: true,
+    initialPhoneCode: '7',
+    filter: PhoneCodes.findCountryDatasByCountryCodes(
+    countryIsoCodes: [
+        'RU',
+        'BR',
+        'DE',
+    ],
+)
+```
+
 
 ### Formatting a credit / debit card
 

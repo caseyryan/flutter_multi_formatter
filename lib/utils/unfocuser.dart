@@ -78,8 +78,8 @@ class _UnfocuserState extends State<Unfocuser> {
         var result = BoxHitTestResult();
         rb.hitTest(result, position: touchStopPosition);
 
-        if (result.path
-            .any((entry) => entry.target.runtimeType == IgnoreUnfocuserRenderBox)) {
+        if (result.path.any(
+            (entry) => entry.target.runtimeType == IgnoreUnfocuserRenderBox)) {
           return;
         }
         var isEditable = result.path.any((entry) =>
@@ -125,7 +125,8 @@ class IgnoreUnfocuser extends SingleChildRenderObjectWidget {
 }
 
 class ForceUnfocuser extends SingleChildRenderObjectWidget {
-  const ForceUnfocuser({Key? key, required Widget child}) : super(key: key, child: child);
+  const ForceUnfocuser({Key? key, required Widget child})
+      : super(key: key, child: child);
 
   @override
   ForceUnfocuserRenderBox createRenderObject(BuildContext context) {

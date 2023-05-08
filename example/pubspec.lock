@@ -9,14 +9,14 @@ packages:
     source: hosted
     version: "2.9.0"
   base58check:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: base58check
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
   bech32:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: bech32
       url: "https://pub.dartlang.org"
@@ -44,7 +44,7 @@ packages:
     source: hosted
     version: "1.1.1"
   collection:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: collection
       url: "https://pub.dartlang.org"
@@ -64,6 +64,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
+  cupertino_icons:
+    dependency: "direct main"
+    description:
+      name: cupertino_icons
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.3"
   fake_async:
     dependency: transitive
     description:
@@ -76,6 +83,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_multi_formatter:
+    dependency: "direct main"
+    description:
+      path: ".."
+      relative: true
+    source: path
+    version: "2.10.5"
   flutter_test:
     dependency: "direct dev"
     description: flutter

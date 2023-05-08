@@ -10,7 +10,7 @@ class CountryDropdown extends StatefulWidget {
   final CountryItemBuilder? listItemBuilder;
   final bool printCountryName;
   final String? initialPhoneCode;
-  final List<PhoneCountryData>? countryItems;
+  final List<PhoneCountryData>? filter;
   final ValueChanged<PhoneCountryData> onCountrySelected;
 
   final int elevation;
@@ -31,6 +31,8 @@ class CountryDropdown extends StatefulWidget {
   final bool? enableFeedback;
   final AlignmentGeometry alignment;
 
+  /// [filter] if you need a predefined list of countries only,
+  /// pass it here
   /// [initialPhoneCode] a phone code of the country without leading +
   /// [selectedItemBuilder] use this if you want to make
   /// the selected item look the way you want
@@ -45,7 +47,7 @@ class CountryDropdown extends StatefulWidget {
     this.listItemBuilder,
     this.printCountryName = false,
     this.initialPhoneCode,
-    this.countryItems,
+    this.filter,
     required this.onCountrySelected,
     this.elevation = 8,
     this.style,
@@ -71,31 +73,27 @@ class CountryDropdown extends StatefulWidget {
 }
 
 class _CountryDropdownState extends State<CountryDropdown> {
+  PhoneCountryData? _initialValue;
+  late List<PhoneCountryData> _countryItems;
+
   @override
   void initState() {
+    _countryItems = widget.filter ?? PhoneCodes.getAllCountryDatas();
+    if (widget.initialPhoneCode != null) {
+      _initialValue = _countryItems.firstWhereOrNull(
+              (c) => c.phoneCode == widget.initialPhoneCode) ??
+          _countryItems.first;
+    }
     _widgetsBinding.addPostFrameCallback((timeStamp) {
-      widget.onCountrySelected(_initialValue);
+      if (_initialValue != null) {
+        widget.onCountrySelected(_initialValue!);
+      }
     });
     super.initState();
   }
 
   dynamic get _widgetsBinding {
     return WidgetsBinding.instance;
-  }
-
-  PhoneCountryData get _initialValue {
-    final items = _countryItems;
-
-    if (widget.initialPhoneCode != null) {
-      return items.firstWhereOrNull(
-              (c) => c.phoneCode == widget.initialPhoneCode) ??
-          items.first;
-    }
-    return items.first;
-  }
-
-  List<PhoneCountryData> get _countryItems {
-    return widget.countryItems ?? PhoneCodes.getAllCountryDatas();
   }
 
   Widget _buildSelectedLabel(

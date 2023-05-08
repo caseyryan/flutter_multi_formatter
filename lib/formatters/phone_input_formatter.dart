@@ -606,6 +606,23 @@ class PhoneCountryData {
 }
 
 class PhoneCodes {
+  /// Finds a list of PhoneCountryData objects by a list of
+  /// iso codes, e.g. countryIsoCodes: ['RU', 'US', 'AU']
+  static List<PhoneCountryData> findCountryDatasByCountryCodes({
+    required List<String> countryIsoCodes,
+  }) {
+    final list = <PhoneCountryData>[];
+    for (var code in countryIsoCodes) {
+      final data = getPhoneCountryDataByCountryCode(
+        code,
+      );
+      if (data != null) {
+        list.add(data);
+      }
+    }
+    return list;
+  }
+
   /// рекурсивно ищет в номере телефона код страны, начиная с конца
   /// нужно для того, чтобы даже после setState и обнуления данных страны
   /// снова правильно отформатировать телефон
@@ -663,7 +680,14 @@ class PhoneCodes {
 
   static List<PhoneCountryData>? _allCountryDatas;
 
-  static List<PhoneCountryData> getAllCountryDatas({String langCode = ''}) {
+  /// [langCode] for now the only supported code
+  /// beside the default (english) is Russian.
+  /// countryRU. If you want to translate the names of the countries
+  /// to your language, please feel free to do it and make a pull request.
+  /// Just keep the naming convention like countryBR, countryDE and so on
+  static List<PhoneCountryData> getAllCountryDatas({
+    String langCode = '',
+  }) {
     if (_allCountryDatas == null) {
       _allCountryDatas = _data
           .map((e) => e.containsKey('country${langCode.toUpperCase()}')
