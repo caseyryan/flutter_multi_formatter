@@ -1,3 +1,5 @@
+## [2.10.6]
+- Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/122 by adding triggerOnCountrySelectedInitially param to CountryDropdown
 ## [2.10.5]
 - CountryDropdown can now be filtered. If you need it to show only a 
 predefined list of countries. Just pass "filter" parameter like this 

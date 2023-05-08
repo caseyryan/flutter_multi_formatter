@@ -30,6 +30,7 @@ class CountryDropdown extends StatefulWidget {
   final double? menuMaxHeight;
   final bool? enableFeedback;
   final AlignmentGeometry alignment;
+  final bool triggerOnCountrySelectedInitially;
 
   /// [filter] if you need a predefined list of countries only,
   /// pass it here
@@ -41,12 +42,16 @@ class CountryDropdown extends StatefulWidget {
   /// [printCountryName] if true, it will display
   /// a country name under its flat and country code while
   /// the menu is open
+  /// [triggerOnCountrySelectedInitially] if you don't want onCountrySelected
+  /// to be triggered right away if you set an initialPhoneCode param,
+  /// pass false here. Description is here https://github.com/caseyryan/flutter_multi_formatter/issues/122
   const CountryDropdown({
     Key? key,
     this.selectedItemBuilder,
     this.listItemBuilder,
     this.printCountryName = false,
     this.initialPhoneCode,
+    this.triggerOnCountrySelectedInitially = true,
     this.filter,
     required this.onCountrySelected,
     this.elevation = 8,
@@ -84,11 +89,13 @@ class _CountryDropdownState extends State<CountryDropdown> {
               (c) => c.phoneCode == widget.initialPhoneCode) ??
           _countryItems.first;
     }
-    _widgetsBinding.addPostFrameCallback((timeStamp) {
-      if (_initialValue != null) {
-        widget.onCountrySelected(_initialValue!);
-      }
-    });
+    if (widget.triggerOnCountrySelectedInitially && _initialValue != null) {
+      _widgetsBinding.addPostFrameCallback((timeStamp) {
+        if (_initialValue != null) {
+          widget.onCountrySelected(_initialValue!);
+        }
+      });
+    }
     super.initState();
   }
 

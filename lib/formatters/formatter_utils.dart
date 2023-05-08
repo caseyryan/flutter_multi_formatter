@@ -57,7 +57,11 @@ String toNumericString(
   if (mantissaSeparator == '.') {
     inputString = inputString.replaceAll(',', '');
   } else if (mantissaSeparator == ',') {
-    inputString = inputString.replaceAll('.', '').replaceAll(',', '.');
+    final fractionSep = _detectFractionSeparator(inputString);
+    if (fractionSep != null) {
+      inputString = inputString.replaceAll(fractionSep, '%FRAC%');
+    }
+    inputString = inputString.replaceAll('.', '').replaceAll('%FRAC%', '.');
   }
   var startsWithPeriod = numericStringStartsWithOrphanPeriod(
     inputString,
@@ -552,8 +556,7 @@ String toCurrencyString(
   }
 
   final str = sb.toString();
-  final evenPart =
-      addedMantissaSeparator ? str.substring(0, str.indexOf('.')) : str;
+  final evenPart = addedMantissaSeparator ? str.substring(0, str.indexOf('.')) : str;
 
   int skipEvenNumbers = 0;
   String shorteningName = '';
