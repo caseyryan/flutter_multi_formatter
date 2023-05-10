@@ -87,7 +87,10 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                         flex: 3,
                         child: CountryDropdown(
                           printCountryName: true,
-                          initialPhoneCode: '7',
+                          initialCountryData:
+                              PhoneCodes.getPhoneCountryDataByCountryCode(
+                            'RU',
+                          ),
                           onCountrySelected: (PhoneCountryData countryData) {
                             setState(() {
                               _initialCountryData = countryData;
@@ -132,7 +135,10 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                         flex: 3,
                         child: CountryDropdown(
                           printCountryName: true,
-                          initialPhoneCode: '7',
+                          initialCountryData:
+                              PhoneCodes.getPhoneCountryDataByCountryCode(
+                            'RU',
+                          ),
                           filter: PhoneCodes.findCountryDatasByCountryCodes(
                             countryIsoCodes: [
                               'RU',

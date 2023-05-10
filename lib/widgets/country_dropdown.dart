@@ -9,7 +9,7 @@ class CountryDropdown extends StatefulWidget {
   final CountryItemBuilder? selectedItemBuilder;
   final CountryItemBuilder? listItemBuilder;
   final bool printCountryName;
-  final String? initialPhoneCode;
+  final PhoneCountryData? initialCountryData;
   final List<PhoneCountryData>? filter;
   final ValueChanged<PhoneCountryData> onCountrySelected;
 
@@ -34,7 +34,7 @@ class CountryDropdown extends StatefulWidget {
 
   /// [filter] if you need a predefined list of countries only,
   /// pass it here
-  /// [initialPhoneCode] a phone code of the country without leading +
+  /// [initialCountryData] initial country data to be selected
   /// [selectedItemBuilder] use this if you want to make
   /// the selected item look the way you want
   /// [listItemBuilder] the same as [selectedItemBuilder] but
@@ -50,7 +50,7 @@ class CountryDropdown extends StatefulWidget {
     this.selectedItemBuilder,
     this.listItemBuilder,
     this.printCountryName = false,
-    this.initialPhoneCode,
+    this.initialCountryData,
     this.triggerOnCountrySelectedInitially = true,
     this.filter,
     required this.onCountrySelected,
@@ -84,9 +84,9 @@ class _CountryDropdownState extends State<CountryDropdown> {
   @override
   void initState() {
     _countryItems = widget.filter ?? PhoneCodes.getAllCountryDatas();
-    if (widget.initialPhoneCode != null) {
-      _initialValue = _countryItems.firstWhereOrNull(
-              (c) => c.phoneCode == widget.initialPhoneCode) ??
+    if (widget.initialCountryData != null) {
+      _initialValue = _countryItems
+              .firstWhereOrNull((c) => c == widget.initialCountryData) ??
           _countryItems.first;
     }
     if (widget.triggerOnCountrySelectedInitially && _initialValue != null) {

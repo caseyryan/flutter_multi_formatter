@@ -1,3 +1,7 @@
+## [2.11.0]
+- CountryDropdown now only selects initialCountryData instead of phone code
+because there are cases when different countries share the same phone code 
+and we still need to tell them apart
 ## [2.10.9]
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/123
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/116

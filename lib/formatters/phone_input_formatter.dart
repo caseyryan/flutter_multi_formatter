@@ -471,6 +471,22 @@ class PhoneCountryData {
 
   String? _maskWithoutCountryCode;
 
+  @override
+  bool operator ==(covariant PhoneCountryData other) {
+    return other.phoneCode == phoneCode &&
+        other.internalPhoneCode == internalPhoneCode &&
+        other.country == country;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      phoneCode,
+      internalPhoneCode,
+      country,
+    );
+  }
+
   String getCorrectMask(String? countryCode) {
     if (countryCode == null) {
       return phoneMask!;
