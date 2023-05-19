@@ -1053,7 +1053,7 @@ class PhoneCodes {
       'countryRU': 'Конго',
       'internalPhoneCode': '242',
       'countryCode': 'CG',
-      'phoneMask': '+000 00 000 0000',
+      'phoneMask': '+000 00 00 00000',
     },
     {
       'country': 'Cook Islands',
