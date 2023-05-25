@@ -2171,7 +2171,7 @@ class PhoneCodes {
       'countryRU': 'Конго, Демократическая Республика',
       'internalPhoneCode': '243',
       'countryCode': 'CD',
-      'phoneMask': '+000 00 000 0000',
+      'phoneMask': '+000 00 00 00000',
     },
     {
       'country': 'Cote d\'Ivoire',

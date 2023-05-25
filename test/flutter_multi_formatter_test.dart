@@ -87,43 +87,86 @@ void main() {
   });
 
   group('congo', () {
-    test('should format partial congo mask +000 00', () {
-      final inputNumber = '+24255';
+    group('242', () {
+      test('should format partial congo mask +000 00', () {
+        final inputNumber = '+24255';
 
-      final formattedNumber = PhoneInputFormatter()
-          .formatEditUpdate(
-            TextEditingValue(text: ''),
-            TextEditingValue(text: inputNumber),
-          )
-          .text;
+        final formattedNumber = PhoneInputFormatter()
+            .formatEditUpdate(
+              TextEditingValue(text: ''),
+              TextEditingValue(text: inputNumber),
+            )
+            .text;
 
-      expect(formattedNumber, '+242 55');
+        expect(formattedNumber, '+242 55');
+      });
+
+      test('should format partial congo mask +000 00 00', () {
+        final inputNumber = '+2425566';
+
+        final formattedNumber = PhoneInputFormatter()
+            .formatEditUpdate(
+              TextEditingValue(text: ''),
+              TextEditingValue(text: inputNumber),
+            )
+            .text;
+
+        expect(formattedNumber, '+242 55 66');
+      });
+
+      test('should format full congo mask +000 00 00 00000', () {
+        final inputNumber = '+242556677777';
+
+        final formattedNumber = PhoneInputFormatter()
+            .formatEditUpdate(
+              TextEditingValue(text: ''),
+              TextEditingValue(text: inputNumber),
+            )
+            .text;
+
+        expect(formattedNumber, '+242 55 66 77777');
+      });
     });
 
-    test('should format partial congo mask +000 00 00', () {
-      final inputNumber = '+2425566';
+    group('243', () {
+      test('should format partial congo mask +000 00', () {
+        final inputNumber = '+24355';
 
-      final formattedNumber = PhoneInputFormatter()
-          .formatEditUpdate(
-            TextEditingValue(text: ''),
-            TextEditingValue(text: inputNumber),
-          )
-          .text;
+        final formattedNumber = PhoneInputFormatter()
+            .formatEditUpdate(
+              TextEditingValue(text: ''),
+              TextEditingValue(text: inputNumber),
+            )
+            .text;
 
-      expect(formattedNumber, '+242 55 66');
-    });
+        expect(formattedNumber, '+243 55');
+      });
 
-    test('should format full congo mask +000 00 00 00000', () {
-      final inputNumber = '+242556677777';
+      test('should format partial congo mask +000 00 00', () {
+        final inputNumber = '+2435566';
 
-      final formattedNumber = PhoneInputFormatter()
-          .formatEditUpdate(
-            TextEditingValue(text: ''),
-            TextEditingValue(text: inputNumber),
-          )
-          .text;
+        final formattedNumber = PhoneInputFormatter()
+            .formatEditUpdate(
+              TextEditingValue(text: ''),
+              TextEditingValue(text: inputNumber),
+            )
+            .text;
 
-      expect(formattedNumber, '+242 55 66 77777');
+        expect(formattedNumber, '+243 55 66');
+      });
+
+      test('should format full congo mask +000 00 00 00000', () {
+        final inputNumber = '+243556677777';
+
+        final formattedNumber = PhoneInputFormatter()
+            .formatEditUpdate(
+              TextEditingValue(text: ''),
+              TextEditingValue(text: inputNumber),
+            )
+            .text;
+
+        expect(formattedNumber, '+243 55 66 77777');
+      });
     });
   });
 }
