@@ -1,3 +1,5 @@
+## [2.11.1]
+- Correct mask for Congo number https://github.com/caseyryan/flutter_multi_formatter/pull/127
 ## [2.11.0]
 - CountryDropdown now only selects initialCountryData instead of phone code
 because there are cases when different countries share the same phone code 
