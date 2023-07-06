@@ -53,7 +53,7 @@ class PhoneInputFormatter extends TextInputFormatter {
   PhoneInputFormatter({
     this.onCountrySelected,
     this.allowEndlessPhone = false,
-    this.shouldCorrectNumber = false,
+    this.shouldCorrectNumber = true,
     this.defaultCountryCode,
   });
 
