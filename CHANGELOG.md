@@ -1,3 +1,5 @@
+## [2.11.2]
+- Merged this pull request https://github.com/caseyryan/flutter_multi_formatter/pull/132
 ## [2.11.1]
 - Correct mask for Congo number https://github.com/caseyryan/flutter_multi_formatter/pull/127
 ## [2.11.0]

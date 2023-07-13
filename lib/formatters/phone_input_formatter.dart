@@ -43,10 +43,10 @@ class PhoneInputFormatter extends TextInputFormatter {
   /// and a country is detected
   /// this callback gets called
   /// [allowEndlessPhone] if true, a phone can
-  /// still be enterng after the whole mask is matched.
+  /// still be entering after the whole mask is matched.
   /// use if you are not sure that all masks are supported
   /// [shouldCorrectNumber] if input number is wrong in some country as Rus and Aus,
-  /// the phone be correctted to new number
+  /// the phone be corrected to new number
   /// [defaultCountryCode] if you set a default country code,
   /// the phone will be formatted according to its country mask
   /// and no leading country code will be present in the masked value
