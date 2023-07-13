@@ -33,6 +33,7 @@ import 'phone_input_enums.dart';
 class PhoneInputFormatter extends TextInputFormatter {
   final ValueChanged<PhoneCountryData?>? onCountrySelected;
   final bool allowEndlessPhone;
+  final bool shouldCorrectNumber;
   final String? defaultCountryCode;
 
   PhoneCountryData? _countryData;
@@ -44,12 +45,15 @@ class PhoneInputFormatter extends TextInputFormatter {
   /// [allowEndlessPhone] if true, a phone can
   /// still be enterng after the whole mask is matched.
   /// use if you are not sure that all masks are supported
+  /// [shouldCorrectNumber] if input number is wrong in some country as Rus and Aus,
+  /// the phone be correctted to new number
   /// [defaultCountryCode] if you set a default country code,
   /// the phone will be formatted according to its country mask
   /// and no leading country code will be present in the masked value
   PhoneInputFormatter({
     this.onCountrySelected,
     this.allowEndlessPhone = false,
+    this.shouldCorrectNumber = true,
     this.defaultCountryCode,
   });
 
@@ -84,7 +88,7 @@ class PhoneInputFormatter extends TextInputFormatter {
         _clearCountry();
       }
     }
-    if (onlyNumbers.length == 2) {
+    if (shouldCorrectNumber && onlyNumbers.length == 2) {
       /// хак специально для России, со вводом номера с восьмерки
       /// меняем ее на 7
       var isRussianWrongNumber =
