@@ -1,4 +1,4 @@
-/// My implementation of th Luhn algorithm 
+/// My implementation of th Luhn algorithm
 /// https://en.wikipedia.org/wiki/Luhn_algorithm
 bool checkNumberByLuhn({
   required String number,

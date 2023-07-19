@@ -1,3 +1,5 @@
+## [2.11.5]
+Added Luhn algorithm to validate card numbers
 ## [2.11.4]
 Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/131
 Added new card system https://github.com/caseyryan/flutter_multi_formatter/issues/109
