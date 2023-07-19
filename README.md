@@ -391,7 +391,10 @@ String cardNumber, {
 });
 
 /// and a method to check is a card is valid
-bool isCardValidNumber(String cardNumber);
+bool isCardNumberValid(required String cardNumber,
+  bool checkLength = false,
+  bool useLuhnAlgo = true,
+});
 /// but it will return true only if the card system is supported, 
 /// so you should not really rely on that
 

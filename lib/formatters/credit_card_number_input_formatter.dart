@@ -127,12 +127,11 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
   }
 }
 
-/// checks not only for a length and characters but also
-/// for card system code. If it's not found the succession of numbers
-/// will not be marked as a valid card number
-bool isCardValidNumber(
-  String cardNumber, {
+/// [useLuhnAlgo] validates the number using the Luhn algorithm
+bool isCardNumberValid({
+  required String cardNumber,
   bool checkLength = false,
+  bool useLuhnAlgo = true,
 }) {
   cardNumber = toNumericString(
     cardNumber,
@@ -153,11 +152,28 @@ bool isCardValidNumber(
       (checkLength == false || reprocessed.length == countryData.numDigits);
 }
 
+/// checks not only for a length and characters but also
+/// for card system code. If it's not found the succession of numbers
+/// will not be marked as a valid card number
+@Deprecated('Use isCardNumberValid() instead')
+bool isCardValidNumber(
+  String cardNumber, {
+  bool checkLength = false,
+}) {
+  return isCardNumberValid(
+    cardNumber: cardNumber,
+    checkLength: checkLength,
+    useLuhnAlgo: false,
+  );
+}
+
 String formatAsCardNumber(
   String cardNumber, {
   bool useSeparators = true,
 }) {
-  if (!isCardValidNumber(cardNumber)) {
+  if (!isCardNumberValid(
+    cardNumber: cardNumber,
+  )) {
     return cardNumber;
   }
   cardNumber = toNumericString(
