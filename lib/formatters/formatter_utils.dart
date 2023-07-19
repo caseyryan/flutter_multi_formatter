@@ -464,14 +464,14 @@ String? _detectFractionSeparator(String value) {
     return null;
   }
   final separator = value[index];
-  int numOccurences = 0;
+  int numOccurrences = 0;
   for (var i = 0; i < value.length; i++) {
     final char = value[i];
     if (char == separator) {
-      numOccurences++;
+      numOccurrences++;
     }
   }
-  if (numOccurences == 1) {
+  if (numOccurrences == 1) {
     return separator;
   }
   return null;
@@ -529,8 +529,8 @@ String toCurrencyString(
     allowPeriod: true,
     mantissaSeparator: mSeparator,
   );
-  String? fractionalSeparator =
-      mantissaLength > 0 ? _detectFractionSeparator(value) : null;
+  String? fractionalSeparator = _detectFractionSeparator(value);
+  // mantissaLength > 0 ? _detectFractionSeparator(value) : null;
 
   var sb = StringBuffer();
   bool addedMantissaSeparator = false;

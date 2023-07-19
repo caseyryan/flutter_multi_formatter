@@ -26,7 +26,6 @@ class _CreditCardFormatPageState extends State<CreditCardFormatPage> {
       '-888',
       mantissaLength: 2,
     );
-    print(negativeString);
     return Unfocuser(
       child: Scaffold(
         appBar: AppBar(

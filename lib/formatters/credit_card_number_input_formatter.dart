@@ -40,6 +40,7 @@ class CardSystem {
   static const String MAESTRO = 'Maestro';
   static const String AMERICAN_EXPRESS = 'Amex';
   static const String DINERS_CLUB = 'DinersClub';
+  static const String UZ_CARD = 'UzCard';
 }
 
 class CreditCardNumberInputFormatter extends TextInputFormatter {
@@ -338,6 +339,12 @@ class _CardSystemDatas {
     {
       'system': CardSystem.JCB,
       'systemCode': '35',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.UZ_CARD,
+      'systemCode': '8600',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
     },

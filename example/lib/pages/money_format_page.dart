@@ -81,9 +81,12 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
-                      trailingSymbol: '',
-                      thousandSeparator: ThousandSeparator.Comma,
+                      leadingSymbol: '',
+                      thousandSeparator: ThousandSeparator.Space,
                       mantissaLength: 0,
+                      onValueChange: (value) {
+                        print(value);
+                      },
                     )
                   ],
                 ),

@@ -1,3 +1,7 @@
+## [2.11.4]
+Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/131
+Added new card system https://github.com/caseyryan/flutter_multi_formatter/issues/109
+- Fixed a bug with incorrect decimal point detection when mantissa length is 0
 ## [2.11.2]
 - Merged this pull request https://github.com/caseyryan/flutter_multi_formatter/pull/132
 ## [2.11.1]

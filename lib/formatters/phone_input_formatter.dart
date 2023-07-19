@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'formatter_utils.dart';
@@ -239,7 +240,7 @@ class PhoneInputFormatter extends TextInputFormatter {
     checkMask(newMask);
     final countryData = _findCountryDataByCountryCode(countryCode);
     var currentMask = countryData['phoneMask'];
-    if (currentMask != newMask) {
+    if (currentMask != newMask && kDebugMode) {
       print(
         'Phone mask for country "${countryData['country']}"' +
             ' was replaced from $currentMask to $newMask',
@@ -806,7 +807,8 @@ class PhoneCodes {
       'countryRU': 'Армения',
       'internalPhoneCode': '374',
       'countryCode': 'AM',
-      'phoneMask': '+000 000 000 0000',
+      'phoneMask': '+000 000 000 00',
+      'altMasks': ['+000 000 000 0000']
     },
     {
       'country': 'Aruba',
