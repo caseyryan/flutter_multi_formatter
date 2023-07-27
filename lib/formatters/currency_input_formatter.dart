@@ -40,7 +40,7 @@ class CurrencySymbols {
   static const String EURO_SIGN = '€';
   static const String POUND_SIGN = '£';
   static const String YEN_SIGN = '￥';
-  static const String ETHERIUM_SIGN = 'Ξ';
+  static const String ETHEREUM_SIGN = 'Ξ';
   static const String BITCOIN_SIGN = 'Ƀ';
   static const String SWISS_FRANK_SIGN = '₣';
   static const String RUBLE_SIGN = '₽';
@@ -55,7 +55,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
   final int? maxTextLength;
   final ValueChanged<num>? onValueChange;
 
-  bool _printDebugInfo = false;
+  bool _printDebugInfo = true;
 
   /// [thousandSeparator] specifies what symbol will be used to separate
   /// each block of 3 digits, e.g. [ThousandSeparator.Comma] will format
@@ -67,7 +67,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
   /// added in front of the resulting string. E.g. $ or €
   /// some of the signs are available via constants like [CurrencySymbols.EURO_SIGN]
   /// but you can basically add any string instead of it. The main rule is that the string
-  /// must not contain digits, preiods, commas and dashes
+  /// must not contain digits, periods, commas and dashes
   /// [trailingSymbol] is the same as leading but this symbol will be added at the
   /// end of your resulting string like 1,250€ instead of €1,250
   /// [useSymbolPadding] adds a space between the number and trailing / leading symbols
@@ -371,7 +371,12 @@ class CurrencyInputFormatter extends TextInputFormatter {
         longerString: newText,
         shorterString: oldText,
       );
-      if (_containsMantissaSeparator(newChars)) {
+
+      /// [hasWrongSeparator] is an attempt to fix this
+      /// https://github.com/caseyryan/flutter_multi_formatter/issues/114
+      /// Not sure if it will have some side effect
+      final hasWrongSeparator = newText.contains(',.');
+      if (_containsMantissaSeparator(newChars) || hasWrongSeparator) {
         return true;
       }
     }

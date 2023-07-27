@@ -49,7 +49,7 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                   ),
                   keyboardType: TextInputType.numberWithOptions(
                     decimal: true,
-                    signed: true,
+                    // signed: true,
                   ),
                   inputFormatters: [
                     CurrencyInputFormatter(
