@@ -27,6 +27,7 @@ THE SOFTWARE.
 import 'dart:math';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_multi_formatter/utils/luhn_algo.dart';
 
 import 'formatter_utils.dart';
 
@@ -145,6 +146,12 @@ bool isCardNumberValid({
   var countryData = _CardSystemDatas.getCardSystemDataByNumber(cardNumber);
   if (countryData == null) {
     return false;
+  }
+  if (useLuhnAlgo) {
+    final isLuhnOk = checkNumberByLuhn(number: cardNumber);
+    if (!isLuhnOk) {
+      return false;
+    }
   }
   var formatted = _formatByMask(cardNumber, countryData.numberMask!);
   var reprocessed = toNumericString(formatted);

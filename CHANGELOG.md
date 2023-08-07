@@ -1,3 +1,5 @@
+## [2.11.7]
+- Fixed missing Luhn algo check in isCardNumberValid function 
 ## [2.11.6]
 Potential fix https://github.com/caseyryan/flutter_multi_formatter/issues/114
 ## [2.11.5]
