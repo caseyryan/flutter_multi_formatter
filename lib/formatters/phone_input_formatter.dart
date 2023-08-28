@@ -92,9 +92,8 @@ class PhoneInputFormatter extends TextInputFormatter {
     if (shouldCorrectNumber && onlyNumbers.length == 2) {
       /// хак специально для России, со вводом номера с восьмерки
       /// меняем ее на 7
-      var isRussianWrongNumber =
-          onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
-              onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
+      var isRussianWrongNumber = onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
+          onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
       if (isRussianWrongNumber) {
         onlyNumbers = '7${onlyNumbers[1]}';
         _countryData = null;
@@ -104,8 +103,7 @@ class PhoneInputFormatter extends TextInputFormatter {
         );
       }
 
-      final isAustralianPhoneNumber =
-          onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
+      final isAustralianPhoneNumber = onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
       if (isAustralianPhoneNumber) {
         onlyNumbers = '61${onlyNumbers[1]}';
         _countryData = null;
@@ -2304,6 +2302,18 @@ class PhoneCodes {
       'internalPhoneCode': '7',
       'countryCode': 'RU',
       'phoneMask': '+0 (000) 000-00-00',
+    },
+    {
+      'country': 'Ascension Island',
+      'countryRU': 'Остров Вознесения',
+      'internalPhoneCode': '247',
+      'countryCode': 'AC',
+      'phoneMask': '+000 000000',
+      'altMasks': [
+        '+000 00000',
+        '+000 00000-00000',
+        '+000 000000-000000',
+      ]
     },
     {
       'country': 'Saint Barthélemy',
