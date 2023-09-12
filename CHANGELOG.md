@@ -1,3 +1,6 @@
+## [2.11.8]
+Merged https://github.com/caseyryan/flutter_multi_formatter/pull/140 
+adding isForce parameter to getAllCountryCodes
 ## [2.11.7]
 - Fixed missing Luhn algo check in isCardNumberValid function 
 ## [2.11.6]

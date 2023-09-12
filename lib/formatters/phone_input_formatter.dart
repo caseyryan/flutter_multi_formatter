@@ -92,8 +92,9 @@ class PhoneInputFormatter extends TextInputFormatter {
     if (shouldCorrectNumber && onlyNumbers.length == 2) {
       /// хак специально для России, со вводом номера с восьмерки
       /// меняем ее на 7
-      var isRussianWrongNumber = onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
-          onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
+      var isRussianWrongNumber =
+          onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
+              onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
       if (isRussianWrongNumber) {
         onlyNumbers = '7${onlyNumbers[1]}';
         _countryData = null;
@@ -103,7 +104,8 @@ class PhoneInputFormatter extends TextInputFormatter {
         );
       }
 
-      final isAustralianPhoneNumber = onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
+      final isAustralianPhoneNumber =
+          onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
       if (isAustralianPhoneNumber) {
         onlyNumbers = '61${onlyNumbers[1]}';
         _countryData = null;
@@ -706,6 +708,7 @@ class PhoneCodes {
   /// countryRU. If you want to translate the names of the countries
   /// to your language, please feel free to do it and make a pull request.
   /// Just keep the naming convention like countryBR, countryDE and so on
+  /// [isForce] pass true if you need to update cache
   static List<PhoneCountryData> getAllCountryDatas({
     String langCode = '',
     bool isForce = false,
