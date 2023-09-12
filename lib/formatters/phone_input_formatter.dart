@@ -690,8 +690,10 @@ class PhoneCodes {
 
   /// [returns] a list of all available country codes like
   /// ['RU', 'US', 'GB'] etc
-  static List<String> getAllCountryCodes() {
-    if (_countryCodes == null) {
+  static List<String> getAllCountryCodes({
+    bool isForce = false,
+  }) {
+    if (_countryCodes == null || isForce) {
       _countryCodes = _data.map((e) => e['countryCode'].toString()).toList();
     }
     return _countryCodes!;
@@ -706,8 +708,9 @@ class PhoneCodes {
   /// Just keep the naming convention like countryBR, countryDE and so on
   static List<PhoneCountryData> getAllCountryDatas({
     String langCode = '',
+    bool isForce = false,
   }) {
-    if (_allCountryDatas == null) {
+    if (_allCountryDatas == null || isForce) {
       _allCountryDatas = _data
           .map((e) => e.containsKey('country${langCode.toUpperCase()}')
               ? PhoneCountryData.fromMap(e, lang: langCode)
