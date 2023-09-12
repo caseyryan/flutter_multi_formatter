@@ -1,3 +1,6 @@
+## [2.11.9]
+Fixed Czech phone mask
+https://github.com/caseyryan/flutter_multi_formatter/issues/141
 ## [2.11.8]
 Merged https://github.com/caseyryan/flutter_multi_formatter/pull/140 
 adding isForce parameter to getAllCountryCodes

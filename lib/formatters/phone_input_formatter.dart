@@ -1105,7 +1105,7 @@ class PhoneCodes {
       'countryRU': 'Чешская Республика',
       'internalPhoneCode': '420',
       'countryCode': 'CZ',
-      'phoneMask': '+000 00 000 0000',
+      'phoneMask': '+000 000 000 000',
     },
     {
       'country': 'Denmark',
@@ -1912,7 +1912,7 @@ class PhoneCodes {
       'countryRU': 'Словакия',
       'internalPhoneCode': '421',
       'countryCode': 'SK',
-      'phoneMask': '+000 00 000 0000',
+      'phoneMask': '+000 000 000 000',
     },
     {
       'country': 'Slovenia',
