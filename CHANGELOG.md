@@ -1,3 +1,6 @@
+## [2.11.10]
+- Completely changed the logic of Unfocuser widget since the previous one 
+doesn't work anymore
 ## [2.11.9]
 Fixed Czech phone mask
 https://github.com/caseyryan/flutter_multi_formatter/issues/141

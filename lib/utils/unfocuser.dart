@@ -25,115 +25,33 @@ THE SOFTWARE.
 */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
-/// [minScrollDistance] if you do not want Unfocuser
-/// to remove current focus on scroll, set this value
-/// as you prefer. By default it's set to 10 pixels
-/// this means that if you touch the screen and drag
-/// more that 10 pixels it will be considered as
-/// scrolling and unfocuser will not trigger
-/// In case you want it to always unfocus current text field
-/// just set this value to 0.0
-class Unfocuser extends StatefulWidget {
-  final Widget child;
-  final double minScrollDistance;
-  final bool isEnabled;
-
+class Unfocuser extends StatelessWidget {
   const Unfocuser({
     Key? key,
     required this.child,
     this.isEnabled = true,
-    this.minScrollDistance = 10.0,
-  }) : super(key: key);
+  }) : super(
+          key: key,
+        );
 
-  @override
-  _UnfocuserState createState() => _UnfocuserState();
-}
-
-class _UnfocuserState extends State<Unfocuser> {
-  RenderBox? _lastRenderBox;
-  Offset? _touchStartPosition;
+  final Widget child;
+  final bool isEnabled;
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.isEnabled) {
-      return widget.child;
+    if (!isEnabled) {
+      return child;
     }
-    return Listener(
-      onPointerDown: (e) {
-        _touchStartPosition = e.position;
-      },
-      onPointerUp: (e) {
-        var touchStopPosition = e.position;
-        if (widget.minScrollDistance > 0.0 && _touchStartPosition != null) {
-          var difference = _touchStartPosition! - touchStopPosition;
-          _touchStartPosition = null;
-          if (difference.distance > widget.minScrollDistance) {
-            return;
-          }
-        }
-
-        var rb = context.findRenderObject() as RenderBox;
-        var result = BoxHitTestResult();
-        rb.hitTest(result, position: touchStopPosition);
-
-        if (result.path.any(
-            (entry) => entry.target.runtimeType == IgnoreUnfocuserRenderBox)) {
-          return;
-        }
-        var isEditable = result.path.any((entry) =>
-            entry.target.runtimeType == RenderEditable ||
-            entry.target.runtimeType == RenderParagraph ||
-            entry.target.runtimeType == ForceUnfocuserRenderBox);
-
-        var currentFocus = FocusScope.of(context);
-        if (!isEditable) {
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-            _lastRenderBox = null;
-          }
-        } else {
-          for (var entry in result.path) {
-            var isEditable = entry.target.runtimeType == RenderEditable ||
-                entry.target.runtimeType == RenderParagraph ||
-                entry.target.runtimeType == ForceUnfocuserRenderBox;
-
-            if (isEditable) {
-              var renderBox = (entry.target as RenderBox);
-              if (_lastRenderBox != renderBox) {
-                _lastRenderBox = renderBox;
-                setState(() {});
-              }
-            }
-          }
+    return GestureDetector(
+      onTap: () {
+        final focusScopeNode = FocusScope.of(context);
+        if (focusScopeNode.hasPrimaryFocus == false &&
+            focusScopeNode.focusedChild != null) {
+          FocusManager.instance.primaryFocus?.unfocus();
         }
       },
-      child: widget.child,
+      child: child,
     );
   }
 }
-
-class IgnoreUnfocuser extends SingleChildRenderObjectWidget {
-  const IgnoreUnfocuser({Key? key, required Widget child})
-      : super(key: key, child: child);
-
-  @override
-  IgnoreUnfocuserRenderBox createRenderObject(BuildContext context) {
-    return IgnoreUnfocuserRenderBox();
-  }
-}
-
-class ForceUnfocuser extends SingleChildRenderObjectWidget {
-  const ForceUnfocuser({Key? key, required Widget child})
-      : super(key: key, child: child);
-
-  @override
-  ForceUnfocuserRenderBox createRenderObject(BuildContext context) {
-    return ForceUnfocuserRenderBox();
-  }
-}
-
-class IgnoreUnfocuserRenderBox extends RenderPointerListener {}
-
-class ForceUnfocuserRenderBox extends RenderPointerListener {}
