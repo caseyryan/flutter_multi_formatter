@@ -240,13 +240,19 @@ class PhoneInputFormatter extends TextInputFormatter {
     checkMask(newMask);
     final countryData = _findCountryDataByCountryCode(countryCode);
     var currentMask = countryData['phoneMask'];
-    if (currentMask != newMask && kDebugMode) {
+
+    if (currentMask == newMask) {
+      return;
+    }
+
+    if (kDebugMode) {
       print(
         'Phone mask for country "${countryData['country']}"' +
             ' was replaced from $currentMask to $newMask',
       );
-      countryData['phoneMask'] = newMask;
     }
+
+    countryData['phoneMask'] = newMask;
   }
 
   static Map<String, dynamic> _findCountryDataByCountryCode(
