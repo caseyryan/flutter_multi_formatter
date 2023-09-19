@@ -1,3 +1,5 @@
+## [2.11.11]
+- Merged https://github.com/caseyryan/flutter_multi_formatter/pull/142
 ## [2.11.10]
 - Completely changed the logic of Unfocuser widget since the previous one 
 doesn't work anymore
