@@ -1,4 +1,5 @@
-## [2.11.13]
+## [2.11.14]
+- Fixed Luhn algorithm
 ## [2.11.12]
 - Updated README
 - Added this https://github.com/caseyryan/flutter_multi_formatter/issues/137
