@@ -92,8 +92,9 @@ class PhoneInputFormatter extends TextInputFormatter {
     if (shouldCorrectNumber && onlyNumbers.length >= 2) {
       /// хак специально для России, со вводом номера с восьмерки
       /// меняем ее на 7
-      var isRussianWrongNumber = onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
-          onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
+      var isRussianWrongNumber =
+          onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
+              onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
       if (isRussianWrongNumber) {
         onlyNumbers = '7${onlyNumbers.substring(1)}';
         _countryData = null;
@@ -103,7 +104,8 @@ class PhoneInputFormatter extends TextInputFormatter {
         );
       }
 
-      final isAustralianPhoneNumber = onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
+      final isAustralianPhoneNumber =
+          onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
       if (isAustralianPhoneNumber) {
         onlyNumbers = '61${onlyNumbers.substring(1)}';
         _countryData = null;

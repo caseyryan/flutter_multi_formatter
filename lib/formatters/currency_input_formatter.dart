@@ -29,6 +29,8 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_multi_formatter/extensions/int_extensions.dart';
+import 'package:flutter_multi_formatter/extensions/string_extensions.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 final RegExp _mantissaSeparatorRegexp = RegExp(r'[,.]');
@@ -55,7 +57,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
   final int? maxTextLength;
   final ValueChanged<num>? onValueChange;
 
-  bool _printDebugInfo = true;
+  bool _printDebugInfo = false;
 
   /// [thousandSeparator] specifies what symbol will be used to separate
   /// each block of 3 digits, e.g. [ThousandSeparator.Comma] will format
@@ -126,8 +128,8 @@ class CurrencyInputFormatter extends TextInputFormatter {
   ) {
     final trailingLength = _getTrailingLength();
     final leadingLength = _getLeadingLength();
-    final oldCaretIndex = max(oldValue.selection.start, oldValue.selection.end);
-    final newCaretIndex = max(newValue.selection.start, newValue.selection.end);
+    int oldCaretIndex = max(oldValue.selection.start, oldValue.selection.end);
+    int newCaretIndex = max(newValue.selection.start, newValue.selection.end);
     var newText = newValue.text;
     final newAsNumeric = toNumericString(
       newText,
@@ -158,6 +160,26 @@ class CurrencyInputFormatter extends TextInputFormatter {
               ),
             ),
           );
+        }
+      } else {
+        if (thousandSeparator == ThousandSeparator.Space) {
+          /// It's a dirty hack to try and fix this issue
+          /// https://github.com/caseyryan/flutter_multi_formatter/issues/145
+          /// The problem there is that after erasing just a white space
+          /// the number from e.g. this 45 555 $ becomes this 45555 $ but
+          /// after applying the format again in regains the lost space and
+          /// this leads to a situation when nothing seems to be changed
+          final differences = _findDifferentChars(
+            longerString: oldText,
+            shorterString: newText,
+          );
+          if (differences.length == 1 && differences.first == ' ') {
+            if (newCaretIndex > 0) {
+              newCaretIndex = newCaretIndex.subtractClamping(1);
+              oldCaretIndex = oldCaretIndex.subtractClamping(1);
+              newText = newText.removeCharAt(newCaretIndex);
+            }
+          }
         }
       }
       if (_hasErasedMantissaSeparator(
@@ -282,12 +304,12 @@ class CurrencyInputFormatter extends TextInputFormatter {
       (oldCaretIndex + lengthDiff),
       leadingLength + 1,
     );
-
     if (initialCaretOffset < 1) {
       if (newAsCurrency.isNotEmpty) {
         initialCaretOffset += 1;
       }
     }
+
     if (_printDebugInfo) {
       print('RETURN 8 $newAsCurrency');
     }
@@ -449,10 +471,10 @@ class CurrencyInputFormatter extends TextInputFormatter {
       if (sub.length > leadingSymbol.length) {
         return true;
       }
-      clearedInput = clearedInput.replaceAll(leadingSymbol, '');
+      clearedInput = clearedInput.replaceAll(RegExp('[$leadingSymbol]+'), '');
     }
     if (trailingSymbol.isNotEmpty) {
-      clearedInput = clearedInput.replaceAll(trailingSymbol, '');
+      clearedInput = clearedInput.replaceAll(RegExp('[$trailingSymbol]+'), '');
     }
     clearedInput = clearedInput.replaceAll(' ', '');
     return _illegalCharsRegexp.hasMatch(clearedInput);
