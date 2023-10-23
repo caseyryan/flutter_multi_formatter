@@ -1,3 +1,6 @@
+## [2.11.15]
+- Added PhoneCodes.removeCountryCode method which simply remove a country code from a phone
+- PhoneCodes.getCountryDataByPhone now accepts phones with a leading plus
 ## [2.11.14]
 - Fixed Luhn algorithm
 ## [2.11.12]

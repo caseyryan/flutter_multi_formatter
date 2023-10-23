@@ -34,31 +34,6 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                 _getText(
                   'The first field uses no trailing or leading symbols, and no decimal points',
                 ),
-                TextFormField(
-                  autofocus: true,
-                  // controller: _controller,
-                  // focusNode: _focusNode,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Сумма',
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [
-                    CurrencyInputFormatter(
-                      thousandSeparator: ThousandSeparator.Space,
-                      mantissaLength: 0,
-                      trailingSymbol: ' ₽',
-                    )
-                  ],
-                ),
                 const SizedBox(
                   height: 10.0,
                 ),

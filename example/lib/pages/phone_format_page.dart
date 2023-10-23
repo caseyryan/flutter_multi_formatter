@@ -101,7 +101,7 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                       Expanded(
                         flex: 5,
                         child: TextFormField(
-                          key: ValueKey(_initialCountryData ?? 'country'),
+                          key: ValueKey(_initialCountryData),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             hintText: _initialCountryData
@@ -156,8 +156,8 @@ class _PhoneFormatPageState extends State<PhoneFormatPage> {
                       Expanded(
                         flex: 5,
                         child: TextFormField(
-                          key: ValueKey(
-                              _initialCountryDataFiltered ?? 'country'),
+                          key: Key(_initialCountryDataFiltered?.countryCode ??
+                              'country2'),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             hintText: _initialCountryDataFiltered

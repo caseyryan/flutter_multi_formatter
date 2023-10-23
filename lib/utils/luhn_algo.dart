@@ -22,4 +22,3 @@ bool checkNumberByLuhn({
   }
   return (sum % 10 == 0);
 }
-
