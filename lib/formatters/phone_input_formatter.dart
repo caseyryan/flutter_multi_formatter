@@ -345,6 +345,8 @@ String? formatAsPhoneNumber(
         return null;
       case InvalidPhoneAction.ShowPhoneInvalidString:
         return 'invalid phone';
+      case InvalidPhoneAction.DoNothing:
+        break;
     }
   }
   phone = toNumericString(

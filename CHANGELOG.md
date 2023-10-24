@@ -1,3 +1,5 @@
+## [2.11.16]
+- Added DoNothing clause
 ## [2.11.15]
 - Added PhoneCodes.removeCountryCode method which simply remove a country code from a phone
 - PhoneCodes.getCountryDataByPhone now accepts phones with a leading plus
