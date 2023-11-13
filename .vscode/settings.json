@@ -1,4 +1,8 @@
 {
     "dart.flutterSdkPath": "/Users/konstantin/FlutterProjects/flutter_multi_formatter/.fvm/flutter_sdk",
-    "git-blame.gitWebUrl": ""
+    "git-blame.gitWebUrl": "",
+    "cSpell.words": [
+        "bech",
+        "Schyler"
+    ]
 }

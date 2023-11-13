@@ -230,7 +230,7 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                 ),
                 _getText(
                   'You can also use another thousand separators by setting a [thousandSeparator] param ' +
-                      ' to one of the predefined enum values. This example uses ThousandSeparator.SpaceAndPeriodMantissa. This means that thausands' +
+                      ' to one of the predefined enum values. This example uses ThousandSeparator.SpaceAndPeriodMantissa. This means that thousands' +
                       ' will be separated by spaces and mantissa part by comma',
                 ),
                 TextFormField(

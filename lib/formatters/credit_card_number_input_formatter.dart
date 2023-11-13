@@ -174,14 +174,11 @@ bool isCardValidNumber(
   );
 }
 
-String formatAsCardNumber(
-  String cardNumber, {
-  bool useSeparators = true,
-}) {
+String formatAsCardNumber(String cardNumber) {
   if (!isCardNumberValid(
     cardNumber: cardNumber,
   )) {
-    return cardNumber;
+    return _formatByMask(cardNumber, '0000 0000 0000 0000');
   }
   cardNumber = toNumericString(
     cardNumber,

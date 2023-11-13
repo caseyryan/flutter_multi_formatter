@@ -1,3 +1,7 @@
+## [2.12.0]
+- Updated SKD restrictions
+- formatAsCardNumber now also tries to format invalid cards
+- Added `toPhoneNumber()`, `toCardNumber()`, `isValidCardNumber()` string extensions
 ## [2.11.16]
 - Added DoNothing clause
 ## [2.11.15]
