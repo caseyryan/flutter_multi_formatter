@@ -1,5 +1,6 @@
 ## [2.12.1]
 - Fixed a bug with incorrect decimal point detection when mantissa length is 0
+- Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/136 Error Range start 5 is out of text of length 1 #136
 ## [2.12.0]
 - Updated SKD restrictions
 - formatAsCardNumber now also tries to format invalid cards

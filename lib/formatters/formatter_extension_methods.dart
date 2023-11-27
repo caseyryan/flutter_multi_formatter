@@ -48,7 +48,7 @@ extension NumericInputFormatting on num {
   /// added in front of the resulting string. E.g. $ or €
   /// some of the signs are available via constants like [CurrencySymbols.EURO_SIGN]
   /// but you can basically add any string instead of it. The main rule is that the string
-  /// must not contain digits, preiods, commas and dashes
+  /// must not contain digits, periods, commas and dashes
   /// [trailingSymbol] is the same as leading but this symbol will be added at the
   /// end of your resulting string like 1,250€ instead of €1,250
   /// [useSymbolPadding] adds a space between the number and trailing / leading symbols
@@ -103,7 +103,7 @@ extension StringInputFormatting on String {
   /// added in front of the resulting string. E.g. $ or €
   /// some of the signs are available via constants like [MoneyInputFormatter.EURO_SIGN]
   /// but you can basically add any string instead of it. The main rule is that the string
-  /// must not contain digits, preiods, commas and dashes
+  /// must not contain digits, periods, commas and dashes
   /// [trailingSymbol] is the same as leading but this symbol will be added at the
   /// end of your resulting string like 1,250€ instead of €1,250
   /// [useSymbolPadding] adds a space between the number and trailing / leading symbols

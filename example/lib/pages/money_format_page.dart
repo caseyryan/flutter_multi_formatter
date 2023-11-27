@@ -55,6 +55,10 @@ class _MoneyFormatPageState extends State<MoneyFormatPage> {
                     // signed: true,
                   ),
                   inputFormatters: [
+                    // CurrencyInputFormatter(
+                    //   thousandSeparator: ThousandSeparator.Period,
+                    //   mantissaLength: 0,
+                    // )
                     CurrencyInputFormatter(
                       thousandSeparator: ThousandSeparator.Space,
                       mantissaLength: 2,
