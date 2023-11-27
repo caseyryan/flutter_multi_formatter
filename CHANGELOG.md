@@ -1,3 +1,5 @@
+## [2.12.1]
+- Fixed a bug with incorrect decimal point detection when mantissa length is 0
 ## [2.12.0]
 - Updated SKD restrictions
 - formatAsCardNumber now also tries to format invalid cards
