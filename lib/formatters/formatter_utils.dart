@@ -529,8 +529,8 @@ String toCurrencyString(
     allowPeriod: true,
     mantissaSeparator: mSeparator,
   );
-  String? fractionalSeparator = _detectFractionSeparator(value);
-  // mantissaLength > 0 ? _detectFractionSeparator(value) : null;
+  String? fractionalSeparator =
+      mantissaLength > 0 ? _detectFractionSeparator(value) : null;
 
   var sb = StringBuffer();
   bool addedMantissaSeparator = false;
