@@ -135,6 +135,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
       newText,
       allowPeriod: true,
       mantissaSeparator: _mantissaSeparator,
+      mantissaLength: mantissaLength,
     );
     _updateValue(newAsNumeric);
 
@@ -329,6 +330,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
       value,
       allowPeriod: true,
       mantissaSeparator: _mantissaSeparator,
+      mantissaLength: mantissaLength,
     );
     try {
       return double.parse(value) == 0.0;
