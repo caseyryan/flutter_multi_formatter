@@ -25,7 +25,6 @@ const allFiatCurrencies = const <String>[
   'SEK',
   'PLN',
   'TRY',
-  'BTC',
   'CLP',
   'NOK',
   'PHP',

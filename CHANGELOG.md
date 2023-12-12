@@ -1,3 +1,5 @@
+## [2.12.2]
+- Removed BTC from the list of fiat currencies
 ## [2.12.1]
 - Fixed https://github.com/caseyryan/flutter_multi_formatter/issues/136 Error Range start 5 is out of text of length 1 #136
 
