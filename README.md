@@ -10,7 +10,7 @@ If you want to support my development you can donate some `ETH / USDT`
 
 <img src="https://github.com/caseyryan/reflect_buddy/blob/master/trust.jpg?raw=true" width="220"/>
 
-[Donate via Trust Wallet](https://link.trustwallet.com/send?address=0xaDed99fda2AA53B3aFC8bB2d27b14910dB9CEdA1&asset=c60)
+[Donate some Ethereum or USDT](https://link.trustwallet.com/send?address=0xaDed99fda2AA53B3aFC8bB2d27b14910dB9CEdA1&asset=c60)
 
 ---
 
