@@ -108,19 +108,22 @@ extension StringInputFormatting on String {
   /// end of your resulting string like 1,250€ instead of €1,250
   /// [useSymbolPadding] adds a space between the number and trailing / leading symbols
   /// like 1,250€ -> 1,250 € or €1,250€ -> € 1,250
-  String toCurrencyString(
-      {int mantissaLength = 2,
-      ThousandSeparator thousandSeparator = ThousandSeparator.Comma,
-      ShorteningPolicy shorteningPolicy = ShorteningPolicy.NoShortening,
-      String leadingSymbol = '',
-      String trailingSymbol = '',
-      bool useSymbolPadding = false}) {
-    return fu.toCurrencyString(this.toString(),
-        mantissaLength: mantissaLength,
-        leadingSymbol: leadingSymbol,
-        shorteningPolicy: shorteningPolicy,
-        thousandSeparator: thousandSeparator,
-        trailingSymbol: trailingSymbol,
-        useSymbolPadding: useSymbolPadding);
+  String toCurrencyString({
+    int mantissaLength = 2,
+    ThousandSeparator thousandSeparator = ThousandSeparator.Comma,
+    ShorteningPolicy shorteningPolicy = ShorteningPolicy.NoShortening,
+    String leadingSymbol = '',
+    String trailingSymbol = '',
+    bool useSymbolPadding = false,
+  }) {
+    return fu.toCurrencyString(
+      toString(),
+      mantissaLength: mantissaLength,
+      leadingSymbol: leadingSymbol,
+      shorteningPolicy: shorteningPolicy,
+      thousandSeparator: thousandSeparator,
+      trailingSymbol: trailingSymbol,
+      useSymbolPadding: useSymbolPadding,
+    );
   }
 }

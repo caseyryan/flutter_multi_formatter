@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 library flutter_multi_formatter;
 
+export 'extensions/exports.dart';
 export 'formatters/credit_card_cvc_input_formatter.dart';
 export 'formatters/credit_card_expiration_input_formatter.dart';
 export 'formatters/credit_card_number_input_formatter.dart';

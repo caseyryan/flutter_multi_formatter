@@ -1,3 +1,6 @@
+## [2.12.3]
+- Added toStringAsSmartRound() to double extension
+- Re-Fixed a problem with incorrect rounding if mantissa == 0
 ## [2.12.2]
 - Removed BTC from the list of fiat currencies
 ## [2.12.1]

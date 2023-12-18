@@ -55,12 +55,12 @@ String toNumericString(
   } else if (inputString == '+') {
     return inputString;
   }
-  if (mantissaLength != null) {
-    if (mantissaLength < 1) {
-      /// a small hack to fix this https://github.com/caseyryan/flutter_multi_formatter/issues/136
-      inputString = inputString.replaceAll('.', '');
-    }
-  }
+  // if (mantissaLength != null) {
+  //   if (mantissaLength < 1) {
+  //     /// a small hack to fix this https://github.com/caseyryan/flutter_multi_formatter/issues/136
+  //     // inputString = inputString.replaceAll('.', '');
+  //   }
+  // }
   if (mantissaSeparator == '.') {
     inputString = inputString.replaceAll(',', '');
   } else if (mantissaSeparator == ',') {
@@ -457,8 +457,7 @@ String _getMantissaSeparator(
   if (thousandSeparator == ThousandSeparator.Comma) {
     return '.';
   }
-  if (thousandSeparator == ThousandSeparator.Period ||
-      thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
+  if (thousandSeparator == ThousandSeparator.Period || thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
     return ',';
   }
   return '.';
@@ -501,6 +500,7 @@ ShorteningPolicy _detectShorteningPolicyByStrLength(String evenPart) {
   return ShorteningPolicy.NoShortening;
 }
 
+/// [isRawValue] pass true if you 
 String toCurrencyString(
   String value, {
   int mantissaLength = 2,
@@ -509,7 +509,9 @@ String toCurrencyString(
   String leadingSymbol = '',
   String trailingSymbol = '',
   bool useSymbolPadding = false,
+  bool isRawValue = false,
 }) {
+
   bool isNegative = false;
   if (value.startsWith('-')) {
     value = value.replaceAll(RegExp(r'^[-+]+'), '');
@@ -527,7 +529,7 @@ String toCurrencyString(
     thousandSeparator,
   );
 
-  /// нужно только для того, чтобы недопустить числа начинающиеся с нуля
+  /// нужно только для того, чтобы не допустить числа начинающиеся с нуля
   /// 04.00 и т.д
   value = toNumericString(
     value,
@@ -537,10 +539,16 @@ String toCurrencyString(
     mantissaSeparator: mSeparator,
     mantissaLength: mantissaLength,
   );
-  String? fractionalSeparator = _detectFractionSeparator(value);
-  // mantissaLength > 0 ? _detectFractionSeparator(value) : null;
+  bool hasFraction = mantissaLength > 0;
+  String? fractionalSeparator;
+  if (hasFraction) {
+    fractionalSeparator = _detectFractionSeparator(value);
+  } else {
+    value = value.replaceAll(tSeparator, '');
+  }
 
   var sb = StringBuffer();
+
   bool addedMantissaSeparator = false;
   for (var i = 0; i < value.length; i++) {
     final char = value[i];
@@ -560,12 +568,17 @@ String toCurrencyString(
       } else {
         continue;
       }
+    } else {
+      if (!hasFraction) {
+        if (char == '.' && char != tSeparator) {
+          break;
+        }
+      }
     }
   }
 
   final str = sb.toString();
-  final evenPart =
-      addedMantissaSeparator ? str.substring(0, str.indexOf('.')) : str;
+  final evenPart = addedMantissaSeparator ? str.substring(0, str.indexOf('.')) : str;
 
   int skipEvenNumbers = 0;
   String shorteningName = '';
@@ -605,8 +618,7 @@ String toCurrencyString(
   }
   bool ignoreMantissa = skipEvenNumbers > 0;
 
-  final fractionalPart =
-      addedMantissaSeparator ? str.substring(str.indexOf('.') + 1) : '';
+  final fractionalPart = addedMantissaSeparator ? str.substring(str.indexOf('.') + 1) : '';
   final reversed = evenPart.split('').reversed.toList();
   List<String> temp = [];
   bool skippedLast = false;
