@@ -29,8 +29,6 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_multi_formatter/extensions/int_extensions.dart';
-import 'package:flutter_multi_formatter/extensions/string_extensions.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 final RegExp _mantissaSeparatorRegexp = RegExp(r'[,.]');

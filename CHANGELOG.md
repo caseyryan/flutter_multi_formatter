@@ -1,3 +1,5 @@
+## [2.12.4]
+- Added one more UZ_CARD format and HUMO according to this thread https://github.com/caseyryan/flutter_multi_formatter/issues/150
 ## [2.12.3]
 - Added toStringAsSmartRound() to double extension
 - Re-Fixed a problem with incorrect rounding if mantissa == 0

@@ -42,6 +42,7 @@ class CardSystem {
   static const String AMERICAN_EXPRESS = 'Amex';
   static const String DINERS_CLUB = 'DinersClub';
   static const String UZ_CARD = 'UzCard';
+  static const String HUMO = 'HUMO';
 }
 
 class CreditCardNumberInputFormatter extends TextInputFormatter {
@@ -155,8 +156,7 @@ bool isCardNumberValid({
   }
   var formatted = _formatByMask(cardNumber, countryData.numberMask!);
   var reprocessed = toNumericString(formatted);
-  return reprocessed == cardNumber &&
-      (checkLength == false || reprocessed.length == countryData.numDigits);
+  return reprocessed == cardNumber && (checkLength == false || reprocessed.length == countryData.numDigits);
 }
 
 /// checks not only for a length and characters but also
@@ -365,12 +365,18 @@ class _CardSystemDatas {
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
     },
-    // {
-    //   'system': CardSystem.JCB,
-    //   'systemCode': '35',
-    //   'numberMask': '0000 0000 0000 0000 000',
-    //   'numDigits': 19,
-    // },
+    {
+      'system': CardSystem.UZ_CARD,
+      'systemCode': '5614',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.HUMO,
+      'systemCode': '9860',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
     {
       'system': CardSystem.DISCOVER,
       'systemCode': '60',
