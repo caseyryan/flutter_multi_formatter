@@ -37,6 +37,7 @@ class CardSystem {
   static const String VISA = 'Visa';
   static const String MASTERCARD = 'Mastercard';
   static const String JCB = 'JCB';
+  static const String RUPAY = 'RuPay';
   static const String DISCOVER = 'Discover';
   static const String MAESTRO = 'Maestro';
   static const String AMERICAN_EXPRESS = 'Amex';
@@ -410,6 +411,36 @@ class _CardSystemDatas {
     {
       'system': CardSystem.MIR,
       'systemCode': '2204',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.RUPAY,
+      'systemCode': '60',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.RUPAY,
+      'systemCode': '65',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.RUPAY,
+      'systemCode': '81',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.RUPAY,
+      'systemCode': '82',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.RUPAY,
+      'systemCode': '508',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
     },
