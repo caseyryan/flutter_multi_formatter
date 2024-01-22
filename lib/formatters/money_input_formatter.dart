@@ -44,6 +44,7 @@ class MoneySymbols {
   static const String BITCOIN_SIGN = 'Ƀ';
   static const String SWISS_FRANK_SIGN = '₣';
   static const String RUBLE_SIGN = '₽';
+  static const String WON_SIGN = '₩';
 }
 
 @Deprecated(
