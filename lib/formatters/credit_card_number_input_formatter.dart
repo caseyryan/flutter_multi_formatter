@@ -156,7 +156,8 @@ bool isCardNumberValid({
   }
   var formatted = _formatByMask(cardNumber, countryData.numberMask!);
   var reprocessed = toNumericString(formatted);
-  return reprocessed == cardNumber && (checkLength == false || reprocessed.length == countryData.numDigits);
+  return reprocessed == cardNumber &&
+      (checkLength == false || reprocessed.length == countryData.numDigits);
 }
 
 /// checks not only for a length and characters but also

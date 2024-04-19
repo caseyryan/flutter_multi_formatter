@@ -457,7 +457,8 @@ String _getMantissaSeparator(
   if (thousandSeparator == ThousandSeparator.Comma) {
     return '.';
   }
-  if (thousandSeparator == ThousandSeparator.Period || thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
+  if (thousandSeparator == ThousandSeparator.Period ||
+      thousandSeparator == ThousandSeparator.SpaceAndCommaMantissa) {
     return ',';
   }
   return '.';
@@ -500,7 +501,7 @@ ShorteningPolicy _detectShorteningPolicyByStrLength(String evenPart) {
   return ShorteningPolicy.NoShortening;
 }
 
-/// [isRawValue] pass true if you 
+/// [isRawValue] pass true if you
 String toCurrencyString(
   String value, {
   int mantissaLength = 2,
@@ -511,7 +512,6 @@ String toCurrencyString(
   bool useSymbolPadding = false,
   bool isRawValue = false,
 }) {
-
   bool isNegative = false;
   if (value.startsWith('-')) {
     value = value.replaceAll(RegExp(r'^[-+]+'), '');
@@ -578,7 +578,8 @@ String toCurrencyString(
   }
 
   final str = sb.toString();
-  final evenPart = addedMantissaSeparator ? str.substring(0, str.indexOf('.')) : str;
+  final evenPart =
+      addedMantissaSeparator ? str.substring(0, str.indexOf('.')) : str;
 
   int skipEvenNumbers = 0;
   String shorteningName = '';
@@ -618,7 +619,8 @@ String toCurrencyString(
   }
   bool ignoreMantissa = skipEvenNumbers > 0;
 
-  final fractionalPart = addedMantissaSeparator ? str.substring(str.indexOf('.') + 1) : '';
+  final fractionalPart =
+      addedMantissaSeparator ? str.substring(str.indexOf('.') + 1) : '';
   final reversed = evenPart.split('').reversed.toList();
   List<String> temp = [];
   bool skippedLast = false;
