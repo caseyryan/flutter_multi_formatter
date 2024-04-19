@@ -1275,7 +1275,10 @@ class PhoneCodes {
       'countryRU': 'Германия',
       'internalPhoneCode': '49',
       'countryCode': 'DE',
-      'phoneMask': '+00 00 000000000',
+      'phoneMask': '+00 00 00000000',
+      'altMasks': [
+        '+00 00 000000000',
+      ]
     },
     {
       'country': 'Ghana',
