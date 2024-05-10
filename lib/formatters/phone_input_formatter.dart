@@ -1537,9 +1537,9 @@ class PhoneCodes {
       'countryRU': 'Литва',
       'internalPhoneCode': '370',
       'countryCode': 'LT',
-      'phoneMask': '+000 000 00000',
+      'phoneMask': '+000 000 0000',
       'altMasks': [
-        '+000 000 0000',
+        '+000 000 00000',
       ]
     },
     {
