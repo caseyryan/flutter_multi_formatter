@@ -380,6 +380,12 @@ class _CardSystemDatas {
     },
     {
       'system': CardSystem.DISCOVER,
+      'systemCode': '65',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.DISCOVER,
       'systemCode': '60',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
