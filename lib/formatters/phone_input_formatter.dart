@@ -1227,6 +1227,9 @@ class PhoneCodes {
       'internalPhoneCode': '358',
       'countryCode': 'FI',
       'phoneMask': '+000 00 000 0000',
+      'altMasks': [
+        '+000 000 000 0000',
+      ],
     },
     {
       'country': 'France',
@@ -1439,6 +1442,9 @@ class PhoneCodes {
       'internalPhoneCode': '39',
       'countryCode': 'IT',
       'phoneMask': '+00 00 000 0000',
+      'altMasks': [
+        '+00 000 000 0000',
+      ],
     },
     {
       'country': 'Jamaica',
