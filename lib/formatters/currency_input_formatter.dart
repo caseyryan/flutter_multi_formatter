@@ -523,10 +523,11 @@ class CurrencyInputFormatter extends TextInputFormatter {
       if (sub.length > leadingSymbol.length) {
         return true;
       }
-      clearedInput = clearedInput.replaceAll(RegExp('[$leadingSymbol]+'), '');
+
+      clearedInput = clearedInput.replaceFirst(leadingSymbol, '');
     }
     if (trailingSymbol.isNotEmpty) {
-      clearedInput = clearedInput.replaceAll(RegExp('[$trailingSymbol]+'), '');
+      clearedInput = clearedInput.replaceFirst(trailingSymbol, '');
     }
     clearedInput = clearedInput.replaceAll(' ', '');
     return _illegalCharsRegexp.hasMatch(clearedInput);
