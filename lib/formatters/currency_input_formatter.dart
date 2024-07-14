@@ -172,13 +172,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
     int oldCaretIndex = max(oldValue.selection.start, oldValue.selection.end);
     int newCaretIndex = max(newValue.selection.start, newValue.selection.end);
     var newText = newValue.text;
-    final newAsNumeric = toNumericString(
-      newText,
-      allowPeriod: true,
-      mantissaSeparator: _mantissaSeparator,
-      mantissaLength: mantissaLength,
-    );
-    _updateValue(newAsNumeric);
+    final newAsNumeric = _updateValueFromText(newText);
 
     var oldText = oldValue.text;
     if (oldValue == newValue) {
@@ -231,6 +225,10 @@ class CurrencyInputFormatter extends TextInputFormatter {
         if (_printDebugInfo) {
           print('RETURN 2 ${oldValue.text}');
         }
+
+        // propagate previous correct value with mantissa separator
+        _updateValueFromText(oldText);
+
         return oldValue.copyWith(
           selection: TextSelection.collapsed(
             offset: min(
@@ -245,6 +243,10 @@ class CurrencyInputFormatter extends TextInputFormatter {
         if (_printDebugInfo) {
           print('RETURN 3 ${oldValue.text}');
         }
+
+        // propagate previous correct value without illegal chars
+        _updateValueFromText(oldText);
+
         return oldValue;
       }
     }
@@ -270,6 +272,10 @@ class CurrencyInputFormatter extends TextInputFormatter {
       if (_printDebugInfo) {
         print('RETURN 4 ${oldValue.text.length} $oldCaretIndex');
       }
+
+      // propagate previous correct value with correct mantissa position
+      _updateValueFromText(oldText);
+
       return oldValue.copyWith(
         selection: TextSelection.collapsed(
           offset: min(
@@ -299,6 +305,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
         if (_printDebugInfo) {
           print('RETURN 6 $newAsCurrency');
         }
+
         int offset = min(
           newCaretIndex,
           newAsCurrency.length - trailingLength,
@@ -355,6 +362,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
     if (_printDebugInfo) {
       print('RETURN 8 $newAsCurrency');
     }
+
     return TextEditingValue(
       selection: TextSelection.collapsed(
         offset: initialCaretOffset,
