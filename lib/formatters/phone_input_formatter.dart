@@ -1342,6 +1342,9 @@ class PhoneCodes {
       'internalPhoneCode': '62',
       'countryCode': 'ID',
       'phoneMask': '+00 00 0000 0000',
+      'altMasks': [
+        '+00 000 0000 0000',
+      ],
     },
     {
       'country': 'Iraq',
