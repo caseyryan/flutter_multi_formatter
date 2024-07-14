@@ -110,7 +110,6 @@ class CurrencyInputFormatter extends TextInputFormatter {
   /// be used.
   ///
   /// @{endtemplate}
-  ///
   void _updateValue(String value) {
     if (onValueChange == null) {
       return;
@@ -162,6 +161,23 @@ class CurrencyInputFormatter extends TextInputFormatter {
     return '.';
   }
 
+  // For the package developers: if you added a new return case here and it's return
+  // a value that does not match the value triggered on "onChangedValue" then you
+  // need to call [_updateValue] or [_updateValueFromText] method before returning
+  // the value.
+  //
+  // Take as example the "RETURN 3" case:
+  //
+  // ```dart
+  // // ...
+  // if (_printDebugInfo) {
+  //   print('RETURN 3 ${oldValue.text}');
+  // }
+  //
+  // _updateValueFromText(oldText); // <-- this is the line that needs to be added
+  //
+  // return oldValue;
+  // ```
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
