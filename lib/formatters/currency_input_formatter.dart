@@ -55,7 +55,14 @@ class CurrencyInputFormatter extends TextInputFormatter {
   final int? maxTextLength;
   final ValueChanged<num>? onValueChange;
 
-  bool _printDebugInfo = false;
+  bool _printDebugInfo = true;
+
+  /// Indicates if there are any scheduled updates using [_widgetsBinding]'s `addPostFrameCallback`.
+  bool _scheduledUpdate = false;
+
+  /// The value that will be passed to [onValueChange] on the next scheduled frame.
+  /// This value need is updated using [_updateValue] and [_updateValueFromText].
+  late String _nextValue;
 
   /// [thousandSeparator] specifies what symbol will be used to separate
   /// each block of 3 digits, e.g. [ThousandSeparator.Comma] will format
@@ -90,25 +97,61 @@ class CurrencyInputFormatter extends TextInputFormatter {
     they might interfere with numbers: -,.+
   ''');
 
+  dynamic get _widgetsBinding {
+    return WidgetsBinding.instance;
+  }
+
+  // The use of [_nextValue] is a hack to avoid calling [onValueChange] twice while
+  // formatting the text.
+  /// @{template fmf_schedule_update}
+  ///
+  /// Updates the value that will be passed to [onValueChange] on the next frame.
+  /// If this is called more than once in a frame, only the last call [value] will
+  /// be used.
+  ///
+  /// @{endtemplate}
+  ///
   void _updateValue(String value) {
     if (onValueChange == null) {
       return;
     }
+    _nextValue = value;
+
+    if (_scheduledUpdate) {
+      return;
+    }
+
+    _scheduledUpdate = true;
     _widgetsBinding?.addPostFrameCallback((timeStamp) {
       try {
         if (mantissaLength < 1) {
-          onValueChange!(int.tryParse(value) ?? double.nan);
+          onValueChange!(int.parse(_nextValue));
         } else {
-          onValueChange!(double.tryParse(value) ?? double.nan);
+          onValueChange!(double.parse(_nextValue));
         }
       } catch (e) {
+        if (_printDebugInfo) print(e);
+
         onValueChange!(double.nan);
+      } finally {
+        _scheduledUpdate = false;
       }
     });
   }
 
-  dynamic get _widgetsBinding {
-    return WidgetsBinding.instance;
+  ///
+  /// @{macro fmf_schedule_update}
+  ///
+  String _updateValueFromText(String newText) {
+    final asNumeric = toNumericString(
+      newText,
+      allowPeriod: true,
+      mantissaSeparator: _mantissaSeparator,
+      mantissaLength: mantissaLength,
+    );
+    _updateValue(asNumeric);
+
+    return asNumeric;
   }
 
   String get _mantissaSeparator {
