@@ -1578,7 +1578,7 @@ class PhoneCodes {
       'internalPhoneCode': '60',
       'countryCode': 'MY',
       'phoneMask': '+00 0 000 0000',
-       'altMasks': [
+      'altMasks': [
         '+00 00 000 0000',
       ],
     },

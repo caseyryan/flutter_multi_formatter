@@ -464,7 +464,8 @@ class CurrencyInputFormatter extends TextInputFormatter {
       /// [hasWrongSeparator] is an attempt to fix this
       /// https://github.com/caseyryan/flutter_multi_formatter/issues/114
       /// Not sure if it will have some side effect
-      final hasWrongSeparator = newText.contains(',.') || newText.contains('.,');
+      final hasWrongSeparator =
+          newText.contains(',.') || newText.contains('.,');
       if (_containsMantissaSeparator(newChars) || hasWrongSeparator) {
         return true;
       }
@@ -482,7 +483,8 @@ class CurrencyInputFormatter extends TextInputFormatter {
         var nextChar = '';
         if (caretPosition < newText.length - 1) {
           nextChar = newText[caretPosition];
-          if (!isDigit(nextChar, positiveOnly: true) || int.tryParse(nextChar) == 0) {
+          if (!isDigit(nextChar, positiveOnly: true) ||
+              int.tryParse(nextChar) == 0) {
             return true;
           }
         }

@@ -1,3 +1,5 @@
+## [2.13.0]
+- Merged many fixes
 ## [2.12.8]
 - Merged https://github.com/caseyryan/flutter_multi_formatter/pull/155 /// Fix decimal separator issue for countries using "," as decimal separator #155
 - https://github.com/caseyryan/flutter_multi_formatter/pull/153 /// Add Won sign
