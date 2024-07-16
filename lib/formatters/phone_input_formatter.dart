@@ -1227,6 +1227,9 @@ class PhoneCodes {
       'internalPhoneCode': '358',
       'countryCode': 'FI',
       'phoneMask': '+000 00 000 0000',
+      'altMasks': [
+        '+000 000 000 0000',
+      ],
     },
     {
       'country': 'France',
@@ -1442,6 +1445,9 @@ class PhoneCodes {
       'internalPhoneCode': '39',
       'countryCode': 'IT',
       'phoneMask': '+00 00 000 0000',
+      'altMasks': [
+        '+00 000 000 0000',
+      ],
     },
     {
       'country': 'Jamaica',
@@ -1541,6 +1547,9 @@ class PhoneCodes {
       'internalPhoneCode': '370',
       'countryCode': 'LT',
       'phoneMask': '+000 000 0000',
+      'altMasks': [
+        '+000 000 00000',
+      ]
     },
     {
       'country': 'Luxembourg',
