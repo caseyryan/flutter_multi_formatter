@@ -952,9 +952,9 @@ class PhoneCodes {
       'countryRU': 'Бразилия',
       'internalPhoneCode': '55',
       'countryCode': 'BR',
-      'phoneMask': '+00 (00) 0000-0000',
+      'phoneMask': '+00 (00) 00000-0000',
       'altMasks': [
-        '+00 (00) 00000-0000',
+        '+00 (00) 0000-0000',
       ],
     },
     {
@@ -1227,6 +1227,9 @@ class PhoneCodes {
       'internalPhoneCode': '358',
       'countryCode': 'FI',
       'phoneMask': '+000 00 000 0000',
+      'altMasks': [
+        '+000 000 000 0000',
+      ],
     },
     {
       'country': 'France',
@@ -1411,6 +1414,9 @@ class PhoneCodes {
       'internalPhoneCode': '62',
       'countryCode': 'ID',
       'phoneMask': '+00 00 0000 0000',
+      'altMasks': [
+        '+00 000 0000 0000',
+      ],
     },
     {
       'country': 'Iraq',
@@ -1439,6 +1445,9 @@ class PhoneCodes {
       'internalPhoneCode': '39',
       'countryCode': 'IT',
       'phoneMask': '+00 00 000 0000',
+      'altMasks': [
+        '+00 000 000 0000',
+      ],
     },
     {
       'country': 'Jamaica',
@@ -1538,6 +1547,9 @@ class PhoneCodes {
       'internalPhoneCode': '370',
       'countryCode': 'LT',
       'phoneMask': '+000 000 0000',
+      'altMasks': [
+        '+000 000 00000',
+      ]
     },
     {
       'country': 'Luxembourg',
@@ -1566,6 +1578,9 @@ class PhoneCodes {
       'internalPhoneCode': '60',
       'countryCode': 'MY',
       'phoneMask': '+00 0 000 0000',
+       'altMasks': [
+        '+00 00 000 0000',
+      ],
     },
     {
       'country': 'Maldives',
