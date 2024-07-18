@@ -9,6 +9,7 @@ class CountryDropdown extends StatefulWidget {
   final CountryItemBuilder? selectedItemBuilder;
   final CountryItemBuilder? listItemBuilder;
   final bool printCountryName;
+  final bool showCountryFlag;
   final PhoneCountryData? initialCountryData;
   final List<PhoneCountryData>? filter;
   final ValueChanged<PhoneCountryData> onCountrySelected;
@@ -50,6 +51,7 @@ class CountryDropdown extends StatefulWidget {
     this.selectedItemBuilder,
     this.listItemBuilder,
     this.printCountryName = false,
+    this.showCountryFlag = true,
     this.initialCountryData,
     this.triggerOnCountrySelectedInitially = true,
     this.filter,
@@ -85,8 +87,7 @@ class _CountryDropdownState extends State<CountryDropdown> {
   void initState() {
     _countryItems = widget.filter ?? PhoneCodes.getAllCountryDatas();
     if (widget.initialCountryData != null) {
-      _initialValue = _countryItems
-              .firstWhereOrNull((c) => c == widget.initialCountryData) ??
+      _initialValue = _countryItems.firstWhereOrNull((c) => c == widget.initialCountryData) ??
           _countryItems.first;
     }
     if (widget.triggerOnCountrySelectedInitially && _initialValue != null) {
@@ -111,12 +112,13 @@ class _CountryDropdownState extends State<CountryDropdown> {
     }
     return Row(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: CountryFlag(
-            countryId: phoneCountryData.countryCode!,
+        if (widget.showCountryFlag)
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: CountryFlag(
+              countryId: phoneCountryData.countryCode!,
+            ),
           ),
-        ),
         Flexible(
           child: Text(
             '+${phoneCountryData.phoneCode}',
@@ -139,12 +141,13 @@ class _CountryDropdownState extends State<CountryDropdown> {
       children: [
         Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: CountryFlag(
-                countryId: phoneCountryData.countryCode!,
+            if (widget.showCountryFlag)
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: CountryFlag(
+                  countryId: phoneCountryData.countryCode!,
+                ),
               ),
-            ),
             Text('+${phoneCountryData.phoneCode}'),
           ],
         ),
