@@ -32,6 +32,10 @@ class CountryDropdown extends StatefulWidget {
   final bool? enableFeedback;
   final AlignmentGeometry alignment;
   final bool triggerOnCountrySelectedInitially;
+  final EdgeInsetsGeometry? padding;
+  final Widget? disabledHint;
+  final BorderRadius? borderRadius;
+  final Widget? hint;
 
   /// [filter] if you need a predefined list of countries only,
   /// pass it here
@@ -72,6 +76,10 @@ class CountryDropdown extends StatefulWidget {
     this.autovalidateMode,
     this.menuMaxHeight,
     this.enableFeedback,
+    this.hint,
+    this.padding,
+    this.disabledHint,
+    this.borderRadius,
     this.alignment = AlignmentDirectional.centerStart,
   }) : super(key: key);
 
@@ -194,6 +202,10 @@ class _CountryDropdownState extends State<CountryDropdown> {
       enableFeedback: widget.enableFeedback,
       icon: widget.icon,
       isExpanded: true,
+      hint: widget.hint,
+      padding: widget.padding,
+      disabledHint: widget.disabledHint,
+      borderRadius: widget.borderRadius,
       elevation: widget.elevation,
       itemHeight: widget.itemHeight,
       selectedItemBuilder: (c) {
