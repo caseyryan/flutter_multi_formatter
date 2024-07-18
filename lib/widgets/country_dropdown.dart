@@ -12,7 +12,7 @@ class CountryDropdown extends StatefulWidget {
   final bool showCountryFlag;
   final PhoneCountryData? initialCountryData;
   final List<PhoneCountryData>? filter;
-  final ValueChanged<PhoneCountryData> onCountrySelected;
+  final ValueChanged<PhoneCountryData>? onCountrySelected;
 
   final int elevation;
   final TextStyle? style;
@@ -90,10 +90,12 @@ class _CountryDropdownState extends State<CountryDropdown> {
       _initialValue = _countryItems.firstWhereOrNull((c) => c == widget.initialCountryData) ??
           _countryItems.first;
     }
-    if (widget.triggerOnCountrySelectedInitially && _initialValue != null) {
+    if (widget.triggerOnCountrySelectedInitially &&
+        _initialValue != null &&
+        widget.onCountrySelected != null) {
       _widgetsBinding.addPostFrameCallback((timeStamp) {
         if (_initialValue != null) {
-          widget.onCountrySelected(_initialValue!);
+          widget.onCountrySelected!(_initialValue!);
         }
       });
     }
@@ -171,6 +173,8 @@ class _CountryDropdownState extends State<CountryDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    final enabled = widget.onCountrySelected != null;
+
     return DropdownButtonFormField<PhoneCountryData>(
       key: Key('countryDropdown'),
       isDense: true,
@@ -210,11 +214,13 @@ class _CountryDropdownState extends State<CountryDropdown> {
             ),
           )
           .toList(),
-      onChanged: (PhoneCountryData? data) {
-        if (data != null) {
-          widget.onCountrySelected(data);
-        }
-      },
+      onChanged: enabled
+          ? (PhoneCountryData? data) {
+              if (data != null) {
+                widget.onCountrySelected!(data);
+              }
+            }
+          : null,
       value: _initialValue,
     );
   }
