@@ -9,9 +9,10 @@ class CountryDropdown extends StatefulWidget {
   final CountryItemBuilder? selectedItemBuilder;
   final CountryItemBuilder? listItemBuilder;
   final bool printCountryName;
+  final bool showCountryFlag;
   final PhoneCountryData? initialCountryData;
   final List<PhoneCountryData>? filter;
-  final ValueChanged<PhoneCountryData> onCountrySelected;
+  final ValueChanged<PhoneCountryData>? onCountrySelected;
 
   final int elevation;
   final TextStyle? style;
@@ -31,6 +32,10 @@ class CountryDropdown extends StatefulWidget {
   final bool? enableFeedback;
   final AlignmentGeometry alignment;
   final bool triggerOnCountrySelectedInitially;
+  final EdgeInsetsGeometry? padding;
+  final Widget? disabledHint;
+  final BorderRadius? borderRadius;
+  final Widget? hint;
 
   /// [filter] if you need a predefined list of countries only,
   /// pass it here
@@ -50,6 +55,7 @@ class CountryDropdown extends StatefulWidget {
     this.selectedItemBuilder,
     this.listItemBuilder,
     this.printCountryName = false,
+    this.showCountryFlag = true,
     this.initialCountryData,
     this.triggerOnCountrySelectedInitially = true,
     this.filter,
@@ -70,6 +76,10 @@ class CountryDropdown extends StatefulWidget {
     this.autovalidateMode,
     this.menuMaxHeight,
     this.enableFeedback,
+    this.hint,
+    this.padding,
+    this.disabledHint,
+    this.borderRadius,
     this.alignment = AlignmentDirectional.centerStart,
   }) : super(key: key);
 
@@ -85,14 +95,15 @@ class _CountryDropdownState extends State<CountryDropdown> {
   void initState() {
     _countryItems = widget.filter ?? PhoneCodes.getAllCountryDatas();
     if (widget.initialCountryData != null) {
-      _initialValue = _countryItems
-              .firstWhereOrNull((c) => c == widget.initialCountryData) ??
+      _initialValue = _countryItems.firstWhereOrNull((c) => c == widget.initialCountryData) ??
           _countryItems.first;
     }
-    if (widget.triggerOnCountrySelectedInitially && _initialValue != null) {
+    if (widget.triggerOnCountrySelectedInitially &&
+        _initialValue != null &&
+        widget.onCountrySelected != null) {
       _widgetsBinding.addPostFrameCallback((timeStamp) {
         if (_initialValue != null) {
-          widget.onCountrySelected(_initialValue!);
+          widget.onCountrySelected!(_initialValue!);
         }
       });
     }
@@ -111,12 +122,13 @@ class _CountryDropdownState extends State<CountryDropdown> {
     }
     return Row(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: CountryFlag(
-            countryId: phoneCountryData.countryCode!,
+        if (widget.showCountryFlag)
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: CountryFlag(
+              countryId: phoneCountryData.countryCode!,
+            ),
           ),
-        ),
         Flexible(
           child: Text(
             '+${phoneCountryData.phoneCode}',
@@ -139,12 +151,13 @@ class _CountryDropdownState extends State<CountryDropdown> {
       children: [
         Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: CountryFlag(
-                countryId: phoneCountryData.countryCode!,
+            if (widget.showCountryFlag)
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: CountryFlag(
+                  countryId: phoneCountryData.countryCode!,
+                ),
               ),
-            ),
             Text('+${phoneCountryData.phoneCode}'),
           ],
         ),
@@ -168,6 +181,8 @@ class _CountryDropdownState extends State<CountryDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    final enabled = widget.onCountrySelected != null;
+
     return DropdownButtonFormField<PhoneCountryData>(
       key: Key('countryDropdown'),
       isDense: true,
@@ -187,6 +202,10 @@ class _CountryDropdownState extends State<CountryDropdown> {
       enableFeedback: widget.enableFeedback,
       icon: widget.icon,
       isExpanded: true,
+      hint: widget.hint,
+      padding: widget.padding,
+      disabledHint: widget.disabledHint,
+      borderRadius: widget.borderRadius,
       elevation: widget.elevation,
       itemHeight: widget.itemHeight,
       selectedItemBuilder: (c) {
@@ -207,11 +226,13 @@ class _CountryDropdownState extends State<CountryDropdown> {
             ),
           )
           .toList(),
-      onChanged: (PhoneCountryData? data) {
-        if (data != null) {
-          widget.onCountrySelected(data);
-        }
-      },
+      onChanged: enabled
+          ? (PhoneCountryData? data) {
+              if (data != null) {
+                widget.onCountrySelected!(data);
+              }
+            }
+          : null,
       value: _initialValue,
     );
   }
