@@ -952,9 +952,9 @@ class PhoneCodes {
       'countryRU': 'Бразилия',
       'internalPhoneCode': '55',
       'countryCode': 'BR',
-      'phoneMask': '+00 (00) 0000-0000',
+      'phoneMask': '+00 (00) 00000-0000',
       'altMasks': [
-        '+00 (00) 00000-0000',
+        '+00 (00) 0000-0000',
       ],
     },
     {
@@ -1414,6 +1414,9 @@ class PhoneCodes {
       'internalPhoneCode': '62',
       'countryCode': 'ID',
       'phoneMask': '+00 00 0000 0000',
+      'altMasks': [
+        '+00 000 0000 0000',
+      ],
     },
     {
       'country': 'Iraq',
@@ -1575,6 +1578,9 @@ class PhoneCodes {
       'internalPhoneCode': '60',
       'countryCode': 'MY',
       'phoneMask': '+00 0 000 0000',
+      'altMasks': [
+        '+00 00 000 0000',
+      ],
     },
     {
       'country': 'Maldives',

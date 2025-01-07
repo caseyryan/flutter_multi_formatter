@@ -57,6 +57,13 @@ class CurrencyInputFormatter extends TextInputFormatter {
 
   bool _printDebugInfo = false;
 
+  /// Indicates if there are any scheduled updates using [_widgetsBinding]'s `addPostFrameCallback`.
+  bool _scheduledUpdate = false;
+
+  /// The value that will be passed to [onValueChange] on the next scheduled frame.
+  /// This value need is updated using [_updateValue] and [_updateValueFromText].
+  late String _nextValue;
+
   /// [thousandSeparator] specifies what symbol will be used to separate
   /// each block of 3 digits, e.g. [ThousandSeparator.Comma] will format
   /// million as 1,000,000
@@ -90,25 +97,60 @@ class CurrencyInputFormatter extends TextInputFormatter {
     they might interfere with numbers: -,.+
   ''');
 
+  dynamic get _widgetsBinding {
+    return WidgetsBinding.instance;
+  }
+
+  // The use of [_nextValue] is a hack to avoid calling [onValueChange] twice while
+  // formatting the text.
+  /// @{template fmf_schedule_update}
+  ///
+  /// Updates the value that will be passed to [onValueChange] on the next frame.
+  /// If this is called more than once in a frame, only the last call [value] will
+  /// be used.
+  ///
+  /// @{endtemplate}
   void _updateValue(String value) {
     if (onValueChange == null) {
       return;
     }
+    _nextValue = value;
+
+    if (_scheduledUpdate) {
+      return;
+    }
+
+    _scheduledUpdate = true;
     _widgetsBinding?.addPostFrameCallback((timeStamp) {
       try {
         if (mantissaLength < 1) {
-          onValueChange!(int.tryParse(value) ?? double.nan);
+          onValueChange!(int.parse(_nextValue));
         } else {
-          onValueChange!(double.tryParse(value) ?? double.nan);
+          onValueChange!(double.parse(_nextValue));
         }
       } catch (e) {
+        if (_printDebugInfo) print(e);
+
         onValueChange!(double.nan);
+      } finally {
+        _scheduledUpdate = false;
       }
     });
   }
 
-  dynamic get _widgetsBinding {
-    return WidgetsBinding.instance;
+  ///
+  /// @{macro fmf_schedule_update}
+  ///
+  String _updateValueFromText(String newText) {
+    final asNumeric = toNumericString(
+      newText,
+      allowPeriod: true,
+      mantissaSeparator: _mantissaSeparator,
+      mantissaLength: mantissaLength,
+    );
+    _updateValue(asNumeric);
+
+    return asNumeric;
   }
 
   String get _mantissaSeparator {
@@ -119,6 +161,23 @@ class CurrencyInputFormatter extends TextInputFormatter {
     return '.';
   }
 
+  // For the package developers: if you added a new return case here and it's return
+  // a value that does not match the value triggered on "onChangedValue" then you
+  // need to call [_updateValue] or [_updateValueFromText] method before returning
+  // the value.
+  //
+  // Take as example the "RETURN 3" case:
+  //
+  // ```dart
+  // // ...
+  // if (_printDebugInfo) {
+  //   print('RETURN 3 ${oldValue.text}');
+  // }
+  //
+  // _updateValueFromText(oldText); // <-- this is the line that needs to be added
+  //
+  // return oldValue;
+  // ```
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
@@ -129,13 +188,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
     int oldCaretIndex = max(oldValue.selection.start, oldValue.selection.end);
     int newCaretIndex = max(newValue.selection.start, newValue.selection.end);
     var newText = newValue.text;
-    final newAsNumeric = toNumericString(
-      newText,
-      allowPeriod: true,
-      mantissaSeparator: _mantissaSeparator,
-      mantissaLength: mantissaLength,
-    );
-    _updateValue(newAsNumeric);
+    final newAsNumeric = _updateValueFromText(newText);
 
     var oldText = oldValue.text;
     if (oldValue == newValue) {
@@ -188,6 +241,10 @@ class CurrencyInputFormatter extends TextInputFormatter {
         if (_printDebugInfo) {
           print('RETURN 2 ${oldValue.text}');
         }
+
+        // propagate previous correct value with mantissa separator
+        _updateValueFromText(oldText);
+
         return oldValue.copyWith(
           selection: TextSelection.collapsed(
             offset: min(
@@ -202,6 +259,10 @@ class CurrencyInputFormatter extends TextInputFormatter {
         if (_printDebugInfo) {
           print('RETURN 3 ${oldValue.text}');
         }
+
+        // propagate previous correct value without illegal chars
+        _updateValueFromText(oldText);
+
         return oldValue;
       }
     }
@@ -227,6 +288,10 @@ class CurrencyInputFormatter extends TextInputFormatter {
       if (_printDebugInfo) {
         print('RETURN 4 ${oldValue.text.length} $oldCaretIndex');
       }
+
+      // propagate previous correct value with correct mantissa position
+      _updateValueFromText(oldText);
+
       return oldValue.copyWith(
         selection: TextSelection.collapsed(
           offset: min(
@@ -256,6 +321,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
         if (_printDebugInfo) {
           print('RETURN 6 $newAsCurrency');
         }
+
         int offset = min(
           newCaretIndex,
           newAsCurrency.length - trailingLength,
@@ -312,6 +378,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
     if (_printDebugInfo) {
       print('RETURN 8 $newAsCurrency');
     }
+
     return TextEditingValue(
       selection: TextSelection.collapsed(
         offset: initialCaretOffset,
@@ -472,10 +539,11 @@ class CurrencyInputFormatter extends TextInputFormatter {
       if (sub.length > leadingSymbol.length) {
         return true;
       }
-      clearedInput = clearedInput.replaceAll(RegExp('[$leadingSymbol]+'), '');
+
+      clearedInput = clearedInput.replaceFirst(leadingSymbol, '');
     }
     if (trailingSymbol.isNotEmpty) {
-      clearedInput = clearedInput.replaceAll(RegExp('[$trailingSymbol]+'), '');
+      clearedInput = clearedInput.replaceFirst(trailingSymbol, '');
     }
     clearedInput = clearedInput.replaceAll(' ', '');
     return _illegalCharsRegexp.hasMatch(clearedInput);
