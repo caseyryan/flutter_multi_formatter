@@ -855,6 +855,11 @@ class PhoneCodes {
       'internalPhoneCode': '43',
       'countryCode': 'AT',
       'phoneMask': '+00 000 000 0000',
+      'altMasks': [
+        '+00 000 000 0000000',
+        '+00 000 000 000000',
+        '+00 000 000 00000',
+      ],
     },
     {
       'country': 'Azerbaijan',
@@ -1103,6 +1108,11 @@ class PhoneCodes {
       'internalPhoneCode': '385',
       'countryCode': 'HR',
       'phoneMask': '+000 00 000 0000',
+      'altMasks': [
+        '+000 00 000 0000 000',
+        '+000 00 000 0000 00',
+        '+000 00 000 0000 0',
+      ]
     },
     {
       'country': 'Cuba',
@@ -1117,6 +1127,11 @@ class PhoneCodes {
       'internalPhoneCode': '357',
       'countryCode': 'CY',
       'phoneMask': '+000 0 000 0000',
+      'altMasks': [
+        '+000 00 000000000',
+        '+000 00 00000000',
+        '+000 00 0000000',
+      ]
     },
     {
       'country': 'Czech Republic',
@@ -1124,6 +1139,11 @@ class PhoneCodes {
       'internalPhoneCode': '420',
       'countryCode': 'CZ',
       'phoneMask': '+000 000 000 000',
+      'altMasks': [
+        '+000 000 000 000 000',
+        '+000 000 000 000 00',
+        '+000 000 000 000 0',
+      ]
     },
     {
       'country': 'Denmark',
@@ -1228,6 +1248,8 @@ class PhoneCodes {
       'countryCode': 'FI',
       'phoneMask': '+000 00 000 0000',
       'altMasks': [
+        '+000 000 000 000000',
+        '+000 000 000 00000',
         '+000 000 000 0000',
       ],
     },
@@ -1280,6 +1302,8 @@ class PhoneCodes {
       'countryCode': 'DE',
       'phoneMask': '+00 00 00000000',
       'altMasks': [
+        '+00 00 00000000000',
+        '+00 00 0000000000',
         '+00 00 000000000',
       ]
     },
@@ -1431,6 +1455,11 @@ class PhoneCodes {
       'internalPhoneCode': '353',
       'countryCode': 'IE',
       'phoneMask': '+000 00 000 0000',
+      'altMasks': [
+        '+000 00 000 0000 00',
+        '+000 00 000 0000 0',
+      ],
+
     },
     {
       'country': 'Israel',
@@ -1446,6 +1475,7 @@ class PhoneCodes {
       'countryCode': 'IT',
       'phoneMask': '+00 00 000 0000',
       'altMasks': [
+        '+00 00 0000 00000',
         '+00 000 000 0000',
       ],
     },
@@ -1665,6 +1695,12 @@ class PhoneCodes {
       'internalPhoneCode': '382',
       'countryCode': 'ME',
       'phoneMask': '+000 00 000000',
+      'altMasks': [
+        '+000 000 000 000 000',
+        '+000 000 000 000 00',
+        '+000 000 000 000 0',
+        '+000 000 000 000',
+      ]
     },
     {
       'country': 'Montserrat',
@@ -1858,6 +1894,10 @@ class PhoneCodes {
       'internalPhoneCode': '351',
       'countryCode': 'PT',
       'phoneMask': '+000 000 000 000',
+      'altMasks': [
+        '+000 000 000 000 00',
+        '+000 000 000 000 0',
+      ],
     },
     {
       'country': 'Puerto Rico',
@@ -1921,6 +1961,11 @@ class PhoneCodes {
       'internalPhoneCode': '381',
       'countryCode': 'RS',
       'phoneMask': '+000 00 000 0000',
+      'altMasks': [
+        '+000 000 000 00 00 00',
+        '+000 00 000 00 00 00',
+        '+000 00 000 00 00 0',
+      ],
     },
     {
       'country': 'Seychelles',
@@ -2019,13 +2064,24 @@ class PhoneCodes {
       'internalPhoneCode': '46',
       'countryCode': 'SE',
       'phoneMask': '+00 00 000 0000',
+      'altMasks': [
+        '+00 00 000 0000 0000',
+        '+00 00 000 0000 000',
+        '+00 00 000 0000 00',
+        '+00 00 000 0000 0',
+      ],
     },
     {
       'country': 'Switzerland',
       'countryRU': 'Швейцария',
       'internalPhoneCode': '41',
       'countryCode': 'CH',
-      'phoneMask': '+00 00 000 0000',
+      'phoneMask': '+00 00 000 00 00',
+      'altMasks': [
+        '+00 000 000 00 00 00',
+        '+00 000 000 00 00 0',
+        '+00 000 000 00 00',
+      ],
     },
     {
       'country': 'Tajikistan',
