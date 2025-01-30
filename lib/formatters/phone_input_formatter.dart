@@ -93,8 +93,7 @@ class PhoneInputFormatter extends TextInputFormatter {
       /// хак специально для России, со вводом номера с восьмерки
       /// меняем ее на 7
       var isRussianWrongNumber =
-          onlyNumbers[0] == '8' && onlyNumbers[1] == '9' ||
-              onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
+          onlyNumbers[0] == '8' && onlyNumbers[1] == '9' || onlyNumbers[0] == '8' && onlyNumbers[1] == '3';
       if (isRussianWrongNumber) {
         onlyNumbers = '7${onlyNumbers.substring(1)}';
         _countryData = null;
@@ -104,8 +103,7 @@ class PhoneInputFormatter extends TextInputFormatter {
         );
       }
 
-      final isAustralianPhoneNumber =
-          onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
+      final isAustralianPhoneNumber = onlyNumbers[0] == '0' && onlyNumbers[1] == '4';
       if (isAustralianPhoneNumber) {
         onlyNumbers = '61${onlyNumbers.substring(1)}';
         _countryData = null;
@@ -247,8 +245,7 @@ class PhoneInputFormatter extends TextInputFormatter {
 
     if (kDebugMode) {
       print(
-        'Phone mask for country "${countryData['country']}"' +
-            ' was replaced from $currentMask to $newMask',
+        'Phone mask for country "${countryData['country']}"' + ' was replaced from $currentMask to $newMask',
       );
     }
 
@@ -486,9 +483,7 @@ class PhoneCountryData {
 
   @override
   bool operator ==(covariant PhoneCountryData other) {
-    return other.phoneCode == phoneCode &&
-        other.internalPhoneCode == internalPhoneCode &&
-        other.country == country;
+    return other.phoneCode == phoneCode && other.internalPhoneCode == internalPhoneCode && other.country == country;
   }
 
   @override
@@ -566,10 +561,8 @@ class PhoneCountryData {
     if (_altMasksWithoutCountryCodes != null) {
       return _altMasksWithoutCountryCodes;
     }
-    _altMasksWithoutCountryCodes = altMasks
-            ?.map((e) => _trimPhoneCode(phoneMask: e, phoneCode: phoneCode!))
-            .toList() ??
-        <String>[];
+    _altMasksWithoutCountryCodes =
+        altMasks?.map((e) => _trimPhoneCode(phoneMask: e, phoneCode: phoneCode!)).toList() ?? <String>[];
     return _altMasksWithoutCountryCodes;
   }
 
@@ -629,8 +622,7 @@ class PhoneCountryData {
 
   @override
   String toString() {
-    return '[PhoneCountryData(country: $country,' +
-        ' phoneCode: $phoneCode, countryCode: $countryCode)]';
+    return '[PhoneCountryData(country: $country,' + ' phoneCode: $phoneCode, countryCode: $countryCode)]';
   }
 }
 
@@ -1246,8 +1238,10 @@ class PhoneCodes {
       'countryRU': 'Финляндия',
       'internalPhoneCode': '358',
       'countryCode': 'FI',
-      'phoneMask': '+000 00 000 00',
+      'phoneMask': '+000 00 000',
       'altMasks': [
+        '+000 00 000 0',
+        '+000 00 000 00',
         '+000 00 000 000',
         '+000 00 000 0000',
         '+000 000 000 0000',
