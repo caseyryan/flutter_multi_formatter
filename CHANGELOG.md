@@ -1,3 +1,6 @@
+## [2.13.7]
+- Merged https://github.com/caseyryan/flutter_multi_formatter/pull/165 /// Customization for country dropdown
+- Merged https://github.com/caseyryan/flutter_multi_formatter/pull/174 /// New mask for Finland
 ## [2.13.0]
 - Merged many fixes
 ## [2.12.8]

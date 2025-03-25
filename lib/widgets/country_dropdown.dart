@@ -95,7 +95,8 @@ class _CountryDropdownState extends State<CountryDropdown> {
   void initState() {
     _countryItems = widget.filter ?? PhoneCodes.getAllCountryDatas();
     if (widget.initialCountryData != null) {
-      _initialValue = _countryItems.firstWhereOrNull((c) => c == widget.initialCountryData) ??
+      _initialValue = _countryItems
+              .firstWhereOrNull((c) => c == widget.initialCountryData) ??
           _countryItems.first;
     }
     if (widget.triggerOnCountrySelectedInitially &&
