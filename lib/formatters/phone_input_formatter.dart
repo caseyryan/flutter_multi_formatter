@@ -1246,8 +1246,9 @@ class PhoneCodes {
       'countryRU': 'Финляндия',
       'internalPhoneCode': '358',
       'countryCode': 'FI',
-      'phoneMask': '+000 00 000 00',
+      'phoneMask': '+000 00 000 0',
       'altMasks': [
+        '+000 00 000 00',
         '+000 00 000 000',
         '+000 00 000 0000',
         '+000 000 000 0000',
