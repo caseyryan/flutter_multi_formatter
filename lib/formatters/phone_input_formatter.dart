@@ -501,7 +501,7 @@ class PhoneCountryData {
   }
 
   String getCorrectMask(String? countryCode) {
-    if (countryCode != null) {
+    if (countryCode == null) {
       return phoneMask!;
     }
     return phoneMaskWithoutCountryCode;
