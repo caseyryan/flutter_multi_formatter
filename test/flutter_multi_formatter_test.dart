@@ -183,23 +183,23 @@ void main() {
     test('should preserve area code 83 when typing step by step', () {
       final formatter = PhoneInputFormatter(defaultCountryCode: 'BR');
       
-      var result = formatter.formatEditUpdate(
+      final result1 = formatter.formatEditUpdate(
         TextEditingValue(),
         TextEditingValue(text: '8'),
       );
-      expect(result.text, '(8');
+      expect(result1.text, '(8');
 
-      result = formatter.formatEditUpdate(
-        result,
+      final result2 = formatter.formatEditUpdate(
+        result1,
         TextEditingValue(text: '83'),
       );
-      expect(result.text, '(83');
+      expect(result2.text, '(83');
 
-      result = formatter.formatEditUpdate(
-        result,
+      final result3 = formatter.formatEditUpdate(
+        result2,
         TextEditingValue(text: '839'),
       );
-      expect(result.text, '(83) 9');
+      expect(result3.text, '(83) 9');
     });
 
     test('should format Brazilian landline numbers', () {
