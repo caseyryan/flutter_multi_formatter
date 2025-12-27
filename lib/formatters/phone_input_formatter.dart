@@ -780,7 +780,7 @@ class PhoneCodes {
       'countryRU': 'Алжир',
       'internalPhoneCode': '213',
       'countryCode': 'DZ',
-      'phoneMask': '+000 0 000 0000',
+      'phoneMask': '+000 0 00 00 00 00',
     },
     {
       'country': 'American Samoa',
