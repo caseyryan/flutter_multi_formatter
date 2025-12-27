@@ -169,4 +169,66 @@ void main() {
       });
     });
   });
+
+  group('Brazilian phone numbers', () {
+    test('should preserve area code 83 when formatting', () {
+      final formatter = PhoneInputFormatter(defaultCountryCode: 'BR');
+      final result = formatter.formatEditUpdate(
+        TextEditingValue(),
+        TextEditingValue(text: '83987654321'),
+      );
+      expect(result.text, '(83) 98765-4321');
+    });
+
+    test('should preserve area code 83 when typing step by step', () {
+      final formatter = PhoneInputFormatter(defaultCountryCode: 'BR');
+      
+      final result1 = formatter.formatEditUpdate(
+        TextEditingValue(),
+        TextEditingValue(text: '8'),
+      );
+      expect(result1.text, '(8');
+
+      final result2 = formatter.formatEditUpdate(
+        result1,
+        TextEditingValue(text: '83'),
+      );
+      expect(result2.text, '(83');
+
+      final result3 = formatter.formatEditUpdate(
+        result2,
+        TextEditingValue(text: '839'),
+      );
+      expect(result3.text, '(83) 9');
+    });
+
+    test('should format Brazilian landline numbers', () {
+      final formatter = PhoneInputFormatter(defaultCountryCode: 'BR');
+      final result = formatter.formatEditUpdate(
+        TextEditingValue(),
+        TextEditingValue(text: '8332123456'),
+      );
+      expect(result.text, '(83) 32123-456');
+    });
+  });
+
+  group('Russian phone correction', () {
+    test('should convert 89 to Russian number', () {
+      final formatter = PhoneInputFormatter();
+      final result = formatter.formatEditUpdate(
+        TextEditingValue(),
+        TextEditingValue(text: '89123456789'),
+      );
+      expect(result.text, startsWith('+7 (912)'));
+    });
+
+    test('should not convert 83 to Russian number', () {
+      final formatter = PhoneInputFormatter();
+      final result = formatter.formatEditUpdate(
+        TextEditingValue(),
+        TextEditingValue(text: '83123456789'),
+      );
+      expect(result.text, isNot(startsWith('+7')));
+    });
+  });
 }
