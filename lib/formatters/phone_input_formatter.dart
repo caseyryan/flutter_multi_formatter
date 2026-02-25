@@ -37,6 +37,12 @@ class PhoneInputFormatter extends TextInputFormatter {
   final bool shouldCorrectNumber;
   final String? defaultCountryCode;
 
+  /// if [showCountryCode] is false, the formatted output will not include
+  /// the country code prefix (e.g. `(11) 99999-9999` instead of
+  /// `+55 (11) 99999-9999`). The [unmasked] getter will still return the
+  /// full international number with country code.
+  final bool showCountryCode;
+
   PhoneCountryData? _countryData;
   String _lastValue = '';
 
@@ -51,25 +57,39 @@ class PhoneInputFormatter extends TextInputFormatter {
   /// [defaultCountryCode] if you set a default country code,
   /// the phone will be formatted according to its country mask
   /// and no leading country code will be present in the masked value
+  /// [showCountryCode] if false, the country code prefix is hidden from the
+  /// formatted output while [unmasked] still returns the full international number
   PhoneInputFormatter({
     this.onCountrySelected,
     this.allowEndlessPhone = false,
     this.shouldCorrectNumber = true,
     this.defaultCountryCode,
+    this.showCountryCode = true,
   });
 
   String get masked => _lastValue;
 
-  String get unmasked => '+${toNumericString(
-        _lastValue,
-        allowHyphen: false,
-        allowAllZeroes: true,
-      )}';
+  String get unmasked {
+    final digits = toNumericString(
+      _lastValue,
+      allowHyphen: false,
+      allowAllZeroes: true,
+    );
+    if (!showCountryCode && _countryData?.phoneCode != null) {
+      return '+${_countryData!.phoneCode}$digits';
+    }
+    return '+$digits';
+  }
 
-  bool get isFilled => isPhoneValid(
-        masked,
-        defaultCountryCode: defaultCountryCode,
-      );
+  bool get isFilled {
+    if (!showCountryCode && defaultCountryCode == null) {
+      return isPhoneValid(unmasked);
+    }
+    return isPhoneValid(
+      masked,
+      defaultCountryCode: defaultCountryCode,
+    );
+  }
 
   @override
   TextEditingValue formatEditUpdate(
@@ -130,7 +150,8 @@ class PhoneInputFormatter extends TextInputFormatter {
     }
 
     final endOffset = newValue.text.length - newValue.selection.end;
-    final selectionEnd = maskedValue.length - endOffset;
+    final selectionEnd =
+        (maskedValue.length - endOffset).clamp(0, maskedValue.length);
 
     _lastValue = maskedValue;
     return TextEditingValue(
@@ -175,10 +196,16 @@ class PhoneInputFormatter extends TextInputFormatter {
       }
     }
     if (_countryData != null) {
-      return _formatByMask(
+      final resolved = _resolveCountryCodeDisplay(
+        _countryData!,
+        defaultCountryCode,
+        showCountryCode,
         numericString,
-        _countryData!.getCorrectMask(defaultCountryCode),
-        _countryData!.getCorrectAltMasks(defaultCountryCode),
+      );
+      return _formatByMask(
+        resolved.inputForMask,
+        _countryData!.getCorrectMask(resolved.effectiveCountryCode),
+        _countryData!.getCorrectAltMasks(resolved.effectiveCountryCode),
         0,
         allowEndlessPhone,
       );
@@ -270,6 +297,33 @@ class PhoneInputFormatter extends TextInputFormatter {
   }
 }
 
+class _PhoneDisplayResolution {
+  final String? effectiveCountryCode;
+  final String inputForMask;
+  const _PhoneDisplayResolution(this.effectiveCountryCode, this.inputForMask);
+}
+
+/// When [showCountryCode] is false and no [defaultCountryCode] is provided,
+/// selects the trimmed (no-prefix) mask and strips the phone-code digits from
+/// [input] so the formatter displays only the local portion of the number.
+_PhoneDisplayResolution _resolveCountryCodeDisplay(
+  PhoneCountryData countryData,
+  String? defaultCountryCode,
+  bool showCountryCode,
+  String input,
+) {
+  String? effectiveCountryCode = defaultCountryCode;
+  String inputForMask = input;
+  if (!showCountryCode && effectiveCountryCode == null) {
+    effectiveCountryCode = countryData.countryCode;
+    final phoneCode = countryData.phoneCode;
+    if (phoneCode != null && input.startsWith(phoneCode)) {
+      inputForMask = input.substring(phoneCode.length);
+    }
+  }
+  return _PhoneDisplayResolution(effectiveCountryCode, inputForMask);
+}
+
 bool isPhoneValid(
   String phone, {
   bool allowEndlessPhone = false,
@@ -331,6 +385,7 @@ String? formatAsPhoneNumber(
   bool allowEndlessPhone = false,
   String? defaultMask,
   String? defaultCountryCode,
+  bool showCountryCode = true,
 }) {
   if (!isPhoneValid(
     phone,
@@ -366,10 +421,16 @@ String? formatAsPhoneNumber(
   }
 
   if (countryData != null) {
-    return _formatByMask(
+    final resolved = _resolveCountryCodeDisplay(
+      countryData,
+      defaultCountryCode,
+      showCountryCode,
       phone,
-      countryData.getCorrectMask(defaultCountryCode),
-      countryData.getCorrectAltMasks(defaultCountryCode),
+    );
+    return _formatByMask(
+      resolved.inputForMask,
+      countryData.getCorrectMask(resolved.effectiveCountryCode),
+      countryData.getCorrectAltMasks(resolved.effectiveCountryCode),
       0,
       allowEndlessPhone,
     );

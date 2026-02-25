@@ -150,6 +150,47 @@ CountryDropdown(
 ```
 
 
+### Hiding the country code in formatted output
+
+By default, `PhoneInputFormatter` includes the country code prefix in the formatted value (e.g. `+55 (11) 99999-9999`). Set `showCountryCode: false` to display only the local part of the number while the `unmasked` getter still returns the full international number.
+
+> **Input contract:** The value fed to the formatter must still include the full international number (e.g. `+5511999999999`) so that the country can be auto-detected. Only the *display* is stripped — the digits used for detection are always the full number.
+
+```dart
+// Default — country code is visible
+PhoneInputFormatter(
+  showCountryCode: true, // default
+)
+// input '+5511999999999' → masked: '+55 (11) 99999-9999'
+
+// Hide country code
+PhoneInputFormatter(
+  showCountryCode: false,
+)
+// input '+5511999999999' → masked: '(11) 99999-9999'
+//                        → unmasked: '+5511999999999'  ← full number preserved
+```
+
+The same flag is available on the `formatAsPhoneNumber` top-level function:
+
+```dart
+formatAsPhoneNumber('+5511999999999', showCountryCode: false);
+// → '(11) 99999-9999'
+```
+
+**Using with `defaultCountryCode`:** when `defaultCountryCode` is already set the country code is hidden from the mask by default, so `showCountryCode` has no additional effect on the display. However, setting `showCountryCode: false` alongside `defaultCountryCode` ensures that `unmasked` returns the full international number (country code prepended):
+
+```dart
+PhoneInputFormatter(
+  defaultCountryCode: 'BR',
+  showCountryCode: false,
+)
+// input '11999999999' → masked:   '(11) 99999-9999'
+//                     → unmasked: '+5511999999999'
+```
+
+> **Note:** `unmasked` always returns the full international number (with `+` and country code) regardless of `showCountryCode`.
+
 ### Formatting a credit / debit card
 
 <img src="https://github.com/caseyryan/images/blob/master/multi_formatter/card_format.gif?raw=true" width="240"/>
