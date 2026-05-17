@@ -1,3 +1,5 @@
+## [2.13.11]
+- Merged MIR system https://github.com/caseyryan/flutter_multi_formatter/pull/183 
 ## [2.13.10] 
 - Revert this change because it broke the formatting https://github.com/caseyryan/flutter_multi_formatter/issues/177
 ## [2.13.9]
