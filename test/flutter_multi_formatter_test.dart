@@ -3,6 +3,59 @@ import 'package:flutter_test/flutter_test.dart';
 import '../lib/flutter_multi_formatter.dart';
 
 void main() {
+  group('MIR cards', () {
+    const mirSamples = <String>[
+      '2200000000000004',
+      '2201000000000003',
+      '2202000000000002',
+      '2203000000000001',
+      '2204000000000000',
+    ];
+
+    test('should detect MIR system for supported 2200-2204 prefixes', () {
+      for (final cardNumber in mirSamples) {
+        final cardSystemData = getCardSystemData(cardNumber);
+
+        expect(cardSystemData, isNotNull);
+        expect(cardSystemData!.system, CardSystem.MIR);
+        expect(cardSystemData.systemCode, cardNumber.substring(0, 4));
+      }
+    });
+
+    test('should validate MIR numbers for supported 2200-2204 prefixes', () {
+      for (final cardNumber in mirSamples) {
+        expect(
+          isCardNumberValid(
+            cardNumber: cardNumber,
+            checkLength: true,
+          ),
+          isTrue,
+        );
+      }
+    });
+
+    test('should format MIR numbers for supported 2200-2204 prefixes', () {
+      final formatter = CreditCardNumberInputFormatter();
+
+      for (final cardNumber in mirSamples) {
+        final formatted = formatter
+            .formatEditUpdate(
+              const TextEditingValue(text: ''),
+              TextEditingValue(text: cardNumber),
+            )
+            .text;
+
+        expect(
+          formatted,
+          '${cardNumber.substring(0, 4)} '
+          '${cardNumber.substring(4, 8)} '
+          '${cardNumber.substring(8, 12)} '
+          '${cardNumber.substring(12, 16)}',
+        );
+      }
+    });
+  });
+
   test(
       'should use the philippines land line mask (shorter one) when partially entering a number',
       () {

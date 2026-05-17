@@ -416,6 +416,24 @@ class _CardSystemDatas {
     },
     {
       'system': CardSystem.MIR,
+      'systemCode': '2201',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.MIR,
+      'systemCode': '2202',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.MIR,
+      'systemCode': '2203',
+      'numberMask': '0000 0000 0000 0000',
+      'numDigits': 16,
+    },
+    {
+      'system': CardSystem.MIR,
       'systemCode': '2204',
       'numberMask': '0000 0000 0000 0000',
       'numDigits': 16,
