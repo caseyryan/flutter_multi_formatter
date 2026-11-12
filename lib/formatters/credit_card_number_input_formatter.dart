@@ -69,23 +69,77 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     var onlyNumbers = toNumericString(
       newValue.text,
     );
-    String maskedValue = _applyMask(
-      onlyNumbers,
-    );
-    if (maskedValue.length == oldValue.text.length) {
+    final detectedCard =
+        _CardSystemDatas.getCardSystemDataByNumber(onlyNumbers);
+    final cardSystemData = detectedCard ?? _cardSystemData;
+    final replacesWholeValue = oldValue.selection.start == 0 &&
+        oldValue.selection.end == oldValue.text.length;
+    if (cardSystemData?.system == CardSystem.MIR &&
+        onlyNumbers.length > cardSystemData!.numDigits! &&
+        oldValue.text.isNotEmpty &&
+        !replacesWholeValue) {
+      // Clipping a partial edit could discard digits outside the selection.
       return oldValue;
     }
-    var endOffset = max(
-      oldValue.text.length - oldValue.selection.end,
-      0,
-    );
-    var selectionEnd = maskedValue.length - endOffset;
+    final maskedValue = _applyMask(onlyNumbers, detectedCard);
+    final isMir = _cardSystemData?.system == CardSystem.MIR;
+    if (!isMir && maskedValue.length == oldValue.text.length) {
+      return oldValue;
+    }
+    final newSelectionEnd = newValue.selection.end;
+    final int selectionEnd;
+    if (isMir &&
+        newValue.selection.isValid &&
+        newSelectionEnd <= newValue.text.length) {
+      selectionEnd = _mirSelectionEnd(oldValue, newValue, maskedValue);
+    } else {
+      final endOffset = max(
+        oldValue.text.length - oldValue.selection.end,
+        0,
+      );
+      selectionEnd = maskedValue.length - endOffset;
+    }
     return TextEditingValue(
       selection: TextSelection.collapsed(
         offset: selectionEnd,
       ),
       text: maskedValue,
     );
+  }
+
+  int _mirSelectionEnd(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+    String formatted,
+  ) {
+    final input = newValue.text;
+    final inputOffset = newValue.selection.end;
+    // Forward Delete must advance over a separator restored by the mask.
+    if (formatted == oldValue.text &&
+        oldValue.selection.isCollapsed &&
+        oldValue.selection.end == inputOffset &&
+        inputOffset < formatted.length &&
+        formatted[inputOffset] == ' ' &&
+        input == formatted.replaceRange(inputOffset, inputOffset + 1, '')) {
+      return inputOffset + 1;
+    }
+    // A space may be inserted or removed after the cursor as the mask changes.
+    var digitsBeforeCursor =
+        input.substring(0, inputOffset).split('').where(isDigit).length;
+    var offset = 0;
+    while (offset < formatted.length && digitsBeforeCursor > 0) {
+      if (isDigit(formatted[offset])) {
+        digitsBeforeCursor--;
+      }
+      offset++;
+    }
+    if (offset < formatted.length &&
+        formatted[offset] == ' ' &&
+        inputOffset > 0 &&
+        input[inputOffset - 1] == ' ') {
+      offset++;
+    }
+    return offset;
   }
 
   /// this is a small dirty hack to be able to remove the first character
@@ -107,20 +161,9 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     }
   }
 
-  String _applyMask(
-    String numericString,
-  ) {
-    if (numericString.isEmpty) {
-      _updateCardSystemData(null);
-    } else {
-      var countryData = _CardSystemDatas.getCardSystemDataByNumber(
-        numericString,
-      );
-      if (countryData != null) {
-        _updateCardSystemData(
-          countryData,
-        );
-      }
+  String _applyMask(String numericString, CardSystemData? detectedCard) {
+    if (numericString.isEmpty || detectedCard != null) {
+      _updateCardSystemData(detectedCard);
     }
     if (_cardSystemData != null) {
       return _formatByMask(numericString, _cardSystemData!.numberMask!);
@@ -278,7 +321,7 @@ class _CardSystemDatas {
           )
           .toList();
 
-      tempSystems.sort((a, b) => a['systemCode'].compareTo(b['systemCode']));
+      tempSystems.sort((a, b) => a['numDigits'].compareTo(b['numDigits']));
       for (var data in tempSystems) {
         final int numMaskDigits = data['numDigits']!;
         if (cardNumber.length <= numMaskDigits) {
@@ -408,36 +451,32 @@ class _CardSystemDatas {
       'numberMask': '00000000 0000000000',
       'numDigits': 18,
     },
-    {
-      'system': CardSystem.MIR,
-      'systemCode': '2200',
-      'numberMask': '0000 0000 0000 0000',
-      'numDigits': 16,
-    },
-    {
-      'system': CardSystem.MIR,
-      'systemCode': '2201',
-      'numberMask': '0000 0000 0000 0000',
-      'numDigits': 16,
-    },
-    {
-      'system': CardSystem.MIR,
-      'systemCode': '2202',
-      'numberMask': '0000 0000 0000 0000',
-      'numDigits': 16,
-    },
-    {
-      'system': CardSystem.MIR,
-      'systemCode': '2203',
-      'numberMask': '0000 0000 0000 0000',
-      'numDigits': 16,
-    },
-    {
-      'system': CardSystem.MIR,
-      'systemCode': '2204',
-      'numberMask': '0000 0000 0000 0000',
-      'numDigits': 16,
-    },
+    for (final prefix in const ['2200', '2201', '2202', '2203', '2204']) ...[
+      {
+        'system': CardSystem.MIR,
+        'systemCode': prefix,
+        'numberMask': '0000 0000 0000 0000',
+        'numDigits': 16,
+      },
+      {
+        'system': CardSystem.MIR,
+        'systemCode': prefix,
+        'numberMask': '0000 0000 0000 0000 0',
+        'numDigits': 17,
+      },
+      {
+        'system': CardSystem.MIR,
+        'systemCode': prefix,
+        'numberMask': '0000 0000 0000 0000 00',
+        'numDigits': 18,
+      },
+      {
+        'system': CardSystem.MIR,
+        'systemCode': prefix,
+        'numberMask': '0000 0000 0000 0000 000',
+        'numDigits': 19,
+      },
+    ],
     {
       'system': CardSystem.UNION_PAY,
       'systemCode': '62',
