@@ -72,20 +72,58 @@ class CreditCardNumberInputFormatter extends TextInputFormatter {
     String maskedValue = _applyMask(
       onlyNumbers,
     );
+    final cardSystemData = _cardSystemData;
+    final isMir = cardSystemData?.system == CardSystem.MIR;
     if (maskedValue.length == oldValue.text.length) {
-      return oldValue;
+      if (!isMir) {
+        return oldValue;
+      }
+      if (oldValue.selection.isCollapsed &&
+          (maskedValue == oldValue.text ||
+              onlyNumbers.length > cardSystemData!.numDigits!)) {
+        return oldValue;
+      }
     }
-    var endOffset = max(
-      oldValue.text.length - oldValue.selection.end,
-      0,
-    );
-    var selectionEnd = maskedValue.length - endOffset;
+    final newSelectionEnd = newValue.selection.end;
+    final int selectionEnd;
+    if (isMir &&
+        newValue.selection.isValid &&
+        newSelectionEnd <= newValue.text.length) {
+      selectionEnd =
+          _mirSelectionEnd(newValue.text, newSelectionEnd, maskedValue);
+    } else {
+      final endOffset = max(
+        oldValue.text.length - oldValue.selection.end,
+        0,
+      );
+      selectionEnd = maskedValue.length - endOffset;
+    }
     return TextEditingValue(
       selection: TextSelection.collapsed(
         offset: selectionEnd,
       ),
       text: maskedValue,
     );
+  }
+
+  int _mirSelectionEnd(String input, int inputOffset, String formatted) {
+    // A space may be inserted or removed after the cursor as the mask changes.
+    var digitsBeforeCursor =
+        input.substring(0, inputOffset).split('').where(isDigit).length;
+    var offset = 0;
+    while (offset < formatted.length && digitsBeforeCursor > 0) {
+      if (isDigit(formatted[offset])) {
+        digitsBeforeCursor--;
+      }
+      offset++;
+    }
+    if (offset < formatted.length &&
+        formatted[offset] == ' ' &&
+        inputOffset > 0 &&
+        input[inputOffset - 1] == ' ') {
+      offset++;
+    }
+    return offset;
   }
 
   /// this is a small dirty hack to be able to remove the first character
@@ -278,7 +316,7 @@ class _CardSystemDatas {
           )
           .toList();
 
-      tempSystems.sort((a, b) => a['systemCode'].compareTo(b['systemCode']));
+      tempSystems.sort((a, b) => a['numDigits'].compareTo(b['numDigits']));
       for (var data in tempSystems) {
         final int numMaskDigits = data['numDigits']!;
         if (cardNumber.length <= numMaskDigits) {
@@ -408,36 +446,32 @@ class _CardSystemDatas {
       'numberMask': '00000000 0000000000',
       'numDigits': 18,
     },
-    {
-      'system': CardSystem.MIR,
-      'systemCode': '2200',
-      'numberMask': '0000 0000 0000 0000',
-      'numDigits': 16,
-    },
-    {
-      'system': CardSystem.MIR,
-      'systemCode': '2201',
-      'numberMask': '0000 0000 0000 0000',
-      'numDigits': 16,
-    },
-    {
-      'system': CardSystem.MIR,
-      'systemCode': '2202',
-      'numberMask': '0000 0000 0000 0000',
-      'numDigits': 16,
-    },
-    {
-      'system': CardSystem.MIR,
-      'systemCode': '2203',
-      'numberMask': '0000 0000 0000 0000',
-      'numDigits': 16,
-    },
-    {
-      'system': CardSystem.MIR,
-      'systemCode': '2204',
-      'numberMask': '0000 0000 0000 0000',
-      'numDigits': 16,
-    },
+    for (final prefix in const ['2200', '2201', '2202', '2203', '2204']) ...[
+      {
+        'system': CardSystem.MIR,
+        'systemCode': prefix,
+        'numberMask': '0000 0000 0000 0000',
+        'numDigits': 16,
+      },
+      {
+        'system': CardSystem.MIR,
+        'systemCode': prefix,
+        'numberMask': '0000 0000 0000 0000 0',
+        'numDigits': 17,
+      },
+      {
+        'system': CardSystem.MIR,
+        'systemCode': prefix,
+        'numberMask': '0000 0000 0000 0000 00',
+        'numDigits': 18,
+      },
+      {
+        'system': CardSystem.MIR,
+        'systemCode': prefix,
+        'numberMask': '0000 0000 0000 0000 000',
+        'numDigits': 19,
+      },
+    ],
     {
       'system': CardSystem.UNION_PAY,
       'systemCode': '62',
