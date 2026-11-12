@@ -156,6 +156,36 @@ void main() {
       expect(result, _editingValue('2201 1234 6789 0123', 10));
     });
 
+    test('moves the cursor past a restored separator on backspace', () {
+      const number = '2201 1234 5678 9012 3';
+      final formatter = CreditCardNumberInputFormatter();
+      final moved = formatter.formatEditUpdate(
+        _editingValue(number, 20),
+        _editingValue('2201 1234 5678 90123', 19),
+      );
+      expect(moved, _editingValue(number, 19));
+      final deleted = formatter.formatEditUpdate(
+        moved,
+        _editingValue('2201 1234 5678 901 3', 18),
+      );
+      expect(deleted, _editingValue('2201 1234 5678 9013', 18));
+    });
+
+    test('moves the cursor past a restored separator on forward delete', () {
+      const number = '2201 1234 5678 9012 3';
+      final formatter = CreditCardNumberInputFormatter();
+      final moved = formatter.formatEditUpdate(
+        _editingValue(number, 19),
+        _editingValue('2201 1234 5678 90123', 19),
+      );
+      expect(moved, _editingValue(number, 20));
+      final deleted = formatter.formatEditUpdate(
+        moved,
+        _editingValue('2201 1234 5678 9012 ', 20),
+      );
+      expect(deleted, _editingValue('2201 1234 5678 9012', 19));
+    });
+
     test('keeps the cursor beside a digit deleted before the final space', () {
       final formatter = CreditCardNumberInputFormatter();
       final initial = _editingValue('2201 1234 5678 9012 3', 19);
@@ -189,6 +219,48 @@ void main() {
         expect(result, _editingValue(expected));
       });
     }
+
+    for (final entry in const {'34': '503', '345': '50'}.entries) {
+      final number = '2201 1234 5678 9012 ${entry.key}';
+      final replacement = entry.value;
+      final length = 16 + entry.key.length;
+      test('rejects overflow pasting over a partial selection ($length digits)',
+          () {
+        final selectedLengths = <int?>[];
+        final formatter = CreditCardNumberInputFormatter(
+          onCardSystemSelected: (data) => selectedLengths.add(data?.numDigits),
+        );
+        final formatted = formatter.formatEditUpdate(
+          _editingValue(''),
+          _editingValue(number),
+        );
+        final selected = formatted.copyWith(
+          selection: const TextSelection(baseOffset: 10, extentOffset: 11),
+        );
+        final result = formatter.formatEditUpdate(
+          selected,
+          _editingValue(
+            '2201 1234 ${replacement}678 9012 ${entry.key}',
+            10 + replacement.length,
+          ),
+        );
+        expect(selectedLengths, [length]);
+        expect(result, selected);
+      });
+    }
+
+    test('limits overlong paste replacing the whole field to 19 digits', () {
+      const previous = '2201 1234 5678 9012 345';
+      final selected = TextEditingValue(
+        text: previous,
+        selection: TextSelection(baseOffset: previous.length, extentOffset: 0),
+      );
+      final result = CreditCardNumberInputFormatter().formatEditUpdate(
+        selected,
+        _editingValue('22021234567890123456'),
+      );
+      expect(result, _editingValue('2202 1234 5678 9012 345'));
+    });
 
     test('limits overlong raw and spaced paste to 19 digits', () {
       const expected = '2201 1234 5678 9012 345';
